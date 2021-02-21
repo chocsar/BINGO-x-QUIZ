@@ -601,6 +601,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1169895743}
   - component: {fileID: 1169895742}
+  - component: {fileID: 1169895744}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -615,7 +616,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1169895741}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f57c5aca7b7184aab86b39eba4faeeff, type: 3}
   m_Name: 
@@ -644,6 +645,30 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1169895744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1169895741}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 07151c5b4aaca459ba5e3d881a4a6527, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputNum: 0
+  bingoNumText:
+  - {fileID: 1733602765}
+  - {fileID: 407381817}
+  - {fileID: 654696479}
+  - {fileID: 1038304994}
+  - {fileID: 452237906}
+  - {fileID: 1811705411}
+  - {fileID: 2123704684}
+  - {fileID: 1680198211}
+  - {fileID: 1965248509}
+  isChecker: 010000000100000000
 --- !u!1 &1353129500
 GameObject:
   m_ObjectHideFlags: 0

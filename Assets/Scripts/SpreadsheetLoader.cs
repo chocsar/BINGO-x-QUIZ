@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using UnityEngine.Networking;
-using System.IO;
+using UnityEngine.UI;
 
 namespace SpreadsheetSystems
 {
@@ -11,11 +11,7 @@ namespace SpreadsheetSystems
     {
         // URLは環境に応じて変更
         string requestURL = "https://script.google.com/macros/s/AKfycbyx8EIlFlR20QxbbkyMKKy1odFNsjOEKjIaoikXJ1q8wYEhRmRPt1D1/exec";
-        UnityWebRequest www;
-        string questionData;
-        string filePath = "assets/Resources/question.json";
-        bool _isJsonWrite = false;
-        [SerializeField]int _questionId = 1;
+        [SerializeField] Text testText
 
         void Start()
         {
@@ -40,14 +36,8 @@ namespace SpreadsheetSystems
                 Debug.Log(www.downloadHandler.text);
                 //string json = JsonUtility.ToJson(www.downloadHandler.text);
                 questionData = www.downloadHandler.text;
+                testText.text = www.downloadHandler.text;
 
-                if (_isJsonWrite == true)
-                {
-                    StreamWriter streamWriter = new StreamWriter(filePath);
-                    streamWriter.Write(questionData);
-                    streamWriter.Flush();
-                    streamWriter.Close();
-                }
                 // または、結果をバイナリデータとして取得します
                 // byte[] results = www.downloadHandler.data;
 
