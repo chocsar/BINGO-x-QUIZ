@@ -11,7 +11,7 @@ namespace SpreadsheetSystems
     {
         // URLは環境に応じて変更
         string requestURL = "https://script.google.com/macros/s/AKfycbyx8EIlFlR20QxbbkyMKKy1odFNsjOEKjIaoikXJ1q8wYEhRmRPt1D1/exec";
-        [SerializeField] Text testText
+        [SerializeField] Text testText;
 
         void Start()
         {
