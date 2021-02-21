@@ -30,14 +30,11 @@ namespace SpreadsheetSystems
 
 
         }
-
         // テキストファイルとして読み込む
         IEnumerator GetText()
         {
-
             www = UnityWebRequest.Get(requestURL);
             yield return www.SendWebRequest();
-
             if (www.isNetworkError || www.isHttpError)
             {
                 Debug.Log(www.error);
@@ -46,7 +43,6 @@ namespace SpreadsheetSystems
             {
                 // 結果をテキストとして表示します
                 Debug.Log(www.downloadHandler.text);
-
                 testText.text = www.downloadHandler.text;
                 Debug.Log("LoadDone");
                 // または、結果をバイナリデータとして取得します
