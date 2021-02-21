@@ -8,6 +8,11 @@ public class BingoSysytem : MonoBehaviour
     public int[,] bingoNum = new int[3,3];
     [SerializeField] Text[] bingoNumText;
 
+
+
+
+     
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,8 +38,18 @@ public class BingoSysytem : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+
         
     }
+
+
+
+
+
+
+
+
 
 
 }
