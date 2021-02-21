@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 
-
 namespace SpreadsheetSystems
 {
     public class SpreadsheetLoader : MonoBehaviour
@@ -35,7 +34,8 @@ namespace SpreadsheetSystems
             {
                 // 結果をテキストとして表示します
                 Debug.Log(www.downloadHandler.text);
-
+                //string json = JsonUtility.ToJson(www.downloadHandler.text);
+                questionData = www.downloadHandler.text;
                 testText.text = www.downloadHandler.text;
 
                 // または、結果をバイナリデータとして取得します
