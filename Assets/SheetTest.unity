@@ -300,7 +300,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a88dc89d6e2064748ba1f1b293dd7a6f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testText: {fileID: 2136349596
+  testText: {fileID: 2136349596}
+  _questionId: 0
 --- !u!4 &1207807474
 Transform:
   m_ObjectHideFlags: 0
@@ -322,7 +323,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1207807472}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5609a4d52f51a40fc81eb6496cad5df5, type: 3}
   m_Name: 
