@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
+using UnityEngine.UI;
 
 public class BingoView : MonoBehaviour
 {
@@ -11,22 +12,20 @@ public class BingoView : MonoBehaviour
     private Subject<Unit> openCellSubject = new Subject<Unit>();
     [SerializeField] private BingoCellView[] bingoCellViews;
     [SerializeField] private GameObject questionWindow;
+    [SerializeField] private Text userNameText;
 
-
-
-    void Start()
+    public void InitBingoView()
     {
-        //Startではなく初期化処理にする？
+        //各bingoCellViewのイベントを監視
         for (int index = 0; index < bingoCellViews.Length; index++)
         {
             bingoCellViews[index].OpenCellEvent.Subscribe(_ => OpenCell());
         }
-
     }
 
-    void Update()
+    public void SetUserName(string name)
     {
-
+        userNameText.text = name;
     }
 
     public void OnChangeBingoPhase(string phase)

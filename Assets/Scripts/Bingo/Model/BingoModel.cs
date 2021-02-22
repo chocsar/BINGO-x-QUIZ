@@ -10,10 +10,13 @@ public class BingoModel : MonoBehaviour
     public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
     public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
     public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoCellModelsSubject;
+    public IObservable<string> ChangeUserNameEvent => userNameSubject;
 
     private Subject<string> userBingoPhaseSubject = new Subject<string>();
     private Subject<string> userBingoStatusSubject = new Subject<string>();
     private Subject<BingoCellModel[]> bingoCellModelsSubject = new Subject<BingoCellModel[]>();
+    private Subject<string> userNameSubject = new Subject<string>();
+
     private string userName;
     private string userBingoPhase;
     private string userBingoStatus;
@@ -24,12 +27,23 @@ public class BingoModel : MonoBehaviour
 
     public void InitBingoModel()
     {
-        InitBingoNumbers();
+        //過去にデータがない場合
+        // if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
+        // {
+        //     InitBingoNumbers();
+        //     SetUserName(PlayerPrefs.GetString(PlayerPrefsKeys.UserName));
+        // }
+        // else
+        // {
+        //     //本当はFirebaseからロードする処理
+        //     InitBingoNumbers();
+        //     SetUserName(PlayerPrefs.GetString(PlayerPrefsKeys.UserName));
+        // }
 
-        //TODO:
-        //userNameの設定（PlayerPrefsから）
-        //イベントでFirebaseでも保存＋Keyの保持
+        InitBingoNumbers();
+        SetUserName(PlayerPrefs.GetString(PlayerPrefsKeys.UserName));
     }
+
     public bool HasNumber(int number)
     {
         for (int index = 0; index < bingoCellModels.Length; index++)
@@ -75,7 +89,7 @@ public class BingoModel : MonoBehaviour
     {
         this.userName = name;
 
-        //TODO:イベントを発行
+        userNameSubject.OnNext(name);
     }
 
     private void SetCurrentNumber(int number)

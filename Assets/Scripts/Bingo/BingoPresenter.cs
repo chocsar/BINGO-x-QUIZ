@@ -9,18 +9,23 @@ public class BingoPresenter : MonoBehaviour
     public IObservable<string> ChangeUserBingoPhaseEvent => bingoModel.ChangeUserBingoPhaseEvent;
     public IObservable<string> ChangeUserBingoStatusEvent => bingoModel.ChangeUserBingoStatusEvent;
     public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoModel.ChangeCellModelsEvent;
+    public IObservable<string> ChangeUserNameEvent => bingoModel.ChangeUserNameEvent;
 
     [SerializeField] private BingoModel bingoModel;
     [SerializeField] private BingoView bingoView;
-    private int currentNumber;
+    private int currentNumber; //モデルに書く
 
-    private void Start()
+    public void InitBingoPresenter()
     {
+        //初期化処理
         bingoModel.InitBingoModel();
+        bingoView.InitBingoView();
 
+        //Modelのイベントを監視
         bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
         bingoModel.ChangeUserBingoStatusEvent.Subscribe(bingoView.OnChangeBingoStatus).AddTo(gameObject);
-
+        bingoModel.ChangeUserNameEvent.Subscribe(bingoView.SetUserName);
+        //Viewのイベントを監視
         bingoView.OpenCellEvent.Subscribe(_ => bingoModel.SetCurrentCellStatus(BingoCellStatus.Open));
     }
 
