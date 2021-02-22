@@ -22,6 +22,14 @@ public class BingoModel : MonoBehaviour
     private int currentNumIndex;
 
 
+    public void InitBingoModel()
+    {
+        InitBingoNumbers();
+
+        //TODO:
+        //userNameの設定（PlayerPrefsから）
+        //イベントでFirebaseでも保存＋Keyの保持
+    }
     public bool HasNumber(int number)
     {
         for (int index = 0; index < bingoCellModels.Length; index++)
@@ -89,7 +97,7 @@ public class BingoModel : MonoBehaviour
         return this.currentNumIndex;
     }
 
-    public void InitBingoNumbers()
+    private void InitBingoNumbers()
     {
         //ここでデータの復元？
 

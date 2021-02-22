@@ -23,11 +23,11 @@ public class UserFirebaseManager : MonoBehaviour
     private void Start()
     {
         firebaseDatabase = FirebaseDatabase.DefaultInstance;
-        hostPhaseRef = firebaseDatabase.GetReference("Host").Child("phase");
-        hostNumsRef = firebaseDatabase.GetReference("Host").Child("numbers");
-        userPhaseRef = firebaseDatabase.GetReference("users").Child(userKey).Child("phase");
-        userStatusRef = firebaseDatabase.GetReference("users").Child(userKey).Child("status");
-        userNumbersRef = firebaseDatabase.GetReference("users").Child(userKey).Child("numbers");
+        hostPhaseRef = firebaseDatabase.GetReference(FirebaseKeys.Host).Child(FirebaseKeys.HostPhase);
+        hostNumsRef = firebaseDatabase.GetReference(FirebaseKeys.Host).Child(FirebaseKeys.HostNumbers);
+        userPhaseRef = firebaseDatabase.GetReference(FirebaseKeys.Users).Child(userKey).Child(FirebaseKeys.UserPhase);
+        userStatusRef = firebaseDatabase.GetReference(FirebaseKeys.Users).Child(userKey).Child(FirebaseKeys.UserStatus);
+        userNumbersRef = firebaseDatabase.GetReference(FirebaseKeys.Users).Child(userKey).Child(FirebaseKeys.UserNumbers);
 
         hostPhaseRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.ChildAdded += OnGivenNumber;
@@ -51,7 +51,7 @@ public class UserFirebaseManager : MonoBehaviour
     private void OnGivenNumber(object sender, ChildChangedEventArgs e)
     {
         //ホストが出した数字を取得
-        string number = e.Snapshot.Child("number").GetRawJsonValue();
+        string number = e.Snapshot.Child(FirebaseKeys.HostNumber).GetRawJsonValue();
         //Debug.Log("num:" + number);
 
         bingoPresenter.OnGivenNumber(int.Parse(number));
@@ -72,7 +72,7 @@ public class UserFirebaseManager : MonoBehaviour
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
             string json = JsonUtility.ToJson(bingoCellModels[index]);
-            userNumbersRef.Child("num" + index).SetRawJsonValueAsync(json);
+            userNumbersRef.Child(FirebaseKeys.UserNumber + index).SetRawJsonValueAsync(json);
         }
     }
 }

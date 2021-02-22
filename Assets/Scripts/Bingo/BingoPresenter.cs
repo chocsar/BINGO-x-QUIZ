@@ -16,7 +16,7 @@ public class BingoPresenter : MonoBehaviour
 
     private void Start()
     {
-        bingoModel.InitBingoNumbers();
+        bingoModel.InitBingoModel();
 
         bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
         bingoModel.ChangeUserBingoStatusEvent.Subscribe(bingoView.OnChangeBingoStatus).AddTo(gameObject);
