@@ -5,42 +5,53 @@ using UnityEngine;
 using System;
 using Firebase;
 using Firebase.Database;
+using UniRx;
 
-public class GameManager : MonoBehaviour
+
+public class FirebaseManager : MonoBehaviour
 {
     [SerializeField] private BingoPresenter bingoPresenter;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference hostPhaseRef;
     private DatabaseReference hostNumsRef;
+    private DatabaseReference userPhaseRef;
+    private string userKey = "testuser";
+
 
     private void Start()
     {
         firebaseDatabase = FirebaseDatabase.DefaultInstance;
         hostPhaseRef = firebaseDatabase.GetReference("Host").Child("phase");
         hostNumsRef = firebaseDatabase.GetReference("Host").Child("nums");
+        userPhaseRef = firebaseDatabase.GetReference("users").Child(userKey).Child("phase");
 
         hostPhaseRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.ChildAdded += OnGivenNumber;
+
+        bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase);
+
     }
 
     private void OnChangeHostPhase(object sender, ValueChangedEventArgs e)
     {
         //ホストのフェーズを取得
-        var phase = e.Snapshot.GetRawJsonValue();
+        string phase = e.Snapshot.GetRawJsonValue();
         //Debug.Log("phase:" + phase);
 
-        if (phase == HostPhase.SelectNum)
-        {
-            //ここで処理
-        }
+        bingoPresenter.OnChangeHostPhase(phase);
     }
 
     private void OnGivenNumber(object sender, ChildChangedEventArgs e)
     {
         //ホストが出した数字を取得
-        var number = e.Snapshot.Child("num").GetRawJsonValue();
+        string number = e.Snapshot.Child("num").GetRawJsonValue();
         //Debug.Log("num:" + number);
 
-        //ここで処理
+        bingoPresenter.OnGivenNumber(int.Parse(number));
+    }
+
+    private void SaveUserBingoPhase(string phase)
+    {
+        userPhaseRef.SetValueAsync(phase);
     }
 }

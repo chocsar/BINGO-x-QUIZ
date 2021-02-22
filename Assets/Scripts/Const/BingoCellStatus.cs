@@ -4,6 +4,7 @@
 public class BingoCellStatus
 {
     public const string Default = "default";
+    public const string BeforeOpen = "beforeopen";
     public const string Open = "open";
     public const string Dead = "dead";
 }

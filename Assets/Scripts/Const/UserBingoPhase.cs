@@ -1,7 +1,7 @@
 ﻿/// <summary>
 /// ユーザー側のフェーズを定義した定数クラス
 /// </summary>
-public class UserBingPhase
+public class UserBingoPhase
 {
     public const string Ready = "ready";
     public const string BeforeAnswer = "beforeanswer";
