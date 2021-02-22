@@ -61,7 +61,8 @@ crashlytics-build.properties
 # Firebase SDK
 Assets/Editor Default Resources*
 Assets/ExternalDependencyManager*
-Assets/Firebase*
+Assets/Firebase/
+Assets/Firebase.meta
 Assets/Parse*
 Assets/Plugins/iOS*
 Assets/StreamingAssets*
