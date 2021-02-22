@@ -7,14 +7,17 @@ using System;
 
 public class BingoModel : MonoBehaviour
 {
-    public IObservable<string> ChangeBingoPhaseEvent => userBingoPhaseSubject;
+    public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
+    public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
+    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoCellModelsSubject;
 
     private Subject<string> userBingoPhaseSubject = new Subject<string>();
+    private Subject<string> userBingoStatusSubject = new Subject<string>();
+    private Subject<BingoCellModel[]> bingoCellModelsSubject = new Subject<BingoCellModel[]>();
     private string userName;
     private string userBingoPhase;
     private string userBingoStatus;
     private BingoCellModel[] bingoCellModels = new BingoCellModel[9];
-
     private int currentNumber;
     private int currentNumIndex;
 
@@ -51,6 +54,7 @@ public class BingoModel : MonoBehaviour
         this.userBingoStatus = status;
 
         //イベントを発行
+        userBingoStatusSubject.OnNext(status);
     }
 
     public string GetUserBingoStatus()
@@ -63,23 +67,16 @@ public class BingoModel : MonoBehaviour
     {
         this.userName = name;
 
-        //イベントを発行
-    }
-
-
-    public int GetCurrentNumber()
-    {
-        return currentNumber;
+        //TODO:イベントを発行
     }
 
     private void SetCurrentNumber(int number)
     {
         this.currentNumber = number;
     }
-
-    public int GetCurrentNumIndex()
+    public int GetCurrentNumber()
     {
-        return currentNumIndex;
+        return this.currentNumber;
     }
 
     private void SetCurrentNumIndex(int index)
@@ -87,20 +84,39 @@ public class BingoModel : MonoBehaviour
         this.currentNumIndex = index;
     }
 
-    private void InitBingoNumbers()
+    private int GetCurrentNumIndex()
     {
-        foreach (BingoCellModel bingoCell in bingoCellModels)
+        return this.currentNumIndex;
+    }
+
+    public void InitBingoNumbers()
+    {
+        //ここでデータの復元？
+
+        for (int index = 0; index < bingoCellModels.Length; index++)
         {
-            bingoCell.SetNumber(UnityEngine.Random.Range(1, 26)); //数字の範囲は？
-            bingoCell.SetCellStatus(BingoCellStatus.Default); //真ん中は開ける？
+            bingoCellModels[index] = new BingoCellModel();
+            bingoCellModels[index].SetNumber(UnityEngine.Random.Range(1, 26)); //数字の範囲は？
+            bingoCellModels[index].SetStatus(BingoCellStatus.Default); //真ん中は開ける？
+
+            //TODO:セルは数字でソートするのが自然
         }
 
-        //ここでデータの復元？
+        //イベントの発行
+        bingoCellModelsSubject.OnNext(bingoCellModels);
     }
 
     public BingoCellModel[] GetBingoCells()
     {
         return bingoCellModels;
+    }
+
+    public void SetCurrentCellStatus(string status)
+    {
+        bingoCellModels[currentNumIndex].SetStatus(status);
+
+        //イベントを発行
+        bingoCellModelsSubject.OnNext(bingoCellModels);
     }
 
 

@@ -1,14 +1,26 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UniRx;
+using System;
 
 public class BingoView : MonoBehaviour
 {
+    public IObservable<Unit> OpenCellEvent => openCellSubject;
+
+    private Subject<Unit> openCellSubject = new Subject<Unit>();
     [SerializeField] private BingoCellView[] bingoCellViews;
     [SerializeField] private GameObject questionWindow;
 
+
+
     void Start()
     {
+        //Startではなく初期化処理にする？
+        for (int index = 0; index < bingoCellViews.Length; index++)
+        {
+            bingoCellViews[index].OpenCellEvent.Subscribe(_ => OpenCell());
+        }
 
     }
 
@@ -41,6 +53,10 @@ public class BingoView : MonoBehaviour
 
                 break;
         }
+    }
+
+    public void OnChangeBingoStatus(string status)
+    {
 
     }
 
@@ -53,7 +69,7 @@ public class BingoView : MonoBehaviour
     {
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
-            string status = bingoCellModels[index].GetCellStatus();
+            string status = bingoCellModels[index].GetStatus();
 
             switch (status)
             {
@@ -89,5 +105,10 @@ public class BingoView : MonoBehaviour
     private void OpenAnswerWindow()
     {
         //TODO
+    }
+
+    private void OpenCell()
+    {
+        openCellSubject.OnNext(Unit.Default);
     }
 }

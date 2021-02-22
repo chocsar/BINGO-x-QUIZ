@@ -6,14 +6,22 @@ using System;
 
 public class BingoPresenter : MonoBehaviour
 {
-    public IObservable<string> ChangeUserBingoPhaseEvent => bingoModel.ChangeBingoPhaseEvent;
+    public IObservable<string> ChangeUserBingoPhaseEvent => bingoModel.ChangeUserBingoPhaseEvent;
+    public IObservable<string> ChangeUserBingoStatusEvent => bingoModel.ChangeUserBingoStatusEvent;
+    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoModel.ChangeCellModelsEvent;
 
     [SerializeField] private BingoModel bingoModel;
     [SerializeField] private BingoView bingoView;
+    private int currentNumber;
 
     private void Start()
     {
-        bingoModel.ChangeBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
+        bingoModel.InitBingoNumbers();
+
+        bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
+        bingoModel.ChangeUserBingoStatusEvent.Subscribe(bingoView.OnChangeBingoStatus).AddTo(gameObject);
+
+        bingoView.OpenCellEvent.Subscribe(_ => bingoModel.SetCurrentCellStatus(BingoCellStatus.Open));
     }
 
     public void OnGivenNumber(int number)
@@ -36,7 +44,7 @@ public class BingoPresenter : MonoBehaviour
                 //BeforeAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.BeforeAnswer) return;
                 //Answerフェーズへ遷移
-                bingoView.SetQuestion(bingoModel.GetCurrentNumber()); //indexも渡す？
+                bingoView.SetQuestion(currentNumber); //indexも渡す？
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
                 break;
 

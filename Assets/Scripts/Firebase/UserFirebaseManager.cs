@@ -8,13 +8,15 @@ using Firebase.Database;
 using UniRx;
 
 
-public class FirebaseManager : MonoBehaviour
+public class UserFirebaseManager : MonoBehaviour
 {
     [SerializeField] private BingoPresenter bingoPresenter;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference hostPhaseRef;
     private DatabaseReference hostNumsRef;
     private DatabaseReference userPhaseRef;
+    private DatabaseReference userStatusRef;
+    private DatabaseReference userNumbersRef;
     private string userKey = "testuser";
 
 
@@ -22,13 +24,18 @@ public class FirebaseManager : MonoBehaviour
     {
         firebaseDatabase = FirebaseDatabase.DefaultInstance;
         hostPhaseRef = firebaseDatabase.GetReference("Host").Child("phase");
-        hostNumsRef = firebaseDatabase.GetReference("Host").Child("nums");
+        hostNumsRef = firebaseDatabase.GetReference("Host").Child("numbers");
         userPhaseRef = firebaseDatabase.GetReference("users").Child(userKey).Child("phase");
+        userStatusRef = firebaseDatabase.GetReference("users").Child(userKey).Child("status");
+        userNumbersRef = firebaseDatabase.GetReference("users").Child(userKey).Child("numbers");
 
         hostPhaseRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.ChildAdded += OnGivenNumber;
 
         bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase);
+        bingoPresenter.ChangeUserBingoStatusEvent.Subscribe(SaveUserBingoStatus);
+        bingoPresenter.ChangeCellModelsEvent.Subscribe(SaveUserNumbers);
+
 
     }
 
@@ -44,7 +51,7 @@ public class FirebaseManager : MonoBehaviour
     private void OnGivenNumber(object sender, ChildChangedEventArgs e)
     {
         //ホストが出した数字を取得
-        string number = e.Snapshot.Child("num").GetRawJsonValue();
+        string number = e.Snapshot.Child("number").GetRawJsonValue();
         //Debug.Log("num:" + number);
 
         bingoPresenter.OnGivenNumber(int.Parse(number));
@@ -53,5 +60,19 @@ public class FirebaseManager : MonoBehaviour
     private void SaveUserBingoPhase(string phase)
     {
         userPhaseRef.SetValueAsync(phase);
+    }
+
+    private void SaveUserBingoStatus(string status)
+    {
+        userStatusRef.SetValueAsync(status);
+    }
+
+    private void SaveUserNumbers(BingoCellModel[] bingoCellModels)
+    {
+        for (int index = 0; index < bingoCellModels.Length; index++)
+        {
+            string json = JsonUtility.ToJson(bingoCellModels[index]);
+            userNumbersRef.Child("num" + index).SetRawJsonValueAsync(json);
+        }
     }
 }

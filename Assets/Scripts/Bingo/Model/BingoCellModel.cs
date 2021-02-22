@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BingoCellModel : MonoBehaviour
+public class BingoCellModel
 {
-    private int number;
-    private string cellStatus;
+    public int number;
+    public string status;
 
     public void SetNumber(int number)
     {
@@ -16,14 +16,14 @@ public class BingoCellModel : MonoBehaviour
     {
         return number;
     }
-    public void SetCellStatus(string status)
+    public void SetStatus(string status)
     {
-        this.cellStatus = status;
+        this.status = status;
     }
 
-    public string GetCellStatus()
+    public string GetStatus()
     {
-        return cellStatus;
+        return status;
     }
 
 }
