@@ -14,6 +14,10 @@ public class BingoPresenter : MonoBehaviour
     [SerializeField] private BingoModel bingoModel;
     [SerializeField] private BingoView bingoView;
 
+
+    /// <summary>
+    /// BingoPresenterの初期化処理（ここからModelとViewも初期化）
+    /// </summary>
     public void InitBingoPresenter()
     {
         //ModelとViewの初期化処理
@@ -48,7 +52,7 @@ public class BingoPresenter : MonoBehaviour
                 //BeforeAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.BeforeAnswer) return;
                 //Answerフェーズへ遷移
-                bingoView.SetQuestion(bingoModel.GetCurrentNumber()); //indexも渡す？
+                bingoView.SetQuestionNumber(bingoModel.GetCurrentNumber());//問題番号を渡す
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
                 break;
 
@@ -56,12 +60,13 @@ public class BingoPresenter : MonoBehaviour
                 //AfterAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.AfterAnswer) return;
                 //Openフェーズへ遷移
-                bingoView.SetBingoCellStates(bingoModel.GetBingoCells());
+                bingoView.SetBingoCellStatus(bingoModel.GetBingoCells());//TODO:画面反映のタイミング制御を修正
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Open);
                 break;
         }
     }
 
+    //メモ：クイズに答えた後に呼び出す想定
     public void SetUserBingoPhase(string phase)
     {
         bingoModel.SetUserBingoPhase(phase);

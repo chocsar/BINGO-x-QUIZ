@@ -16,6 +16,7 @@ public class BingoCellModel
     {
         return number;
     }
+
     public void SetStatus(string status)
     {
         this.status = status;

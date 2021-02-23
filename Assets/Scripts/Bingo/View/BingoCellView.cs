@@ -9,42 +9,43 @@ public class BingoCellView : MonoBehaviour
 {
     public IObservable<Unit> OpenCellEvent => openCellSubject;
     private Subject<Unit> openCellSubject = new Subject<Unit>();
-    [SerializeField] private Text cellText;
+
+    [SerializeField] private Text cellText;//Spriteに変更する
     [SerializeField] private Button cellButton;
 
-    private bool isBeforeOpen = false;
+    private bool canOpen = false;
 
-    private void Start()
+    public void InitCellView()
     {
+        //セルへのボタン入力を監視
         cellButton.OnClickAsObservable().Subscribe(_ => OnClickCell()).AddTo(gameObject);
     }
 
-    public void SetCellText(int number)
+    public void SetCellText(int number) //TODO:SetCellImageに変更する
     {
         cellText.text = number.ToString();
     }
 
+    //メモ：セルを見た目を変更する処理 → SetCellImage(string status)に組み込めそう
     public void OpenCell()
     {
-        isBeforeOpen = false;
-    }
-    public void MakeBeforeOpenCell()
-    {
-        isBeforeOpen = true;
 
     }
     public void KillCell()
     {
-        isBeforeOpen = false;
+
+    }
+    public void MakeBeforeOpenCell() //命名が微妙
+    {
+
     }
 
     private void OnClickCell()
     {
-        if (isBeforeOpen)
+        if (canOpen)
         {
             OpenCell();
             openCellSubject.OnNext(Unit.Default);
-
         }
     }
 }
