@@ -17,6 +17,8 @@ public class BingoView : MonoBehaviour
 
     //フェーズごとに出現させるウィンドウ
     [SerializeField] private GameObject questionWindow;
+    [SerializeField] private GameObject loadingWindow;
+    [SerializeField] private GameObject answerWindow;
 
     private int currentQuestionNumber;
 
@@ -51,67 +53,36 @@ public class BingoView : MonoBehaviour
         bingoCellViews[index].SetCellImage(number, status);
     }
 
-    public void OnChangeBingoStatus(string status)
-    {
-        //TODO:リーチやビンゴの画面表示
-    }
-
     private void OpenCell(int index)
     {
         openCellSubject.OnNext(index);
     }
 
+    public void OnChangeBingoStatus(string status)
+    {
+        //TODO:リーチやビンゴの画面表示
+    }
 
     public void OnChangeBingoPhase(string phase)
     {
         switch (phase)
         {
             case UserBingoPhase.Ready:
+
                 break;
 
             case UserBingoPhase.BeforeAnswer:
-                OpenBeforeAnswerWindow();
                 break;
 
             case UserBingoPhase.Answer:
-                OpenQuestionWindow();
                 break;
 
             case UserBingoPhase.AfterAnswer:
-                OpenAfterAnswerWindow();
                 break;
 
             case UserBingoPhase.Open:
-                OpenAnswerWindow();
                 break;
         }
     }
-
-    private void OpenBeforeAnswerWindow()
-    {
-        //TODO:問題提示までホストを待ってることを示すウィンドウ（なしでもOK）
-    }
-
-    public void SetQuestionNumber(int number)
-    {
-        this.currentQuestionNumber = number;
-    }
-
-    private void OpenQuestionWindow()
-    {
-        //TODO:問題のウィンドウを表示する
-        //TODO:この処理をPresenterに移行する
-    }
-
-    private void OpenAfterAnswerWindow()
-    {
-        //TODO:答え提示までホストを待ってることを示すウィンドウ（なしでもOK）
-    }
-
-    private void OpenAnswerWindow()
-    {
-        //TODO:正解不正解のウィンドウを表示する
-    }
-
 
 }

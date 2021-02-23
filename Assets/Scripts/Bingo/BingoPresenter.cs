@@ -14,6 +14,10 @@ public class BingoPresenter : MonoBehaviour
 
     [SerializeField] private BingoModel bingoModel;
     [SerializeField] private BingoView bingoView;
+    [SerializeField] private QuestionWindowView questionWindowView;
+    [SerializeField] private LoadingWindowView loadingWindowView;
+    [SerializeField] private AnswerWindowView answerWindowView;
+
 
     private bool canUpdateCell = true;
 
@@ -46,6 +50,9 @@ public class BingoPresenter : MonoBehaviour
     {
         //数字を持ってない場合は何も処理しない
         if (!bingoModel.HasNumber(number)) return;
+
+        loadingWindowView.OpenWindow();
+
         //BeforeAnswerフェーズへ遷移
         bingoModel.SetUserBingoPhase(UserBingoPhase.BeforeAnswer);
     }
@@ -65,7 +72,9 @@ public class BingoPresenter : MonoBehaviour
                 canUpdateCell = false;
 
                 //問題をセット
-                bingoView.SetQuestionNumber(bingoModel.GetCurrentNumber());
+                loadingWindowView.CloseWindow();
+                questionWindowView.SetQuestionNumber(bingoModel.GetCurrentNumber());
+                questionWindowView.OpenWindow();
 
                 //Answerフェーズへ遷移
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
@@ -74,6 +83,8 @@ public class BingoPresenter : MonoBehaviour
             case HostPhase.PresentAnswer:
                 //AfterAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.AfterAnswer) return;
+
+                loadingWindowView.CloseWindow();
 
                 //答えが出たら画面を反映
                 canUpdateCell = true;
@@ -89,6 +100,11 @@ public class BingoPresenter : MonoBehaviour
     public void SetUserBingoPhase(string phase)
     {
         bingoModel.SetUserBingoPhase(phase);
+    }
+
+    public void OpenLoadingWindow()
+    {
+        loadingWindowView.OpenWindow();
     }
 
     private void OpenCell(int index)
