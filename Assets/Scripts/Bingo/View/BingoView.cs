@@ -40,7 +40,7 @@ public class BingoView : MonoBehaviour
     /// セルの状態を画面に反映する
     /// </summary>
     /// <param name="bingoCellModels">セルのデータ</param>
-    public void SetBingoCellStatus(BingoCellModel[] bingoCellModels)
+    public void SetAllBingoCellStatus(BingoCellModel[] bingoCellModels)
     {
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
@@ -50,6 +50,20 @@ public class BingoView : MonoBehaviour
             bingoCellViews[index].SetCellImage(number, status);
         }
     }
+
+    /// <summary>
+    /// 対象セルの状態を画面に反映する
+    /// </summary>
+    /// <param name="index">位置</param>
+    /// <param name="bingoCellModel">セルのデータ</param>
+    public void SetBingoCellStatus(int index, BingoCellModel bingoCellModel)
+    {
+        int number = bingoCellModel.GetNumber();
+        string status = bingoCellModel.GetStatus();
+
+        bingoCellViews[index].SetCellImage(number, status);
+    }
+
     public void OnChangeBingoStatus(string status)
     {
         //TODO:リーチやビンゴの画面表示

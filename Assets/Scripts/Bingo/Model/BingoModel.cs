@@ -49,6 +49,9 @@ public class BingoModel : MonoBehaviour
             {
                 //数字を保持しておく
                 SetCurrentNumber(number);
+                //Hit状態にする
+                SetCellStatus(index, BingoCellStatus.Hit);
+
                 return true;
             }
         }
@@ -79,9 +82,14 @@ public class BingoModel : MonoBehaviour
     {
         return userBingoPhase;
     }
-    public BingoCellModel[] GetBingoCells()
+    public BingoCellModel[] GetAllBingoCells()
     {
         return bingoCellModels;
+    }
+
+    public BingoCellModel GetBingoCell(int index)
+    {
+        return bingoCellModels[index];
     }
 
     /// <summary>
@@ -101,7 +109,7 @@ public class BingoModel : MonoBehaviour
     }
 
     /// <summary>
-    /// 今対象とする数字マスの状態を変更する（OpenとかDeadとか）
+    /// 対象マスの状態を変更する（OpenとかDeadとか）
     /// </summary>
     /// <param name="index">位置</param>
     /// <param name="status">状態</param>
