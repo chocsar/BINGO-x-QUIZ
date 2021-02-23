@@ -17,6 +17,11 @@ public class BingoPresenter : MonoBehaviour
 
     private bool canUpdateCell = true;
 
+    //デバッグ用
+    // private void Start()
+    // {
+    //     InitBingoPresenter();
+    // }
 
     /// <summary>
     /// BingoPresenterの初期化処理（ここからModelとViewも初期化）
