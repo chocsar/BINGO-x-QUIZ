@@ -3,9 +3,9 @@
     public static class UtilityPass
     {
         private const string PASSWORD_CHARS =
-            "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-";
+            "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-        public static string GeneratePassword(int length = 20)
+        public static string GeneratePassword(int length = 15)
         {
             var sb = new System.Text.StringBuilder(length);
             var r = new System.Random();

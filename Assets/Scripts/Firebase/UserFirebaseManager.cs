@@ -15,7 +15,6 @@ public class UserFirebaseManager : MonoBehaviour
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference hostPhaseRef;
     private DatabaseReference hostNumsRef;
-    private DatabaseReference usersRef;
     private DatabaseReference userNameRef;
     private DatabaseReference userStatusRef;
     private DatabaseReference userPhaseRef;
@@ -28,7 +27,6 @@ public class UserFirebaseManager : MonoBehaviour
     {
         //FirebaseDatabaseへの参照を保持（usersとHost）
         firebaseDatabase = FirebaseDatabase.Instance;
-        usersRef = firebaseDatabase.GetReference(FirebaseKeys.Users);
         hostPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");
         hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
 
@@ -41,25 +39,26 @@ public class UserFirebaseManager : MonoBehaviour
         {
             //ユーザーデータのロード
             //LoadUser();
-
             CreateUser(); //デバッグ用
         }
 
         //FirebaseDatabaseへの参照を保持（usersにある自分のデータ）
-        userNameRef = usersRef.Child(userKey).Child(FirebaseKeys.UserName);
-        userPhaseRef = usersRef.Child(userKey).Child(FirebaseKeys.UserPhase);
-        userStatusRef = usersRef.Child(userKey).Child(FirebaseKeys.UserStatus);
-        userNumbersRef = usersRef.Child(userKey).Child(FirebaseKeys.UserNumbers);
+        userNameRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserName}");
+        userPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserPhase}");
+        userStatusRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserStatus}");
+        userNumbersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}");
 
         //ホストの変更を監視
         hostPhaseRef.ValueChanged += OnChangeHostPhase;
-        hostNumsRef.ValueChanged += OnGivenNumber;
+        hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
 
         //BingoPresenterのイベントを監視
         bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase);
         bingoPresenter.ChangeUserBingoStatusEvent.Subscribe(SaveUserBingoStatus);
-        bingoPresenter.ChangeCellModelsEvent.Subscribe(SaveUserNumbers);
+        bingoPresenter.ChangeCellModelEvent.Subscribe(SaveUserNumber);
         bingoPresenter.ChangeUserNameEvent.Subscribe(SaveUserName);
+
+        bingoPresenter.InitBingoPresenter();
 
     }
 
@@ -71,8 +70,8 @@ public class UserFirebaseManager : MonoBehaviour
         //キーの作成
         userKey = Utility.UtilityPass.GeneratePassword();
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
+        PlayerPrefs.Save();
         //Presenterの初期化処理
-        bingoPresenter.InitBingoPresenter();
     }
 
     /// <summary>
@@ -110,9 +109,17 @@ public class UserFirebaseManager : MonoBehaviour
     {
         //ホストが出した数字を取得
         string number = e.Snapshot.GetRawJsonValue();
-        var nums = number.TrimStart('{').TrimEnd('}').Split(',');
-        number = nums[nums.Length - 1].Split(':')[1];
-        Debug.Log("num:" + number);
+        if (number == null) return;
+        if (number.Contains("{"))
+        {
+            var num = number.TrimStart('{').TrimEnd('}');
+            if (number.Contains(","))
+            {
+                var nums = num.Split(',');
+                number = nums[nums.Length - 1].Split(':')[1];
+            }
+            else number = num.Split(':')[1];
+        }
 
         bingoPresenter.OnGivenNumber(Int32.Parse(number));
     }
@@ -130,12 +137,10 @@ public class UserFirebaseManager : MonoBehaviour
     {
         userPhaseRef.SetValueAsync(phase, 10, (res) => { });
     }
-    private void SaveUserNumbers(BingoCellModel[] bingoCellModels)
+    private void SaveUserNumber(BingoCellModel bingoCellModel)
     {
-        for (int index = 0; index < bingoCellModels.Length; index++)
-        {
-            string json = JsonUtility.ToJson(bingoCellModels[index]);
-            userNumbersRef.Child(FirebaseKeys.UserNumber + index).SetRawJsonValueAsync(json, 10, (res) => { });
-        }
+        string json = JsonUtility.ToJson(bingoCellModel);
+        userNumbersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}/{FirebaseKeys.UserNumber}{bingoCellModel.GetIndex()}");
+        userNumbersRef.SetRawJsonValueAsync(json, 10, (res) => { });
     }
 }

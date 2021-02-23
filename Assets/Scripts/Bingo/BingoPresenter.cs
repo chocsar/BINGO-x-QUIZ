@@ -9,7 +9,7 @@ public class BingoPresenter : MonoBehaviour
     public IObservable<string> ChangeUserNameEvent => bingoModel.ChangeUserNameEvent;
     public IObservable<string> ChangeUserBingoStatusEvent => bingoModel.ChangeUserBingoStatusEvent;
     public IObservable<string> ChangeUserBingoPhaseEvent => bingoModel.ChangeUserBingoPhaseEvent;
-    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoModel.ChangeCellModelsEvent; //TODO:Firebaseのセーブをindexで指定できれば不要
+    //public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoModel.ChangeCellModelsEvent; //TODO:Firebaseのセーブをindexで指定できれば不要
     public IObservable<BingoCellModel> ChangeCellModelEvent => bingoModel.ChangeCellModelEvent;
 
     [SerializeField] private BingoModel bingoModel;
@@ -32,10 +32,6 @@ public class BingoPresenter : MonoBehaviour
     /// </summary>
     public void InitBingoPresenter()
     {
-        //ModelとViewの初期化処理
-        bingoModel.InitBingoModel();
-        bingoView.InitBingoView();
-
         //Modelのイベントを監視
         bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
         bingoModel.ChangeUserBingoStatusEvent.Subscribe(bingoView.OnChangeBingoStatus).AddTo(gameObject);
@@ -44,6 +40,10 @@ public class BingoPresenter : MonoBehaviour
 
         //Viewのイベントを監視
         bingoView.OpenCellEvent.Subscribe(OpenCell);
+
+        //ModelとViewの初期化処理
+        bingoModel.InitBingoModel();
+        bingoView.InitBingoView();
     }
 
     public void OnGivenNumber(int number)
