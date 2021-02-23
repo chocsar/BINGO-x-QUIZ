@@ -17,7 +17,7 @@ public class BingoPresenter : MonoBehaviour
 
     public void InitBingoPresenter()
     {
-        //初期化処理
+        //ModelとViewの初期化処理
         bingoModel.InitBingoModel();
         bingoView.InitBingoView();
 

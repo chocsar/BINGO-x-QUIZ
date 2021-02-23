@@ -15,6 +15,7 @@ public class UserFirebaseManager : MonoBehaviour
     private DatabaseReference hostPhaseRef;
     private DatabaseReference hostNumsRef;
     private DatabaseReference usersRef;
+    private DatabaseReference userNameRef;
     private DatabaseReference userPhaseRef;
     private DatabaseReference userStatusRef;
     private DatabaseReference userNumbersRef;
@@ -25,44 +26,49 @@ public class UserFirebaseManager : MonoBehaviour
     {
         firebaseDatabase = FirebaseDatabase.DefaultInstance;
         usersRef = firebaseDatabase.GetReference(FirebaseKeys.Users);
-
-        CreateUser();
-
         hostPhaseRef = firebaseDatabase.GetReference(FirebaseKeys.Host).Child(FirebaseKeys.HostPhase);
         hostNumsRef = firebaseDatabase.GetReference(FirebaseKeys.Host).Child(FirebaseKeys.HostNumbers);
 
-        userPhaseRef = firebaseDatabase.GetReference(FirebaseKeys.Users).Child(userKey).Child(FirebaseKeys.UserPhase);
-        userStatusRef = firebaseDatabase.GetReference(FirebaseKeys.Users).Child(userKey).Child(FirebaseKeys.UserStatus);
-        userNumbersRef = firebaseDatabase.GetReference(FirebaseKeys.Users).Child(userKey).Child(FirebaseKeys.UserNumbers);
+        if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
+        {
+            CreateUser();
+        }
+        else
+        {
+            //LoadUser();
+            CreateUser(); //デバッグ用
+        }
 
+        userNameRef = usersRef.Child(userKey).Child(FirebaseKeys.UserName);
+        userPhaseRef = usersRef.Child(userKey).Child(FirebaseKeys.UserPhase);
+        userStatusRef = usersRef.Child(userKey).Child(FirebaseKeys.UserStatus);
+        userNumbersRef = usersRef.Child(userKey).Child(FirebaseKeys.UserNumbers);
 
+        //ホストの変更を監視
         hostPhaseRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.ChildAdded += OnGivenNumber;
-
+        //BingoPresenterのイベントを監視
         bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase);
         bingoPresenter.ChangeUserBingoStatusEvent.Subscribe(SaveUserBingoStatus);
         bingoPresenter.ChangeCellModelsEvent.Subscribe(SaveUserNumbers);
         bingoPresenter.ChangeUserNameEvent.Subscribe(SaveUserName);
 
-
     }
 
     private void CreateUser()
     {
-        //新規
-        if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
-        {
-            userKey = usersRef.Push().Key;
-            PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
-            bingoPresenter.InitBingoPresenter();
-        }
-        //すでにデータがある場合
-        else
-        {
-            userKey = PlayerPrefs.GetString(PlayerPrefsKeys.UserKey);
+        //キーの作成
+        userKey = usersRef.Push().Key;
+        PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
+        //Presenterの初期化処理
+        bingoPresenter.InitBingoPresenter();
+    }
 
-            //TODO
-        }
+    private void LoadUser()
+    {
+        userKey = PlayerPrefs.GetString(PlayerPrefsKeys.UserKey);
+        //TODO
+        //ロードだから非同期になる？
     }
 
     private void OnChangeHostPhase(object sender, ValueChangedEventArgs e)
@@ -85,7 +91,7 @@ public class UserFirebaseManager : MonoBehaviour
 
     private void SaveUserName(string name)
     {
-        this.userKey = usersRef.Push().Key;
+        userNameRef.SetValueAsync(name);
     }
 
     private void SaveUserBingoPhase(string phase)

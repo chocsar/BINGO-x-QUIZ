@@ -27,21 +27,10 @@ public class BingoModel : MonoBehaviour
 
     public void InitBingoModel()
     {
-        //過去にデータがない場合
-        // if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
-        // {
-        //     InitBingoNumbers();
-        //     SetUserName(PlayerPrefs.GetString(PlayerPrefsKeys.UserName));
-        // }
-        // else
-        // {
-        //     //本当はFirebaseからロードする処理
-        //     InitBingoNumbers();
-        //     SetUserName(PlayerPrefs.GetString(PlayerPrefsKeys.UserName));
-        // }
-
         InitBingoNumbers();
         SetUserName(PlayerPrefs.GetString(PlayerPrefsKeys.UserName));
+        SetUserBingoPhase(UserBingoPhase.Ready);
+        SetUserBingoStatus(UserBingoStatus.Default);
     }
 
     public bool HasNumber(int number)
