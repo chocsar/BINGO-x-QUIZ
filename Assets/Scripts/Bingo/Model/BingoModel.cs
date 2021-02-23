@@ -7,78 +7,110 @@ using System;
 
 public class BingoModel : MonoBehaviour
 {
-    public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
-    public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
-    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoCellModelsSubject;
     public IObservable<string> ChangeUserNameEvent => userNameSubject;
+    public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
+    public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
+    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoCellModelsSubject;
 
-    private Subject<string> userBingoPhaseSubject = new Subject<string>();
-    private Subject<string> userBingoStatusSubject = new Subject<string>();
-    private Subject<BingoCellModel[]> bingoCellModelsSubject = new Subject<BingoCellModel[]>();
     private Subject<string> userNameSubject = new Subject<string>();
+    private Subject<string> userBingoStatusSubject = new Subject<string>();
+    private Subject<string> userBingoPhaseSubject = new Subject<string>();
+    private Subject<BingoCellModel[]> bingoCellModelsSubject = new Subject<BingoCellModel[]>();
 
+    //ユーザーのデータ
     private string userName;
-    private string userBingoPhase;
     private string userBingoStatus;
+    private string userBingoPhase;
     private BingoCellModel[] bingoCellModels = new BingoCellModel[9];
+
+    //ホストから提示された数字を保持
     private int currentNumber;
     private int currentNumIndex;
 
-
     public void InitBingoModel()
     {
-        InitBingoNumbers();
+        //ユーザーデータの初期化
         SetUserName(PlayerPrefs.GetString(PlayerPrefsKeys.UserName));
-        SetUserBingoPhase(UserBingoPhase.Ready);
         SetUserBingoStatus(UserBingoStatus.Default);
+        SetUserBingoPhase(UserBingoPhase.Ready);
+        SetRadomBingoNumbers();
     }
 
+    /// <summary>
+    /// ホストから提示された数字を持っているかどうか
+    /// </summary>
+    /// <param name="number">ホストが提示した数字</param>
+    /// <returns></returns>
     public bool HasNumber(int number)
     {
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
+            //数字を持っていた場合
             if (bingoCellModels[index].GetNumber() == number)
             {
+                //数字と位置を保持しておく
                 SetCurrentNumber(number);
                 SetCurrentNumIndex(index);
+
                 return true;
             }
         }
+
         return false;
-    }
-
-    public void SetUserBingoPhase(string phase)
-    {
-        this.userBingoPhase = phase;
-
-        //イベントを発行
-        userBingoPhaseSubject.OnNext(phase);
-    }
-
-    public string GetUserBingoPhase()
-    {
-        return userBingoPhase;
-    }
-
-    public void SetUserBingoStatus(string status)
-    {
-        this.userBingoStatus = status;
-
-        //イベントを発行
-        userBingoStatusSubject.OnNext(status);
-    }
-
-    public string GetUserBingoStatus()
-    {
-        //Bingoフェースかどうかだけわかればいいかも
-        return userBingoStatus;
     }
 
     public void SetUserName(string name)
     {
         this.userName = name;
-
         userNameSubject.OnNext(name);
+    }
+    public void SetUserBingoStatus(string status)
+    {
+        this.userBingoStatus = status;
+        userBingoStatusSubject.OnNext(status);
+    }
+    public string GetUserBingoStatus()
+    {
+        return userBingoStatus;
+    }
+    public void SetUserBingoPhase(string phase)
+    {
+        this.userBingoPhase = phase;
+        userBingoPhaseSubject.OnNext(phase);
+    }
+    public string GetUserBingoPhase()
+    {
+        return userBingoPhase;
+    }
+    public BingoCellModel[] GetBingoCells()
+    {
+        return bingoCellModels;
+    }
+
+    /// <summary>
+    /// ビンゴの数字をランダムでセット
+    /// </summary>
+    private void SetRadomBingoNumbers()
+    {
+        for (int index = 0; index < bingoCellModels.Length; index++)
+        {
+            bingoCellModels[index] = new BingoCellModel();
+            bingoCellModels[index].SetNumber(UnityEngine.Random.Range(1, 26));
+            bingoCellModels[index].SetStatus(BingoCellStatus.Default);
+
+            //TODO:セルは数字でソートするのが自然
+        }
+        bingoCellModelsSubject.OnNext(bingoCellModels);
+    }
+
+    /// <summary>
+    /// 今対象とする数字マスの状態を変更する（OpenとかDeadとか）
+    /// </summary>
+    /// <param name="status"></param>
+    public void SetCurrentCellStatus(string status)
+    {
+        bingoCellModels[currentNumIndex].SetStatus(status);
+        bingoCellModelsSubject.OnNext(bingoCellModels);
     }
 
     private void SetCurrentNumber(int number)
@@ -94,45 +126,9 @@ public class BingoModel : MonoBehaviour
     {
         this.currentNumIndex = index;
     }
-
     private int GetCurrentNumIndex()
     {
         return this.currentNumIndex;
     }
-
-    private void InitBingoNumbers()
-    {
-        //ここでデータの復元？
-
-        for (int index = 0; index < bingoCellModels.Length; index++)
-        {
-            bingoCellModels[index] = new BingoCellModel();
-            bingoCellModels[index].SetNumber(UnityEngine.Random.Range(1, 26)); //数字の範囲は？
-            bingoCellModels[index].SetStatus(BingoCellStatus.Default); //真ん中は開ける？
-
-            //TODO:セルは数字でソートするのが自然
-        }
-
-        //イベントの発行
-        bingoCellModelsSubject.OnNext(bingoCellModels);
-    }
-
-    public BingoCellModel[] GetBingoCells()
-    {
-        return bingoCellModels;
-    }
-
-    public void SetCurrentCellStatus(string status)
-    {
-        bingoCellModels[currentNumIndex].SetStatus(status);
-
-        //イベントを発行
-        bingoCellModelsSubject.OnNext(bingoCellModels);
-    }
-
-
-
-
-
 
 }
