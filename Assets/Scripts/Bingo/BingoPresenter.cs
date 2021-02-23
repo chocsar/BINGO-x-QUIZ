@@ -9,18 +9,26 @@ public class BingoPresenter : MonoBehaviour
     public IObservable<string> ChangeUserBingoPhaseEvent => bingoModel.ChangeUserBingoPhaseEvent;
     public IObservable<string> ChangeUserBingoStatusEvent => bingoModel.ChangeUserBingoStatusEvent;
     public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoModel.ChangeCellModelsEvent;
+    public IObservable<string> ChangeUserNameEvent => bingoModel.ChangeUserNameEvent;
 
     [SerializeField] private BingoModel bingoModel;
     [SerializeField] private BingoView bingoView;
-    private int currentNumber;
 
-    private void Start()
+
+    /// <summary>
+    /// BingoPresenterの初期化処理（ここからModelとViewも初期化）
+    /// </summary>
+    public void InitBingoPresenter()
     {
+        //ModelとViewの初期化処理
         bingoModel.InitBingoModel();
+        bingoView.InitBingoView();
 
+        //Modelのイベントを監視
         bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
         bingoModel.ChangeUserBingoStatusEvent.Subscribe(bingoView.OnChangeBingoStatus).AddTo(gameObject);
-
+        bingoModel.ChangeUserNameEvent.Subscribe(bingoView.SetUserName);
+        //Viewのイベントを監視
         bingoView.OpenCellEvent.Subscribe(_ => bingoModel.SetCurrentCellStatus(BingoCellStatus.Open));
     }
 
@@ -44,7 +52,7 @@ public class BingoPresenter : MonoBehaviour
                 //BeforeAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.BeforeAnswer) return;
                 //Answerフェーズへ遷移
-                bingoView.SetQuestion(currentNumber); //indexも渡す？
+                bingoView.SetQuestionNumber(bingoModel.GetCurrentNumber());//問題番号を渡す
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
                 break;
 
@@ -52,12 +60,13 @@ public class BingoPresenter : MonoBehaviour
                 //AfterAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.AfterAnswer) return;
                 //Openフェーズへ遷移
-                bingoView.SetBingoCellStates(bingoModel.GetBingoCells());
+                bingoView.SetBingoCellStatus(bingoModel.GetBingoCells());//TODO:画面反映のタイミング制御を修正
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Open);
                 break;
         }
     }
 
+    //メモ：クイズに答えた後に呼び出す想定
     public void SetUserBingoPhase(string phase)
     {
         bingoModel.SetUserBingoPhase(phase);

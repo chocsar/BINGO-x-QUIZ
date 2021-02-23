@@ -3,31 +3,79 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using System;
+using UnityEngine.UI;
 
 public class BingoView : MonoBehaviour
 {
     public IObservable<Unit> OpenCellEvent => openCellSubject;
 
     private Subject<Unit> openCellSubject = new Subject<Unit>();
+
+    //ユーザーの画面
+    [SerializeField] private Text userNameText;
     [SerializeField] private BingoCellView[] bingoCellViews;
+
+    //フェーズごとに出現させるウィンドウ
     [SerializeField] private GameObject questionWindow;
 
+    private int currentQuestionNumber;
 
 
-    void Start()
+    public void InitBingoView()
     {
-        //Startではなく初期化処理にする？
+        //各BingoCellViewのイベントを監視
         for (int index = 0; index < bingoCellViews.Length; index++)
         {
             bingoCellViews[index].OpenCellEvent.Subscribe(_ => OpenCell());
         }
-
     }
 
-    void Update()
+    public void SetUserName(string name)
     {
-
+        userNameText.text = name;
     }
+
+    /// <summary>
+    /// セルの状態を画面に反映する
+    /// </summary>
+    /// <param name="bingoCellModels">セルのデータ</param>
+    public void SetBingoCellStatus(BingoCellModel[] bingoCellModels)
+    {
+        for (int index = 0; index < bingoCellModels.Length; index++)
+        {
+            string status = bingoCellModels[index].GetStatus();
+
+            switch (status)
+            {
+                case BingoCellStatus.BeforeOpen:
+                    bingoCellViews[index].MakeBeforeOpenCell();
+                    break;
+                case BingoCellStatus.Open:
+                    bingoCellViews[index].OpenCell();
+                    break;
+                case BingoCellStatus.Dead:
+                    bingoCellViews[index].KillCell();
+                    break;
+            }
+        }
+    }
+    public void OnChangeBingoStatus(string status)
+    {
+        //TODO:リーチやビンゴの画面表示
+    }
+
+    private void OpenCell()
+    {
+        /*
+        メモ：
+        正解時にセルを押した時の処理だが不要かも
+        セルを押せる状態もセルが開いてる状態もModelやFirebaseでは同じ扱いでいいのでは？
+        モデルからの画面反映のタイミングを制御する
+        */
+
+        openCellSubject.OnNext(Unit.Default);
+    }
+
 
     public void OnChangeBingoPhase(string phase)
     {
@@ -50,65 +98,35 @@ public class BingoView : MonoBehaviour
 
             case UserBingoPhase.Open:
                 OpenAnswerWindow();
-
                 break;
-        }
-    }
-
-    public void OnChangeBingoStatus(string status)
-    {
-
-    }
-
-    public void SetQuestion(int number)
-    {
-
-    }
-
-    public void SetBingoCellStates(BingoCellModel[] bingoCellModels)
-    {
-        for (int index = 0; index < bingoCellModels.Length; index++)
-        {
-            string status = bingoCellModels[index].GetStatus();
-
-            switch (status)
-            {
-                case BingoCellStatus.BeforeOpen:
-                    bingoCellViews[index].MakeBeforeOpenCell();
-                    break;
-                case BingoCellStatus.Open:
-                    bingoCellViews[index].OpenCell();
-                    break;
-                case BingoCellStatus.Dead:
-                    bingoCellViews[index].KillCell();
-                    break;
-
-            }
         }
     }
 
     private void OpenBeforeAnswerWindow()
     {
-        //TODO
+        //TODO:問題提示までホストを待ってることを示すウィンドウ（なしでもOK）
+    }
+
+    public void SetQuestionNumber(int number)
+    {
+        this.currentQuestionNumber = number;
     }
 
     private void OpenQuestionWindow()
     {
-        //TODO
+        //TODO:問題のウィンドウを表示する
+        //TODO:この処理をPresenterに移行する
     }
 
     private void OpenAfterAnswerWindow()
     {
-        //TODO
+        //TODO:答え提示までホストを待ってることを示すウィンドウ（なしでもOK）
     }
 
     private void OpenAnswerWindow()
     {
-        //TODO
+        //TODO:正解不正解のウィンドウを表示する
     }
 
-    private void OpenCell()
-    {
-        openCellSubject.OnNext(Unit.Default);
-    }
+
 }
