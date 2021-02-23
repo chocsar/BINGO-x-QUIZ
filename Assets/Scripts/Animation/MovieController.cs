@@ -4,14 +4,20 @@ using UnityEngine;
 using UnityEngine.Video;
 using UnityEngine.UI;
 
-public class OpAnimController : MonoBehaviour
+public class MovieController : MonoBehaviour
 {
     [SerializeField] VideoPlayer videoPlayer;
     [SerializeField] GameObject B1image;
     [SerializeField] GameObject B2image;
 
-    // Start is called before the first frame update
-    void Start()
+    // void Start()
+    // {
+    //     Invoke("VideoPause", 0.2f);
+    //     B2image.SetActive(true);
+    //     B1image.SetActive(false);
+    // }
+
+    private void OnEnable()
     {
         Invoke("VideoPause", 0.2f);
         B2image.SetActive(true);
