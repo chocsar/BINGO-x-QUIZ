@@ -13,7 +13,6 @@ public class BingoPresenter : MonoBehaviour
 
     [SerializeField] private BingoModel bingoModel;
     [SerializeField] private BingoView bingoView;
-    private int currentNumber; //モデルに書く
 
     public void InitBingoPresenter()
     {
@@ -49,7 +48,7 @@ public class BingoPresenter : MonoBehaviour
                 //BeforeAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.BeforeAnswer) return;
                 //Answerフェーズへ遷移
-                bingoView.SetQuestion(currentNumber); //indexも渡す？
+                bingoView.SetQuestion(bingoModel.GetCurrentNumber()); //indexも渡す？
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
                 break;
 
