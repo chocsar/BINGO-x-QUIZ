@@ -25,7 +25,6 @@ public class BingoModel : MonoBehaviour
 
     //ホストから提示された数字を保持
     private int currentNumber;
-    private int currentNumIndex;
 
     public void InitBingoModel()
     {
@@ -48,10 +47,8 @@ public class BingoModel : MonoBehaviour
             //数字を持っていた場合
             if (bingoCellModels[index].GetNumber() == number)
             {
-                //数字と位置を保持しておく
+                //数字を保持しておく
                 SetCurrentNumber(number);
-                SetCurrentNumIndex(index);
-
                 return true;
             }
         }
@@ -106,11 +103,12 @@ public class BingoModel : MonoBehaviour
     /// <summary>
     /// 今対象とする数字マスの状態を変更する（OpenとかDeadとか）
     /// </summary>
-    /// <param name="status"></param>
-    public void SetCurrentCellStatus(string status)
+    /// <param name="index">位置</param>
+    /// <param name="status">状態</param>
+    public void SetCellStatus(int index, string status)
     {
-        bingoCellModels[currentNumIndex].SetStatus(status);
-        bingoCellModelsSubject.OnNext(bingoCellModels);
+        bingoCellModels[index].SetStatus(status);
+        bingoCellModelsSubject.OnNext(bingoCellModels); //メモ：変更箇所のCellだけ通知するようにしたい
     }
 
     private void SetCurrentNumber(int number)
@@ -120,15 +118,6 @@ public class BingoModel : MonoBehaviour
     public int GetCurrentNumber()
     {
         return this.currentNumber;
-    }
-
-    private void SetCurrentNumIndex(int index)
-    {
-        this.currentNumIndex = index;
-    }
-    private int GetCurrentNumIndex()
-    {
-        return this.currentNumIndex;
     }
 
 }

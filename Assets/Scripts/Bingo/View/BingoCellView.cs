@@ -7,13 +7,13 @@ using System;
 
 public class BingoCellView : MonoBehaviour
 {
-    public IObservable<Unit> OpenCellEvent => openCellSubject;
-    private Subject<Unit> openCellSubject = new Subject<Unit>();
+    public IObservable<int> OpenCellEvent => openCellSubject;
+    private Subject<int> openCellSubject = new Subject<int>();
 
     [SerializeField] private Button cellButton;
     [SerializeField] private Image cellImage;
 
-    private int number;
+    private int index;
     private bool canOpen = false;
 
 
@@ -25,8 +25,6 @@ public class BingoCellView : MonoBehaviour
 
     public void SetCellImage(int number, string status)
     {
-        this.number = number;
-
         switch (status)
         {
             case BingoCellStatus.Default:
@@ -44,13 +42,17 @@ public class BingoCellView : MonoBehaviour
         }
     }
 
+    public void SetIndex(int index)
+    {
+        this.index = index;
+    }
+
     private void OnClickCell()
     {
         if (canOpen)
         {
             canOpen = false;
-            SetCellImage(number, BingoCellStatus.Open);
-            //openCellSubject.OnNext(Unit.Default);
+            openCellSubject.OnNext(index);
         }
     }
 }
