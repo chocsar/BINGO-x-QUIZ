@@ -10,12 +10,14 @@ public class BingoModel : MonoBehaviour
     public IObservable<string> ChangeUserNameEvent => userNameSubject;
     public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
     public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
-    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoCellModelsSubject;
+    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoCellModelsSubject; //TODO:Firebaseのセーブをindexで指定できれば不要
+    public IObservable<BingoCellModel> ChangeCellModelEvent => bingoCellModelSubject;
 
     private Subject<string> userNameSubject = new Subject<string>();
     private Subject<string> userBingoStatusSubject = new Subject<string>();
     private Subject<string> userBingoPhaseSubject = new Subject<string>();
-    private Subject<BingoCellModel[]> bingoCellModelsSubject = new Subject<BingoCellModel[]>();
+    private Subject<BingoCellModel[]> bingoCellModelsSubject = new Subject<BingoCellModel[]>(); //TODO:Firebaseのセーブをindexで指定できれば不要
+    private Subject<BingoCellModel> bingoCellModelSubject = new Subject<BingoCellModel>();
 
     //ユーザーのデータ
     private string userName;
@@ -25,7 +27,7 @@ public class BingoModel : MonoBehaviour
 
     //ホストから提示された数字を保持
     private int currentNumber;
-    private int currentNumIndex;
+    private int currentNumIndex; //現状は不要
 
     public void InitBingoModel()
     {
@@ -48,9 +50,11 @@ public class BingoModel : MonoBehaviour
             //数字を持っていた場合
             if (bingoCellModels[index].GetNumber() == number)
             {
-                //数字と位置を保持しておく
+                //数字を保持しておく
                 SetCurrentNumber(number);
                 SetCurrentNumIndex(index);
+                //Hit状態にする
+                SetCellStatus(index, BingoCellStatus.Hit);
 
                 return true;
             }
@@ -82,7 +86,11 @@ public class BingoModel : MonoBehaviour
     {
         return userBingoPhase;
     }
-    public BingoCellModel[] GetBingoCells()
+    public BingoCellModel GetBingoCell(int index)
+    {
+        return bingoCellModels[index];
+    }
+    public BingoCellModel[] GetAllBingoCells()
     {
         return bingoCellModels;
     }
@@ -95,22 +103,26 @@ public class BingoModel : MonoBehaviour
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
             bingoCellModels[index] = new BingoCellModel();
+            bingoCellModels[index].SetIndex(index);
             bingoCellModels[index].SetNumber(UnityEngine.Random.Range(1, 26));
-            bingoCellModels[index].SetStatus(BingoCellStatus.Default);
+
+            SetCellStatus(index, BingoCellStatus.Default);
 
             //TODO:セルは数字でソートするのが自然
         }
-        bingoCellModelsSubject.OnNext(bingoCellModels);
+        bingoCellModelsSubject.OnNext(bingoCellModels); //TODO:Firebaseのセーブをindexで指定できれば不要
     }
 
     /// <summary>
-    /// 今対象とする数字マスの状態を変更する（OpenとかDeadとか）
+    /// 対象マスの状態を変更する（OpenとかDeadとか）
     /// </summary>
-    /// <param name="status"></param>
-    public void SetCurrentCellStatus(string status)
+    /// <param name="index">位置</param>
+    /// <param name="status">状態</param>
+    public void SetCellStatus(int index, string status)
     {
-        bingoCellModels[currentNumIndex].SetStatus(status);
-        bingoCellModelsSubject.OnNext(bingoCellModels);
+        bingoCellModels[index].SetStatus(status);
+        bingoCellModelSubject.OnNext(bingoCellModels[index]);
+        bingoCellModelsSubject.OnNext(bingoCellModels); //TODO:Firebaseのセーブをindexで指定できれば不要
     }
 
     private void SetCurrentNumber(int number)
@@ -121,12 +133,11 @@ public class BingoModel : MonoBehaviour
     {
         return this.currentNumber;
     }
-
     private void SetCurrentNumIndex(int index)
     {
         this.currentNumIndex = index;
     }
-    private int GetCurrentNumIndex()
+    public int GetCurrentNumIndex()
     {
         return this.currentNumIndex;
     }
