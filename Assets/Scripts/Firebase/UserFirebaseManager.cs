@@ -109,7 +109,7 @@ public class UserFirebaseManager : MonoBehaviour
     private void OnGivenNumber(object sender, ChildChangedEventArgs e)
     {
         //ホストが出した数字を取得
-        string number = e.Snapshot.Child(FirebaseKeys.HostNumber).GetRawJsonValue();
+        string number = e.Snapshot.GetRawJsonValue();
         //Debug.Log("num:" + number);
 
         bingoPresenter.OnGivenNumber(int.Parse(number));
