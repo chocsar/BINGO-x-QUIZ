@@ -52,7 +52,7 @@ public class BingoPresenter : MonoBehaviour
                 //BeforeAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.BeforeAnswer) return;
                 //Answerフェーズへ遷移
-                bingoView.SetQuestion(bingoModel.GetCurrentNumber());
+                bingoView.SetQuestionNumber(bingoModel.GetCurrentNumber());//問題番号を渡す
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
                 break;
 
@@ -60,7 +60,7 @@ public class BingoPresenter : MonoBehaviour
                 //AfterAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.AfterAnswer) return;
                 //Openフェーズへ遷移
-                bingoView.SetBingoCellStates(bingoModel.GetBingoCells());
+                bingoView.SetBingoCellStatus(bingoModel.GetBingoCells());//TODO:画面反映のタイミング制御を修正
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Open);
                 break;
         }
