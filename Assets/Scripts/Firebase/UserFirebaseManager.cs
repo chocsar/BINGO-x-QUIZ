@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
 using System;
-using Firebase;
-using Firebase.Database;
+using FirebaseREST;
 using UniRx;
 
 
@@ -28,10 +27,10 @@ public class UserFirebaseManager : MonoBehaviour
     private void Start()
     {
         //FirebaseDatabaseへの参照を保持（usersとHost）
-        firebaseDatabase = FirebaseDatabase.DefaultInstance;
+        firebaseDatabase = FirebaseDatabase.Instance;
         usersRef = firebaseDatabase.GetReference(FirebaseKeys.Users);
-        hostPhaseRef = firebaseDatabase.GetReference(FirebaseKeys.Host).Child(FirebaseKeys.HostPhase);
-        hostNumsRef = firebaseDatabase.GetReference(FirebaseKeys.Host).Child(FirebaseKeys.HostNumbers);
+        hostPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");
+        hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
 
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
         {
@@ -54,7 +53,8 @@ public class UserFirebaseManager : MonoBehaviour
 
         //ホストの変更を監視
         hostPhaseRef.ValueChanged += OnChangeHostPhase;
-        hostNumsRef.ChildAdded += OnGivenNumber;
+        hostNumsRef.ValueChanged += OnGivenNumber;
+
         //BingoPresenterのイベントを監視
         bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase);
         bingoPresenter.ChangeUserBingoStatusEvent.Subscribe(SaveUserBingoStatus);
@@ -69,7 +69,7 @@ public class UserFirebaseManager : MonoBehaviour
     private void CreateUser()
     {
         //キーの作成
-        userKey = usersRef.Push().Key;
+        userKey = Utility.UtilityPass.GeneratePassword();
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         //Presenterの初期化処理
         bingoPresenter.InitBingoPresenter();
@@ -94,10 +94,10 @@ public class UserFirebaseManager : MonoBehaviour
     /// <param name="e"></param>
     private void OnChangeHostPhase(object sender, ValueChangedEventArgs e)
     {
+        string phase;
         //ホストのフェーズを取得
-        string phase = e.Snapshot.GetRawJsonValue();
-        //Debug.Log("phase:" + phase);
-
+        phase = e.Snapshot.GetRawJsonValue();
+        Debug.Log("phase : " + phase.Trim('"'));
         bingoPresenter.OnChangeHostPhase(phase);
     }
 
@@ -106,34 +106,36 @@ public class UserFirebaseManager : MonoBehaviour
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void OnGivenNumber(object sender, ChildChangedEventArgs e)
+    private void OnGivenNumber(object sender, ValueChangedEventArgs e)
     {
         //ホストが出した数字を取得
         string number = e.Snapshot.GetRawJsonValue();
-        //Debug.Log("num:" + number);
+        var nums = number.TrimStart('{').TrimEnd('}').Split(',');
+        number = nums[nums.Length - 1].Split(':')[1];
+        Debug.Log("num:" + number);
 
-        bingoPresenter.OnGivenNumber(int.Parse(number));
+        bingoPresenter.OnGivenNumber(Int32.Parse(number));
     }
 
     //Firebaseへのデータのセーブ処理
     private void SaveUserName(string name)
     {
-        userNameRef.SetValueAsync(name);
+        userNameRef.SetValueAsync(name, 10, (res) => { });
     }
     private void SaveUserBingoStatus(string status)
     {
-        userStatusRef.SetValueAsync(status);
+        userStatusRef.SetValueAsync(status, 10, (res) => { });
     }
     private void SaveUserBingoPhase(string phase)
     {
-        userPhaseRef.SetValueAsync(phase);
+        userPhaseRef.SetValueAsync(phase, 10, (res) => { });
     }
     private void SaveUserNumbers(BingoCellModel[] bingoCellModels)
     {
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
             string json = JsonUtility.ToJson(bingoCellModels[index]);
-            userNumbersRef.Child(FirebaseKeys.UserNumber + index).SetRawJsonValueAsync(json);
+            userNumbersRef.Child(FirebaseKeys.UserNumber + index).SetRawJsonValueAsync(json, 10, (res) => { });
         }
     }
 }
