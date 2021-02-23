@@ -33,6 +33,10 @@ public class BingoCellView : MonoBehaviour
             case BingoCellStatus.Hit:
                 cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.HitCell + number.ToString());
                 break;
+            case BingoCellStatus.CanOpen:
+                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.HitCell + number.ToString());
+                canOpen = true;
+                break;
             case BingoCellStatus.Open:
                 cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.OpenCell + number.ToString());
                 break;
