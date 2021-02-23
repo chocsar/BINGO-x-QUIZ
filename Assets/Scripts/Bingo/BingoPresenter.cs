@@ -6,13 +6,16 @@ using System;
 
 public class BingoPresenter : MonoBehaviour
 {
-    public IObservable<string> ChangeUserBingoPhaseEvent => bingoModel.ChangeUserBingoPhaseEvent;
-    public IObservable<string> ChangeUserBingoStatusEvent => bingoModel.ChangeUserBingoStatusEvent;
-    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoModel.ChangeCellModelsEvent;
     public IObservable<string> ChangeUserNameEvent => bingoModel.ChangeUserNameEvent;
+    public IObservable<string> ChangeUserBingoStatusEvent => bingoModel.ChangeUserBingoStatusEvent;
+    public IObservable<string> ChangeUserBingoPhaseEvent => bingoModel.ChangeUserBingoPhaseEvent;
+    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoModel.ChangeCellModelsEvent; //TODO:Firebaseのセーブをindexで指定できれば不要
+    public IObservable<BingoCellModel> ChangeCellModelEvent => bingoModel.ChangeCellModelEvent;
 
     [SerializeField] private BingoModel bingoModel;
     [SerializeField] private BingoView bingoView;
+
+    private bool canUpdateCell = true;
 
 
     /// <summary>
@@ -23,13 +26,13 @@ public class BingoPresenter : MonoBehaviour
         //ModelとViewの初期化処理
         bingoModel.InitBingoModel();
         bingoView.InitBingoView();
-        //セルを画面反映
-        UpdateAllViewCells();
 
         //Modelのイベントを監視
         bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
         bingoModel.ChangeUserBingoStatusEvent.Subscribe(bingoView.OnChangeBingoStatus).AddTo(gameObject);
         bingoModel.ChangeUserNameEvent.Subscribe(bingoView.SetUserName);
+        bingoModel.ChangeCellModelEvent.Subscribe(UpdateCellView).AddTo(gameObject);
+
         //Viewのイベントを監視
         bingoView.OpenCellEvent.Subscribe(OpenCell);
     }
@@ -38,7 +41,6 @@ public class BingoPresenter : MonoBehaviour
     {
         //数字を持ってない場合は何も処理しない
         if (!bingoModel.HasNumber(number)) return;
-
         //BeforeAnswerフェーズへ遷移
         bingoModel.SetUserBingoPhase(UserBingoPhase.BeforeAnswer);
     }
@@ -53,16 +55,26 @@ public class BingoPresenter : MonoBehaviour
             case HostPhase.PresentQuestion:
                 //BeforeAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.BeforeAnswer) return;
+
+                //問題を答えても画面に反映しない処理
+                canUpdateCell = false;
+
+                //問題をセット
+                bingoView.SetQuestionNumber(bingoModel.GetCurrentNumber());
+
                 //Answerフェーズへ遷移
-                bingoView.SetQuestionNumber(bingoModel.GetCurrentNumber());//問題番号を渡す
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
                 break;
 
             case HostPhase.PresentAnswer:
                 //AfterAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.AfterAnswer) return;
+
+                //答えが出たら画面を反映
+                canUpdateCell = true;
+                UpdateAllCellViews();
+
                 //Openフェーズへ遷移
-                UpdateAllViewCells();//TODO:画面反映のタイミング制御を修正, 対象箇所だけにする
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Open);
                 break;
         }
@@ -74,26 +86,30 @@ public class BingoPresenter : MonoBehaviour
         bingoModel.SetUserBingoPhase(phase);
     }
 
-    //Modelの全Cellの状態を画面に反映
-    private void UpdateAllViewCells()
-    {
-        bingoView.SetAllBingoCellStatus(bingoModel.GetAllBingoCells());
-    }
-
-    //Modelの対象Cellの状態を画面に反映
-    private void UpdateViewCell(int index)
-    {
-        bingoView.SetBingoCellStatus(index, bingoModel.GetBingoCell(index));
-    }
-
     private void OpenCell(int index)
     {
         //対象セルをOpenにする
         bingoModel.SetCellStatus(index, BingoCellStatus.Open);
-        //画面反映
-        UpdateViewCell(index); //メモ：変更箇所だけ反映にする
         //Readyフェーズへ遷移
         bingoModel.SetUserBingoPhase(UserBingoPhase.Ready);
+    }
+
+    private void UpdateCellView(BingoCellModel bingoCellModel)
+    {
+        if (canUpdateCell)
+        {
+            bingoView.SetBingoCellStatus(bingoCellModel);
+        }
+    }
+
+    private void UpdateAllCellViews()
+    {
+        BingoCellModel[] bingoCellModels = bingoModel.GetAllBingoCells();
+
+        foreach (BingoCellModel bingoCellModel in bingoCellModels)
+        {
+            UpdateCellView(bingoCellModel);
+        }
     }
 
 

@@ -4,9 +4,19 @@ using UnityEngine;
 
 public class BingoCellModel
 {
+    public int index;
     public int number;
     public string status;
 
+    public void SetIndex(int index)
+    {
+        this.index = index;
+    }
+
+    public int GetIndex()
+    {
+        return index;
+    }
     public void SetNumber(int number)
     {
         this.number = number;

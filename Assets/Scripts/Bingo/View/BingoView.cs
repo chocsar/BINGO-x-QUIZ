@@ -39,25 +39,10 @@ public class BingoView : MonoBehaviour
     /// <summary>
     /// セルの状態を画面に反映する
     /// </summary>
-    /// <param name="bingoCellModels">セルのデータ</param>
-    public void SetAllBingoCellStatus(BingoCellModel[] bingoCellModels)
-    {
-        for (int index = 0; index < bingoCellModels.Length; index++)
-        {
-            int number = bingoCellModels[index].GetNumber();
-            string status = bingoCellModels[index].GetStatus();
-
-            bingoCellViews[index].SetCellImage(number, status);
-        }
-    }
-
-    /// <summary>
-    /// 対象セルの状態を画面に反映する
-    /// </summary>
-    /// <param name="index">位置</param>
     /// <param name="bingoCellModel">セルのデータ</param>
-    public void SetBingoCellStatus(int index, BingoCellModel bingoCellModel)
+    public void SetBingoCellStatus(BingoCellModel bingoCellModel)
     {
+        int index = bingoCellModel.GetIndex();
         int number = bingoCellModel.GetNumber();
         string status = bingoCellModel.GetStatus();
 
