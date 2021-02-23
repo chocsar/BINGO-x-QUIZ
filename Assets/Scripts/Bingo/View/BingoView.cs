@@ -22,11 +22,13 @@ public class BingoView : MonoBehaviour
 
     public void InitBingoView()
     {
-        //各BingoCellViewのイベントを監視
         for (int index = 0; index < bingoCellViews.Length; index++)
         {
             bingoCellViews[index].InitCellView();
+
             bingoCellViews[index].SetIndex(index);
+
+            //各BingoCellViewのイベントを監視
             bingoCellViews[index].OpenCellEvent.Subscribe(OpenCell);
         }
     }
