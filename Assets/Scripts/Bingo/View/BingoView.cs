@@ -26,6 +26,7 @@ public class BingoView : MonoBehaviour
         //各BingoCellViewのイベントを監視
         for (int index = 0; index < bingoCellViews.Length; index++)
         {
+            bingoCellViews[index].InitCellView();
             bingoCellViews[index].OpenCellEvent.Subscribe(_ => OpenCell());
         }
     }
@@ -43,20 +44,10 @@ public class BingoView : MonoBehaviour
     {
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
+            int number = bingoCellModels[index].GetNumber();
             string status = bingoCellModels[index].GetStatus();
 
-            switch (status)
-            {
-                case BingoCellStatus.BeforeOpen:
-                    bingoCellViews[index].MakeBeforeOpenCell();
-                    break;
-                case BingoCellStatus.Open:
-                    bingoCellViews[index].OpenCell();
-                    break;
-                case BingoCellStatus.Dead:
-                    bingoCellViews[index].KillCell();
-                    break;
-            }
+            bingoCellViews[index].SetCellImage(number, status);
         }
     }
     public void OnChangeBingoStatus(string status)

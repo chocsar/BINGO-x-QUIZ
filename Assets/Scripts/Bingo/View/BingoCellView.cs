@@ -10,10 +10,12 @@ public class BingoCellView : MonoBehaviour
     public IObservable<Unit> OpenCellEvent => openCellSubject;
     private Subject<Unit> openCellSubject = new Subject<Unit>();
 
-    [SerializeField] private Text cellText;//Spriteに変更する
     [SerializeField] private Button cellButton;
+    [SerializeField] private Image cellImage;
 
+    private int number;
     private bool canOpen = false;
+
 
     public void InitCellView()
     {
@@ -21,31 +23,34 @@ public class BingoCellView : MonoBehaviour
         cellButton.OnClickAsObservable().Subscribe(_ => OnClickCell()).AddTo(gameObject);
     }
 
-    public void SetCellText(int number) //TODO:SetCellImageに変更する
+    public void SetCellImage(int number, string status)
     {
-        cellText.text = number.ToString();
-    }
+        this.number = number;
 
-    //メモ：セルを見た目を変更する処理 → SetCellImage(string status)に組み込めそう
-    public void OpenCell()
-    {
-
-    }
-    public void KillCell()
-    {
-
-    }
-    public void MakeBeforeOpenCell() //命名が微妙
-    {
-
+        switch (status)
+        {
+            case BingoCellStatus.Default:
+                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.NormalCell + number.ToString());
+                break;
+            case BingoCellStatus.Hit:
+                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.HitCell + number.ToString());
+                break;
+            case BingoCellStatus.Open:
+                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.OpenCell + number.ToString());
+                break;
+            case BingoCellStatus.Dead:
+                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.DeadCell + number.ToString());
+                break;
+        }
     }
 
     private void OnClickCell()
     {
         if (canOpen)
         {
-            OpenCell();
-            openCellSubject.OnNext(Unit.Default);
+            canOpen = false;
+            SetCellImage(number, BingoCellStatus.Open);
+            //openCellSubject.OnNext(Unit.Default);
         }
     }
 }

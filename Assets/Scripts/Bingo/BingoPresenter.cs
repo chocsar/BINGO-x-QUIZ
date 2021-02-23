@@ -23,6 +23,8 @@ public class BingoPresenter : MonoBehaviour
         //ModelとViewの初期化処理
         bingoModel.InitBingoModel();
         bingoView.InitBingoView();
+        //セルを画面反映
+        UpdateViewCells();
 
         //Modelのイベントを監視
         bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
@@ -60,7 +62,7 @@ public class BingoPresenter : MonoBehaviour
                 //AfterAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.AfterAnswer) return;
                 //Openフェーズへ遷移
-                bingoView.SetBingoCellStatus(bingoModel.GetBingoCells());//TODO:画面反映のタイミング制御を修正
+                UpdateViewCells();//TODO:画面反映のタイミング制御を修正
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Open);
                 break;
         }
@@ -70,6 +72,12 @@ public class BingoPresenter : MonoBehaviour
     public void SetUserBingoPhase(string phase)
     {
         bingoModel.SetUserBingoPhase(phase);
+    }
+
+    //ModelのCell状態を画面に反映
+    private void UpdateViewCells()
+    {
+        bingoView.SetBingoCellStatus(bingoModel.GetBingoCells());
     }
 
 
