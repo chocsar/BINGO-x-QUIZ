@@ -11,19 +11,23 @@ using UniRx;
 public class UserFirebaseManager : MonoBehaviour
 {
     [SerializeField] private BingoPresenter bingoPresenter;
+
+    //FirebaseDatabase
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference hostPhaseRef;
     private DatabaseReference hostNumsRef;
     private DatabaseReference usersRef;
     private DatabaseReference userNameRef;
-    private DatabaseReference userPhaseRef;
     private DatabaseReference userStatusRef;
+    private DatabaseReference userPhaseRef;
     private DatabaseReference userNumbersRef;
-    private string userKey;
 
+    //ユーザーごとのKey
+    private string userKey;
 
     private void Start()
     {
+        //FirebaseDatabaseへの参照を保持（usersとHost）
         firebaseDatabase = FirebaseDatabase.DefaultInstance;
         usersRef = firebaseDatabase.GetReference(FirebaseKeys.Users);
         hostPhaseRef = firebaseDatabase.GetReference(FirebaseKeys.Host).Child(FirebaseKeys.HostPhase);
@@ -31,14 +35,18 @@ public class UserFirebaseManager : MonoBehaviour
 
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
         {
+            //ユーザーの新規作成
             CreateUser();
         }
         else
         {
+            //ユーザーデータのロード
             //LoadUser();
+
             CreateUser(); //デバッグ用
         }
 
+        //FirebaseDatabaseへの参照を保持（usersにある自分のデータ）
         userNameRef = usersRef.Child(userKey).Child(FirebaseKeys.UserName);
         userPhaseRef = usersRef.Child(userKey).Child(FirebaseKeys.UserPhase);
         userStatusRef = usersRef.Child(userKey).Child(FirebaseKeys.UserStatus);
@@ -55,6 +63,9 @@ public class UserFirebaseManager : MonoBehaviour
 
     }
 
+    /// <summary>
+    /// ユーザーデータの新規作成
+    /// </summary>
     private void CreateUser()
     {
         //キーの作成
@@ -64,13 +75,23 @@ public class UserFirebaseManager : MonoBehaviour
         bingoPresenter.InitBingoPresenter();
     }
 
+    /// <summary>
+    /// ユーザーデータのロード
+    /// </summary>
     private void LoadUser()
     {
+        //キーの保持
         userKey = PlayerPrefs.GetString(PlayerPrefsKeys.UserKey);
-        //TODO
+
+        //TODO:データをロードしてPresenterに渡す処理
         //ロードだから非同期になる？
     }
 
+    /// <summary>
+    /// ホストからHostPhaseが変更された時の処理
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void OnChangeHostPhase(object sender, ValueChangedEventArgs e)
     {
         //ホストのフェーズを取得
@@ -80,6 +101,11 @@ public class UserFirebaseManager : MonoBehaviour
         bingoPresenter.OnChangeHostPhase(phase);
     }
 
+    /// <summary>
+    /// ホストから数字が提示された時の処理
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void OnGivenNumber(object sender, ChildChangedEventArgs e)
     {
         //ホストが出した数字を取得
@@ -89,21 +115,19 @@ public class UserFirebaseManager : MonoBehaviour
         bingoPresenter.OnGivenNumber(int.Parse(number));
     }
 
+    //Firebaseへのデータのセーブ処理
     private void SaveUserName(string name)
     {
         userNameRef.SetValueAsync(name);
     }
-
-    private void SaveUserBingoPhase(string phase)
-    {
-        userPhaseRef.SetValueAsync(phase);
-    }
-
     private void SaveUserBingoStatus(string status)
     {
         userStatusRef.SetValueAsync(status);
     }
-
+    private void SaveUserBingoPhase(string phase)
+    {
+        userPhaseRef.SetValueAsync(phase);
+    }
     private void SaveUserNumbers(BingoCellModel[] bingoCellModels)
     {
         for (int index = 0; index < bingoCellModels.Length; index++)
