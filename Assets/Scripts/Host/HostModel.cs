@@ -23,6 +23,7 @@ namespace Host
         {
             nowPhaseNum = 0;
             SetHostPhase(HostPhase.SelectNum);
+            DeleteAllNumbers();
         }
 
         // HostのPhaseが変わった時の処理
@@ -33,8 +34,29 @@ namespace Host
             SetHostPhase(phases[nowPhaseNum]);
         }
 
+        public void OnChangeHostBingoNum(Unit d)
+        {
+            SubmissionNumber();
+        }
+
+        private void DeleteAllNumbers()
+        {
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/numbers");
+            reference.RemoveValueAsync(10, (e) =>
+            {
+                if (e.success)
+                {
+                    Debug.Log("Delete data success");
+                }
+                else
+                {
+                    Debug.Log("Delete data failed : " + e.message);
+                }
+            });
+        }
+
         // DataBaseにあるHostのPhase変更処理とPresenterにイベントの通知
-        public void SetHostPhase(string _phase)
+        private void SetHostPhase(string _phase)
         {
             DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/phase");
             reference.SetValueAsync(_phase, 10, (res) =>
@@ -53,9 +75,22 @@ namespace Host
         }
 
         // 数字を送る
-        public void SubmissionNumber()
+        private void SubmissionNumber()
         {
             var num = RandomGenerateNumber();
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/numbers");
+            reference.Push(num, 10, (res)=>{
+                if (res.success)
+                {
+                    Debug.Log("Pushed with id: " + res.data);
+                }
+                else
+                {
+                    Debug.Log("Push failed : " + res.message);
+                }
+            });
+
+
             hostSubmitNumSubject.OnNext(num);
         }
 
