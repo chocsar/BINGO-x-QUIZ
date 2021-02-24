@@ -61,6 +61,61 @@ public class BingoModel : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// ユーザーのビンゴ状態（Default, Reach, Bingo）を判定するメソッド
+    /// </summary>
+    public void DetermineBingoStatus()
+    {
+        string[,] bingoLine = new string[8, 3];
+
+        bingoLine[0, 0] = bingoCellModels[0].GetStatus();
+        bingoLine[0, 1] = bingoCellModels[1].GetStatus();
+        bingoLine[0, 2] = bingoCellModels[2].GetStatus();
+        bingoLine[1, 0] = bingoCellModels[3].GetStatus();
+        bingoLine[1, 1] = bingoCellModels[4].GetStatus();
+        bingoLine[1, 2] = bingoCellModels[5].GetStatus();
+        bingoLine[2, 0] = bingoCellModels[6].GetStatus();
+        bingoLine[2, 1] = bingoCellModels[7].GetStatus();
+        bingoLine[2, 2] = bingoCellModels[8].GetStatus();
+
+        bingoLine[3, 0] = bingoCellModels[0].GetStatus();
+        bingoLine[4, 0] = bingoCellModels[1].GetStatus();
+        bingoLine[5, 0] = bingoCellModels[2].GetStatus();
+        bingoLine[3, 1] = bingoCellModels[3].GetStatus();
+        bingoLine[4, 1] = bingoCellModels[4].GetStatus();
+        bingoLine[5, 1] = bingoCellModels[5].GetStatus();
+        bingoLine[3, 2] = bingoCellModels[6].GetStatus();
+        bingoLine[4, 2] = bingoCellModels[7].GetStatus();
+        bingoLine[5, 2] = bingoCellModels[8].GetStatus();
+
+        bingoLine[6, 0] = bingoCellModels[0].GetStatus();
+        bingoLine[6, 1] = bingoCellModels[4].GetStatus();
+        bingoLine[6, 2] = bingoCellModels[8].GetStatus();
+        bingoLine[7, 0] = bingoCellModels[2].GetStatus();
+        bingoLine[7, 1] = bingoCellModels[4].GetStatus();
+        bingoLine[7, 2] = bingoCellModels[6].GetStatus();
+
+        int openNumMax = 0;
+        for (int i = 0; i < 8; i++)
+        {
+            int openNum = 0;
+            for (int j = 0; j < 3; j++)
+            {
+                if (bingoLine[i, j] == BingoCellStatus.Open)
+                {
+                    openNum++;
+                }
+            }
+
+            if (openNumMax < openNum) openNumMax = openNum;
+
+            if (openNumMax == 3) break;
+        }
+
+        if (openNumMax == 2) SetUserBingoStatus(UserBingoStatus.Reach);
+        else if (openNumMax == 3) SetUserBingoStatus(UserBingoStatus.Bingo);
+    }
+
     public void SetUserName(string name)
     {
         this.userName = name;
@@ -68,7 +123,6 @@ public class BingoModel : MonoBehaviour
     }
     public void SetUserBingoStatus(string status)
     {
-        //Debug.Log("call");
         this.userBingoStatus = status;
         userBingoStatusSubject.OnNext(status);
     }
@@ -126,8 +180,13 @@ public class BingoModel : MonoBehaviour
             bingoCellModels[index] = new BingoCellModel();
             bingoCellModels[index].SetIndex(index);
             bingoCellModels[index].SetNumber(selectedNumbers[index]);
+            bingoCellModels[index].SetStatus(BingoCellStatus.CanOpen);
+        }
 
-            SetCellStatus(index, BingoCellStatus.Default);
+        //イベント通知
+        for (int index = 0; index < bingoCellModels.Length; index++)
+        {
+            bingoCellModelSubject.OnNext(bingoCellModels[index]);
         }
     }
 
@@ -140,6 +199,9 @@ public class BingoModel : MonoBehaviour
     {
         bingoCellModels[index].SetStatus(status);
         bingoCellModelSubject.OnNext(bingoCellModels[index]);
+
+        //ユーザーの状態を判定
+        DetermineBingoStatus();
     }
 
     private void SetCurrentNumber(int number)
