@@ -15,6 +15,7 @@ public class BingoPresenter : MonoBehaviour
     [SerializeField] private BingoView bingoView;
     [SerializeField] private QuestionWindowView questionWindowView;
     [SerializeField] private LoadingWindowView loadingWindowView;
+    [SerializeField] private BingoAnimationView bingoAnimationView;
 
     private bool canUpdateCell = true;
 
@@ -142,7 +143,7 @@ public class BingoPresenter : MonoBehaviour
             if (status == UserBingoStatus.Bingo)
             {
                 //TODO
-                Debug.Log("BINGO!");
+                bingoAnimationView.OpenWindow();
             }
         }
     }

@@ -11,13 +11,14 @@ GameObject:
   - component: {fileID: 2974030658113435023}
   - component: {fileID: 2974030658113435016}
   - component: {fileID: 2974030658113435017}
+  - component: {fileID: 6129921925542636423}
   m_Layer: 0
   m_Name: BingoAnimation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2974030658113435023
 Transform:
   m_ObjectHideFlags: 0
@@ -79,6 +80,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &6129921925542636423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974030658113435020}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4ddfd9ae6959453aaebdbd26b37a827, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2974030658370019621
 GameObject:
   m_ObjectHideFlags: 0
@@ -137,7 +150,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 1
+  m_SortingOrder: 4
   m_TargetDisplay: 0
 --- !u!114 &2974030658370019622
 MonoBehaviour:
@@ -236,7 +249,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_TargetDisplay: 0
 --- !u!114 &4760695824919476616
 MonoBehaviour:
@@ -347,7 +360,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 80fff3674f17b4df0901ccc0779e7202, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
