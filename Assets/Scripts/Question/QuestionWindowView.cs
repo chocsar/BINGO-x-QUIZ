@@ -4,9 +4,14 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System;
+using UniRx;
 
 public class QuestionWindowView : MonoBehaviour
 {
+    public IObservable<bool> SetAnswerEvent => answerSubject;
+    private Subject<bool> answerSubject = new Subject<bool>();
+
+
     // リクエストするスプシのWebアプリURL
     private const string requestURL = "https://script.google.com/macros/s/AKfycbyx8EIlFlR20QxbbkyMKKy1odFNsjOEKjIaoikXJ1q8wYEhRmRPt1D1/exec";
     UnityWebRequest www;
@@ -24,13 +29,13 @@ public class QuestionWindowView : MonoBehaviour
     [SerializeField] private float answerTimerMaxValue = 15;
     [SerializeField] private float timeToReadQuestion = 9;
 
-    private bool isPlaying;
-    private bool isAnswerSetted;
+    private bool isPlaying = true;
+    private bool isAnswerSetted = false;
     private float answerTimer;
-
     private int questionNum;
     private int answerNum;
     private int playerAnswerNum;
+    private bool isRight = false;
 
     private void Start()
     {
@@ -48,19 +53,22 @@ public class QuestionWindowView : MonoBehaviour
 
             if (answerTimer <= answerTimerMaxValue)
             {
-                choices.SetActive(true);
+                //回答の開始
+                if (!choices.activeSelf)
+                {
+                    choices.SetActive(true);
+                }
+
+                //スライダーの更新
                 timeSlider.value = answerTimer;
-                if (isAnswerSetted) entered.SetActive(true);
-            }
-            else
-            {
-                isAnswerSetted = false;
             }
 
             if (answerTimer <= 0)
             {
-                isPlaying = false;
-                Invoke("CollectChecker", 2);
+                //回答をセット
+                isAnswerSetted = true;
+                SetAnswer();
+
             }
         }
     }
@@ -70,17 +78,24 @@ public class QuestionWindowView : MonoBehaviour
         //テスト用
         SetQuestionNumber(1);
 
-        StartCoroutine(GetText());
+        //問題のロード
+        StartCoroutine(GetText()); //TODO:処理が終わるまで待機したい
 
+        //初期化処理
         choices.SetActive(false);
         choiceButtons[0].GetComponent<Image>().enabled = false;
         choiceButtons[1].GetComponent<Image>().enabled = false;
         choiceButtons[2].GetComponent<Image>().enabled = false;
         entered.SetActive(false);
+        rightObj.SetActive(false);
+        wrongObj.SetActive(false);
         answerTimer = answerTimerMaxValue + timeToReadQuestion;
         timeSlider.value = answerTimerMaxValue;
         playerAnswerNum = 0;
+        isAnswerSetted = false;
+        isRight = false;
 
+        //問題の開始
         isPlaying = true;
     }
 
@@ -151,55 +166,72 @@ public class QuestionWindowView : MonoBehaviour
 
     private void ChoseButton0()
     {
-        if (isPlaying && !isAnswerSetted)
+        if (isPlaying)
         {
             playerAnswerNum = 1;
             choiceButtons[0].GetComponent<Image>().enabled = true;
             choiceButtons[1].GetComponent<Image>().enabled = false;
             choiceButtons[2].GetComponent<Image>().enabled = false;
+            isAnswerSetted = true;
         }
     }
 
     private void ChoseButton1()
     {
-        if (isPlaying && !isAnswerSetted)
+        if (isPlaying)
         {
             playerAnswerNum = 2;
             choiceButtons[0].GetComponent<Image>().enabled = false;
             choiceButtons[1].GetComponent<Image>().enabled = true;
             choiceButtons[2].GetComponent<Image>().enabled = false;
+            isAnswerSetted = true;
         }
     }
 
     private void ChoseButton2()
     {
-        if (isPlaying && !isAnswerSetted)
+        if (isPlaying)
         {
             playerAnswerNum = 3;
             choiceButtons[0].GetComponent<Image>().enabled = false;
             choiceButtons[1].GetComponent<Image>().enabled = false;
             choiceButtons[2].GetComponent<Image>().enabled = true;
+            isAnswerSetted = true;
         }
     }
 
     private void SetAnswer()
     {
-        isAnswerSetted = true;
+        if (!isAnswerSetted) return;
+
+        //問題を終了
+        isPlaying = false;
+        entered.SetActive(true);
+
+        //正解チェック
+        isRight = CheckAnswer();
+
+        //イベント通知
+        answerSubject.OnNext(isRight);
     }
 
-    //メモ：正解を出すタイミングはホスト側から提示する
-    private void CollectChecker()
+    private bool CheckAnswer()
     {
-        if (answerNum == playerAnswerNum)
+        return (answerNum == playerAnswerNum);
+    }
+
+    public void ShowAnswerResult()
+    {
+        if (isRight)
         {
-            //Debug.Log("seikai");
             rightObj.SetActive(true);
         }
         else
         {
-            //Debug.Log("huseikai");
             wrongObj.SetActive(true);
         }
+
+        //TODO:いつ閉じるか
     }
 
 }
