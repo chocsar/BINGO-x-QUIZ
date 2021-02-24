@@ -15,7 +15,6 @@ public class BingoModel : MonoBehaviour
     private Subject<string> userNameSubject = new Subject<string>();
     private Subject<string> userBingoStatusSubject = new Subject<string>();
     private Subject<string> userBingoPhaseSubject = new Subject<string>();
-    private Subject<BingoCellModel[]> bingoCellModelsSubject = new Subject<BingoCellModel[]>(); //TODO:Firebaseのセーブをindexで指定できれば不要
     private Subject<BingoCellModel> bingoCellModelSubject = new Subject<BingoCellModel>();
 
     //ユーザーのデータ
