@@ -10,7 +10,6 @@ public class BingoModel : MonoBehaviour
     public IObservable<string> ChangeUserNameEvent => userNameSubject;
     public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
     public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
-    public IObservable<BingoCellModel[]> ChangeCellModelsEvent => bingoCellModelsSubject; //TODO:Firebaseのセーブをindexで指定できれば不要
     public IObservable<BingoCellModel> ChangeCellModelEvent => bingoCellModelSubject;
 
     private Subject<string> userNameSubject = new Subject<string>();
@@ -111,7 +110,6 @@ public class BingoModel : MonoBehaviour
 
             //TODO:セルは数字でソートするのが自然
         }
-        bingoCellModelsSubject.OnNext(bingoCellModels); //TODO:Firebaseのセーブをindexで指定できれば不要
     }
 
     /// <summary>
@@ -123,7 +121,6 @@ public class BingoModel : MonoBehaviour
     {
         bingoCellModels[index].SetStatus(status);
         bingoCellModelSubject.OnNext(bingoCellModels[index]);
-        bingoCellModelsSubject.OnNext(bingoCellModels); //TODO:Firebaseのセーブをindexで指定できれば不要
     }
 
     private void SetCurrentNumber(int number)

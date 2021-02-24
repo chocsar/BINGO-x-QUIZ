@@ -33,13 +33,13 @@ public class UserFirebaseManager : MonoBehaviour
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
         {
             //ユーザーの新規作成
-            CreateUser();
+            CreateUserKey();
         }
         else
         {
             //ユーザーデータのロード
             //LoadUser();
-            CreateUser(); //デバッグ用
+            CreateUserKey(); //デバッグ用
         }
 
         //FirebaseDatabaseへの参照を保持（usersにある自分のデータ）
@@ -58,6 +58,7 @@ public class UserFirebaseManager : MonoBehaviour
         bingoPresenter.ChangeCellModelEvent.Subscribe(SaveUserNumber);
         bingoPresenter.ChangeUserNameEvent.Subscribe(SaveUserName);
 
+        //ビンゴの初期化
         bingoPresenter.InitBingoPresenter();
 
     }
@@ -65,13 +66,12 @@ public class UserFirebaseManager : MonoBehaviour
     /// <summary>
     /// ユーザーデータの新規作成
     /// </summary>
-    private void CreateUser()
+    private void CreateUserKey()
     {
         //キーの作成
         userKey = Utility.UtilityPass.GeneratePassword();
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         PlayerPrefs.Save();
-        //Presenterの初期化処理
     }
 
     /// <summary>
