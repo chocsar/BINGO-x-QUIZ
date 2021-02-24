@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 3992547359461111800}
   m_Layer: 0
-  m_Name: NameInputObj
+  m_Name: NameInputWindow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3992547359461111800
 Transform:
   m_ObjectHideFlags: 0
