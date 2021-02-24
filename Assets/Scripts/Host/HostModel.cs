@@ -34,9 +34,9 @@ namespace Host
             SetHostPhase(phases[nowPhaseNum]);
         }
 
-        public void OnChangeHostBingoNum(Unit d)
+        public void OnChangeHostBingoNum(int num)
         {
-            SubmissionNumber();
+            SubmissionNumber(num);
         }
 
         private void DeleteAllNumbers()
@@ -75,9 +75,8 @@ namespace Host
         }
 
         // 数字を送る
-        private void SubmissionNumber()
+        private void SubmissionNumber(int num)
         {
-            var num = RandomGenerateNumber();
             DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/numbers");
             reference.Push(num, 10, (res)=>{
                 if (res.success)
@@ -89,8 +88,6 @@ namespace Host
                     Debug.Log("Push failed : " + res.message);
                 }
             });
-
-
             hostSubmitNumSubject.OnNext(num);
         }
 
