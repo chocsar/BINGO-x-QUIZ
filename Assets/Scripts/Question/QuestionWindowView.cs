@@ -15,20 +15,25 @@ public class QuestionWindowView : MonoBehaviour
     [SerializeField] Text questionNumberText;
     [SerializeField] Text questionText;
     [SerializeField] GameObject answerBox;
-    [SerializeField] Button choiceseButton1;
-    [SerializeField] Button choiceseButton2;
-    [SerializeField] Button choiceseButton3;
+    [SerializeField] Button[] choiceseButton;
+    [SerializeField] Button collectButton;
     int answerNum;
+    Color color = new Color(231, 197, 74, 255);
     [SerializeField] int _playerAnswer;
     [SerializeField] Slider timeSlider;
+    [SerializeField] GameObject ansObj;
+    [SerializeField] GameObject noansObj;
+    [SerializeField] GameObject buttonInput;
     bool isPlaying;
+    bool isAnswerSet;
     float timer;
 
     private void Start()
     {
-        choiceseButton1.GetComponent<Button>().onClick.AddListener(ChoseButton1);
-        choiceseButton2.GetComponent<Button>().onClick.AddListener(ChoseButton2);
-        choiceseButton3.GetComponent<Button>().onClick.AddListener(ChoseButton3);
+        choiceseButton[0].GetComponent<Button>().onClick.AddListener(ChoseButton0);
+        choiceseButton[1].GetComponent<Button>().onClick.AddListener(ChoseButton1);
+        choiceseButton[2].GetComponent<Button>().onClick.AddListener(ChoseButton2);
+        collectButton.GetComponent<Button>().onClick.AddListener(AnswerSet);
     }
 
     private void OnEnable()
@@ -38,10 +43,14 @@ public class QuestionWindowView : MonoBehaviour
 
         StartCoroutine(GetText());
         _playerAnswer = 0;
-        timer = 25;
+        timer = 26;
         timeSlider.value = 15;
         answerBox.SetActive(false);
+        buttonInput.SetActive(false);
         isPlaying = true;
+        choiceseButton[0].GetComponent<Image>().enabled = false;
+        choiceseButton[1].GetComponent<Image>().enabled = false;
+        choiceseButton[2].GetComponent<Image>().enabled = false;
     }
 
     public void SetQuestionNumber(int number)
@@ -68,17 +77,20 @@ public class QuestionWindowView : MonoBehaviour
             {
                 answerBox.SetActive(true);
                 timeSlider.value = timer;
+                if(isAnswerSet) buttonInput.SetActive(true);
+            }
+            else
+            {
+                isAnswerSet = false;
             }
             if (timer <= 0)
             {
-                CollectChecker();
                 isPlaying = false;
+                //Debug.Log("false");
+                Invoke("CollectChecker", 2);
             }
         }
     }
-
-
-
 
     IEnumerator GetText()
     {
@@ -122,25 +134,43 @@ public class QuestionWindowView : MonoBehaviour
                 questionText.text = question;
                 questionNumberText.text = String.Format("{0:00}", id);
 
-                choiceseButton1.GetComponentInChildren<Text>().text = choicese1;
-                choiceseButton2.GetComponentInChildren<Text>().text = choicese2;
-                choiceseButton3.GetComponentInChildren<Text>().text = choicese3;
+                choiceseButton[0].GetComponentInChildren<Text>().text = choicese1;
+                choiceseButton[1].GetComponentInChildren<Text>().text = choicese2;
+                choiceseButton[2].GetComponentInChildren<Text>().text = choicese3;
                 break;
             }
         }
     }
 
+    void ChoseButton0()
+    {
+        if (isPlaying && !isAnswerSet)
+        {
+            _playerAnswer = 1;
+            choiceseButton[0].GetComponent<Image>().enabled = true;
+            choiceseButton[1].GetComponent<Image>().enabled = false;
+            choiceseButton[2].GetComponent<Image>().enabled = false;
+        }
+    }
     void ChoseButton1()
     {
-        _playerAnswer = 1;
+        if (isPlaying && !isAnswerSet)
+        {
+            _playerAnswer = 2;
+            choiceseButton[0].GetComponent<Image>().enabled = false;
+            choiceseButton[1].GetComponent<Image>().enabled = true;
+            choiceseButton[2].GetComponent<Image>().enabled = false;
+        }
     }
     void ChoseButton2()
     {
-        _playerAnswer = 2;
-    }
-    void ChoseButton3()
-    {
-        _playerAnswer = 3;
+        if (isPlaying && !isAnswerSet)
+        {
+            _playerAnswer = 3;
+            choiceseButton[0].GetComponent<Image>().enabled = false;
+            choiceseButton[1].GetComponent<Image>().enabled = false;
+            choiceseButton[2].GetComponent<Image>().enabled = true;
+        }
     }
 
     void CollectChecker()
@@ -148,13 +178,18 @@ public class QuestionWindowView : MonoBehaviour
         if(answerNum == _playerAnswer)
         {
             Debug.Log("seikai");
+            ansObj.SetActive(true);
         }
         else
         {
             Debug.Log("huseikai");
+            noansObj.SetActive(true);
         }
     }
 
-
+    void AnswerSet()
+    {
+        isAnswerSet = true;
+    }
 
 }
