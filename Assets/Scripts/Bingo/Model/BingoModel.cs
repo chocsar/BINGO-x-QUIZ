@@ -68,7 +68,7 @@ public class BingoModel : MonoBehaviour
     }
     public void SetUserBingoStatus(string status)
     {
-        Debug.Log("call");
+        //Debug.Log("call");
         this.userBingoStatus = status;
         userBingoStatusSubject.OnNext(status);
     }
