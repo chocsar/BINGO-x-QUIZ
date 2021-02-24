@@ -14,7 +14,7 @@ public class FadeManager : MonoBehaviour
     float alpha = 1;
 
     // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
         if (thisIsImage)
         {
@@ -39,7 +39,7 @@ public class FadeManager : MonoBehaviour
         {
             alpha -= fadeRate;
           
-            if (alpha > 1) isFadein = false;
+            if (alpha > 1) isFadeout = false;
         }
 
         if (thisIsImage)
@@ -54,5 +54,24 @@ public class FadeManager : MonoBehaviour
             color.a = alpha;
             spriteRenderer.color = color;
         }
+    }
+
+    void RestartSet()
+    {
+        alpha = 1;
+
+        if (thisIsImage)
+        {
+            var color = image.color;
+            color.a = alpha;
+            image.color = color;
+        }
+        else if (spriteRenderer != null)
+        {
+            var color = spriteRenderer.color;
+            color.a = alpha;
+            spriteRenderer.color = color;
+        }
+        this.gameObject.SetActive(false);
     }
 }
