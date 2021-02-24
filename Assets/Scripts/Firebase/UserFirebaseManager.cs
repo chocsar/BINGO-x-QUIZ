@@ -97,7 +97,7 @@ public class UserFirebaseManager : MonoBehaviour
         string phase;
         //ホストのフェーズを取得
         phase = e.Snapshot.GetRawJsonValue();
-        Debug.Log("phase:" + phase.Trim('"'));
+        //Debug.Log("phase:" + phase.Trim('"'));
         //bingoPresenter.OnChangeHostPhase(phase);
         bingoPresenter.OnChangeHostPhase(phase.Trim('"'));
     }

@@ -73,8 +73,8 @@ public class BingoPresenter : MonoBehaviour
 
                 //ウィンドウへの処理
                 loadingWindowView.CloseWindow();
-                //questionWindowView.SetQuestionNumber(bingoModel.GetCurrentNumber());
-                //questionWindowView.OpenWindow();
+                questionWindowView.SetQuestionNumber(bingoModel.GetCurrentNumber());
+                questionWindowView.OpenWindow();
 
                 //Answerフェーズへ遷移
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
