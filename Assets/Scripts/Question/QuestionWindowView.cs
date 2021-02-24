@@ -232,6 +232,7 @@ public class QuestionWindowView : MonoBehaviour
         }
 
         //TODO:いつ閉じるか
+        Invoke("CloseWindow", 3);
     }
 
 }
