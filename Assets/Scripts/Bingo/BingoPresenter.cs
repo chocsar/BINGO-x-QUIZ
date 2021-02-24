@@ -97,14 +97,6 @@ public class BingoPresenter : MonoBehaviour
         }
     }
 
-
-
-    //メモ：クイズに答えた後に呼び出す想定
-    private void SetUserBingoPhase(string phase)
-    {
-        bingoModel.SetUserBingoPhase(phase);
-    }
-
     private void OpenLoadingWindow()
     {
         loadingWindowView.OpenWindow();

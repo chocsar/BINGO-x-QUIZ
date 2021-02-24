@@ -141,14 +141,11 @@ public class UserFirebaseManager : MonoBehaviour
     }
     private void SaveUserNumber(BingoCellModel bingoCellModel)
     {
-        //CanOpenステイトならOpenとして保存する
-        if (bingoCellModel.GetStatus() == BingoCellStatus.CanOpen)
-        {
-            bingoCellModel.SetStatus(BingoCellStatus.Open);
-        }
-
         string json = JsonUtility.ToJson(bingoCellModel);
         userNumbersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}/{FirebaseKeys.UserNumber}{bingoCellModel.GetIndex()}");
         userNumbersRef.SetRawJsonValueAsync(json, 10, (res) => { });
+
+        //TODO:CellのstatusがCanOpenなら，Openとして保存しておくほうがいいと思う
+
     }
 }
