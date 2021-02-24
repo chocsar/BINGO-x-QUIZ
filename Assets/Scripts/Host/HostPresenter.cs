@@ -15,7 +15,7 @@ namespace Host
 
         // View側のイベント通知
         public IObservable<Unit> ChangeHostPhaseEvent => hostView.ChangeHostPhaseEvent;
-        public IObservable<Unit> ChangeHostBingoNumEvent => hostView.ChangeHostBingoNumEvent;
+        public IObservable<int> ChangeHostBingoNumEvent => hostView.ChangeHostBingoNumEvent;
 
         // Start is called before the first frame update
         void Start()

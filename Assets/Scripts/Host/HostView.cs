@@ -11,19 +11,20 @@ namespace Host
         [SerializeField] private Text phaseText;
         [SerializeField] private Button generateNumButton;
         [SerializeField] private Text bingoNumText;
+        [SerializeField] private InputField sendNumInputField;
 
         public IObservable<Unit> ChangeHostPhaseEvent => changeHostPhaseSubject;
-        public IObservable<Unit> ChangeHostBingoNumEvent => changeHostBingoSubject;
+        public IObservable<int> ChangeHostBingoNumEvent => changeHostBingoSubject;
 
         private Subject<Unit> changeHostPhaseSubject = new Subject<Unit>();
-        private Subject<Unit> changeHostBingoSubject = new Subject<Unit>();
+        private Subject<int> changeHostBingoSubject = new Subject<int>();
 
         private string nowPhase;
 
         public void InitView()
         {
             nextPhaseButton.onClick.AddListener(() => NextPhase());
-            generateNumButton.onClick.AddListener(() => GenerateNumber());
+            generateNumButton.onClick.AddListener(() => SubmitNumber());
         }
 
         // HostのPhaseが変わった時の見た目の処理
@@ -46,11 +47,14 @@ namespace Host
         }
 
         // 数字生成のイベント通知
-        private void GenerateNumber()
+        private void SubmitNumber()
         {
             if (nowPhase != HostPhase.SelectNum) return;
+            if (string.IsNullOrEmpty(sendNumInputField.text)) return;
 
-            changeHostBingoSubject.OnNext(Unit.Default);
+            var submitNumber = Int32.Parse(sendNumInputField.text);
+
+            changeHostBingoSubject.OnNext(submitNumber);
         }
         
     }
