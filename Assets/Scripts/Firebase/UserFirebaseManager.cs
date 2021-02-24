@@ -69,7 +69,8 @@ public class UserFirebaseManager : MonoBehaviour
     private void CreateUserKey()
     {
         //キーの作成
-        userKey = Utility.UtilityPass.GeneratePassword();
+        //userKey = Utility.UtilityPass.GeneratePassword();
+        userKey = "reotest";
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         PlayerPrefs.Save();
     }
@@ -96,8 +97,9 @@ public class UserFirebaseManager : MonoBehaviour
         string phase;
         //ホストのフェーズを取得
         phase = e.Snapshot.GetRawJsonValue();
-        Debug.Log("phase : " + phase.Trim('"'));
-        bingoPresenter.OnChangeHostPhase(phase);
+        Debug.Log("phase:" + phase.Trim('"'));
+        //bingoPresenter.OnChangeHostPhase(phase);
+        bingoPresenter.OnChangeHostPhase(phase.Trim('"'));
     }
 
     /// <summary>
