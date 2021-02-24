@@ -14,10 +14,22 @@ public class QuestionWindowView : MonoBehaviour
     UnityWebRequest www;
     [SerializeField] Text questionNumberText;
     [SerializeField] Text questionText;
-    [SerializeField] Text choiceseText1;
-    [SerializeField] Text choiceseText2;
-    [SerializeField] Text choiceseText3;
+    [SerializeField] GameObject answerBox;
+    [SerializeField] Button choiceseButton1;
+    [SerializeField] Button choiceseButton2;
+    [SerializeField] Button choiceseButton3;
     int answerNum;
+    [SerializeField] int _playerAnswer;
+    [SerializeField] Slider timeSlider;
+    bool isPlaying;
+    float timer;
+
+    private void Start()
+    {
+        choiceseButton1.GetComponent<Button>().onClick.AddListener(ChoseButton1);
+        choiceseButton2.GetComponent<Button>().onClick.AddListener(ChoseButton2);
+        choiceseButton3.GetComponent<Button>().onClick.AddListener(ChoseButton3);
+    }
 
     private void OnEnable()
     {
@@ -25,6 +37,11 @@ public class QuestionWindowView : MonoBehaviour
         questionNumber = _questionId;
 
         StartCoroutine(GetText());
+        _playerAnswer = 0;
+        timer = 25;
+        timeSlider.value = 15;
+        answerBox.SetActive(false);
+        isPlaying = true;
     }
 
     public void SetQuestionNumber(int number)
@@ -42,6 +59,26 @@ public class QuestionWindowView : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void Update()
+    {
+        if (isPlaying)
+        {
+            timer -= Time.deltaTime;
+            if (timer <= 15)
+            {
+                answerBox.SetActive(true);
+                timeSlider.value = timer;
+            }
+            if (timer <= 0)
+            {
+                CollectChecker();
+                isPlaying = false;
+            }
+        }
+    }
+
+
+
 
     IEnumerator GetText()
     {
@@ -54,7 +91,7 @@ public class QuestionWindowView : MonoBehaviour
         else
         {
             // 結果をテキストとして表示します
-            Debug.Log("LoadJson : " + www.downloadHandler.text);
+            //Debug.Log("LoadJson : " + www.downloadHandler.text);
             // または、結果をバイナリデータとして取得します
             // byte[] results = www.downloadHandler.data;
             PrintQuestions();
@@ -67,13 +104,13 @@ public class QuestionWindowView : MonoBehaviour
 
         JsonNode json = JsonNode.Parse(jsonText);
 
-        Debug.Log("requestID = " + questionNumber);
+        //Debug.Log("requestID = " + questionNumber);
         foreach (var note in json["questions"])
         {
             int id = int.Parse(note["id"].Get<string>());
             //簡易的な指定問題表示方法（効率悪め）
 
-            if (id == _questionId)
+            if (id == questionNumber)
             {
                 string question = note["question"].Get<string>();
                 answerNum = int.Parse(note["answer"].Get<string>());
@@ -85,11 +122,39 @@ public class QuestionWindowView : MonoBehaviour
                 questionText.text = question;
                 questionNumberText.text = String.Format("{0:00}", id);
 
-                choiceseText1.text = choicese1;
-                choiceseText2.text = choicese2;
-                choiceseText3.text = choicese3;
+                choiceseButton1.GetComponentInChildren<Text>().text = choicese1;
+                choiceseButton2.GetComponentInChildren<Text>().text = choicese2;
+                choiceseButton3.GetComponentInChildren<Text>().text = choicese3;
                 break;
             }
         }
     }
+
+    void ChoseButton1()
+    {
+        _playerAnswer = 1;
+    }
+    void ChoseButton2()
+    {
+        _playerAnswer = 2;
+    }
+    void ChoseButton3()
+    {
+        _playerAnswer = 3;
+    }
+
+    void CollectChecker()
+    {
+        if(answerNum == _playerAnswer)
+        {
+            Debug.Log("seikai");
+        }
+        else
+        {
+            Debug.Log("huseikai");
+        }
+    }
+
+
+
 }
