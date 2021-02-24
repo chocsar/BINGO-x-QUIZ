@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7573351418754509642}
   - component: {fileID: 7573351418754509643}
-  - component: {fileID: 7573351418754509640}
+  - component: {fileID: 3449720289006644960}
   m_Layer: 0
-  m_Name: 02noans
+  m_Name: AnswerWrong
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -25,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7573351418754509641}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -1.66}
   m_LocalScale: {x: 0.48000002, y: 0.48000002, z: 1}
   m_Children: []
@@ -82,19 +82,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &7573351418754509640
-MonoBehaviour:
+--- !u!95 &3449720289006644960
+Animator:
+  serializedVersion: 3
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7573351418754509641}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b07c1f8c660a479cbd038f999070a7e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fadeRate: 0.03
-  isFadein: 1
-  isFadeout: 0
-  thisIsImage: 0
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ac18b3f69188e4336b8757549f8d3454, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
