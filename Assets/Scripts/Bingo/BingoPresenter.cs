@@ -49,6 +49,7 @@ public class BingoPresenter : MonoBehaviour
         //数字を持ってない場合は何も処理しない
         if (!bingoModel.HasNumber(number)) return;
 
+        //ウィンドウへの処理
         loadingWindowView.OpenWindow();
 
         //BeforeAnswerフェーズへ遷移
@@ -57,6 +58,7 @@ public class BingoPresenter : MonoBehaviour
 
     public void OnChangeHostPhase(string phase)
     {
+
         switch (phase)
         {
             case HostPhase.SelectNum:
@@ -69,10 +71,10 @@ public class BingoPresenter : MonoBehaviour
                 //問題を答えても画面に反映しない処理
                 canUpdateCell = false;
 
-                //問題をセット
+                //ウィンドウへの処理
                 loadingWindowView.CloseWindow();
-                questionWindowView.SetQuestionNumber(bingoModel.GetCurrentNumber());
-                questionWindowView.OpenWindow();
+                //questionWindowView.SetQuestionNumber(bingoModel.GetCurrentNumber());
+                //questionWindowView.OpenWindow();
 
                 //Answerフェーズへ遷移
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Answer);
@@ -82,6 +84,7 @@ public class BingoPresenter : MonoBehaviour
                 //AfterAnswerフェーズでなければ何もしない
                 if (bingoModel.GetUserBingoPhase() != UserBingoPhase.AfterAnswer) return;
 
+                //ウィンドウへの処理
                 loadingWindowView.CloseWindow();
 
                 //答えが出たら画面を反映

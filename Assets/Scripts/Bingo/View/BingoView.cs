@@ -15,11 +15,6 @@ public class BingoView : MonoBehaviour
     [SerializeField] private Text userNameText;
     [SerializeField] private BingoCellView[] bingoCellViews;
 
-    //フェーズごとに出現させるウィンドウ
-    [SerializeField] private GameObject questionWindow;
-    [SerializeField] private GameObject loadingWindow;
-    [SerializeField] private GameObject answerWindow;
-
     private int currentQuestionNumber;
 
     public void InitBingoView()
