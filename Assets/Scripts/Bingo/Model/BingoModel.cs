@@ -15,7 +15,6 @@ public class BingoModel : MonoBehaviour
     private Subject<string> userNameSubject = new Subject<string>();
     private Subject<string> userBingoStatusSubject = new Subject<string>();
     private Subject<string> userBingoPhaseSubject = new Subject<string>();
-    private Subject<BingoCellModel[]> bingoCellModelsSubject = new Subject<BingoCellModel[]>(); //TODO:Firebaseのセーブをindexで指定できれば不要
     private Subject<BingoCellModel> bingoCellModelSubject = new Subject<BingoCellModel>();
 
     //ユーザーのデータ
@@ -100,15 +99,35 @@ public class BingoModel : MonoBehaviour
     /// </summary>
     private void SetRadomBingoNumbers()
     {
+        int minNum = 1;
+        int maxNum = 25;
+
+        List<int> bingoNumbers = new List<int>();
+        for (int number = minNum; number <= maxNum; number++)
+        {
+            bingoNumbers.Add(number);
+        }
+
+        //ソートされた数字のリストを作成
+        List<int> selectedNumbers = new List<int>();
+        for (int index = 0; index < bingoCellModels.Length; index++)
+        {
+            int listIndex = UnityEngine.Random.Range(0, bingoNumbers.Count);
+            int number = bingoNumbers[listIndex];
+            bingoNumbers.RemoveAt(listIndex);
+
+            selectedNumbers.Add(number);
+        }
+        selectedNumbers.Sort();
+
+        //BingoCellModelへセット
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
             bingoCellModels[index] = new BingoCellModel();
             bingoCellModels[index].SetIndex(index);
-            bingoCellModels[index].SetNumber(UnityEngine.Random.Range(1, 26));
+            bingoCellModels[index].SetNumber(selectedNumbers[index]);
 
             SetCellStatus(index, BingoCellStatus.Default);
-
-            //TODO:セルは数字でソートするのが自然
         }
     }
 
