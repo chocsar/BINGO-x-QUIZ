@@ -97,7 +97,7 @@ public class UserFirebaseManager : MonoBehaviour
         string phase;
         //ホストのフェーズを取得
         phase = e.Snapshot.GetRawJsonValue();
-        Debug.Log("phase:" + phase.Trim('"'));
+        //Debug.Log("phase:" + phase.Trim('"'));
         //bingoPresenter.OnChangeHostPhase(phase);
         bingoPresenter.OnChangeHostPhase(phase.Trim('"'));
     }
@@ -144,5 +144,8 @@ public class UserFirebaseManager : MonoBehaviour
         string json = JsonUtility.ToJson(bingoCellModel);
         userNumbersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}/{FirebaseKeys.UserNumber}{bingoCellModel.GetIndex()}");
         userNumbersRef.SetRawJsonValueAsync(json, 10, (res) => { });
+
+        //TODO:CellのstatusがCanOpenなら，Openとして保存しておくほうがいいと思う
+
     }
 }

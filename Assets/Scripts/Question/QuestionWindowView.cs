@@ -4,58 +4,104 @@ using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 using System;
+using UniRx;
 
 public class QuestionWindowView : MonoBehaviour
 {
-    private int questionNumber;
-    [SerializeField] int _questionId = 1;
+    public IObservable<bool> SetAnswerEvent => answerSubject;
+    private Subject<bool> answerSubject = new Subject<bool>();
+
+
     // リクエストするスプシのWebアプリURL
-    string requestURL = "https://script.google.com/macros/s/AKfycbyx8EIlFlR20QxbbkyMKKy1odFNsjOEKjIaoikXJ1q8wYEhRmRPt1D1/exec";
+    private const string requestURL = "https://script.google.com/macros/s/AKfycbyx8EIlFlR20QxbbkyMKKy1odFNsjOEKjIaoikXJ1q8wYEhRmRPt1D1/exec";
     UnityWebRequest www;
-    [SerializeField] Text questionNumberText;
-    [SerializeField] Text questionText;
-    [SerializeField] GameObject answerBox;
-    [SerializeField] Button[] choiceseButton;
-    [SerializeField] Button collectButton;
-    int answerNum;
-    Color color = new Color(231, 197, 74, 255);
-    [SerializeField] int _playerAnswer;
-    [SerializeField] Slider timeSlider;
-    [SerializeField] GameObject ansObj;
-    [SerializeField] GameObject noansObj;
-    [SerializeField] GameObject buttonInput;
-    bool isPlaying;
-    bool isAnswerSet;
-    float timer;
+
+    [SerializeField] private Text questionNumberText;
+    [SerializeField] private Text questionText;
+    [SerializeField] private GameObject choices;
+    [SerializeField] private Button[] choiceButtons;
+    [SerializeField] private Slider timeSlider;
+    [SerializeField] private Button enterButton;
+    [SerializeField] private GameObject entered;
+    [SerializeField] private GameObject rightObj;
+    [SerializeField] private GameObject wrongObj;
+
+    [SerializeField] private float answerTimerMaxValue = 15;
+    [SerializeField] private float timeToReadQuestion = 9;
+
+    private bool isPlaying = true;
+    private bool isAnswerSetted = false;
+    private float answerTimer;
+    private int questionNum;
+    private int answerNum;
+    private int playerAnswerNum;
+    private bool isRight = false;
 
     private void Start()
     {
-        choiceseButton[0].GetComponent<Button>().onClick.AddListener(ChoseButton0);
-        choiceseButton[1].GetComponent<Button>().onClick.AddListener(ChoseButton1);
-        choiceseButton[2].GetComponent<Button>().onClick.AddListener(ChoseButton2);
-        collectButton.GetComponent<Button>().onClick.AddListener(AnswerSet);
+        choiceButtons[0].GetComponent<Button>().onClick.AddListener(ChoseButton0);
+        choiceButtons[1].GetComponent<Button>().onClick.AddListener(ChoseButton1);
+        choiceButtons[2].GetComponent<Button>().onClick.AddListener(ChoseButton2);
+        enterButton.GetComponent<Button>().onClick.AddListener(SetAnswer);
+    }
+
+    private void Update()
+    {
+        if (isPlaying)
+        {
+            answerTimer -= Time.deltaTime;
+
+            if (answerTimer <= answerTimerMaxValue)
+            {
+                //回答の開始
+                if (!choices.activeSelf)
+                {
+                    choices.SetActive(true);
+                }
+
+                //スライダーの更新
+                timeSlider.value = answerTimer;
+            }
+
+            if (answerTimer <= 0)
+            {
+                //回答をセット
+                isAnswerSetted = true;
+                SetAnswer();
+
+            }
+        }
     }
 
     private void OnEnable()
     {
         //テスト用
-        questionNumber = _questionId;
+        SetQuestionNumber(1);
 
-        StartCoroutine(GetText());
-        _playerAnswer = 0;
-        timer = 26;
-        timeSlider.value = 15;
-        answerBox.SetActive(false);
-        buttonInput.SetActive(false);
+        //問題のロード
+        StartCoroutine(GetText()); //TODO:処理が終わるまで待機したい
+
+        //初期化処理
+        choices.SetActive(false);
+        choiceButtons[0].GetComponent<Image>().enabled = false;
+        choiceButtons[1].GetComponent<Image>().enabled = false;
+        choiceButtons[2].GetComponent<Image>().enabled = false;
+        entered.SetActive(false);
+        rightObj.SetActive(false);
+        wrongObj.SetActive(false);
+        answerTimer = answerTimerMaxValue + timeToReadQuestion;
+        timeSlider.value = answerTimerMaxValue;
+        playerAnswerNum = 0;
+        isAnswerSetted = false;
+        isRight = false;
+
+        //問題の開始
         isPlaying = true;
-        choiceseButton[0].GetComponent<Image>().enabled = false;
-        choiceseButton[1].GetComponent<Image>().enabled = false;
-        choiceseButton[2].GetComponent<Image>().enabled = false;
     }
 
     public void SetQuestionNumber(int number)
     {
-        questionNumber = number;
+        questionNum = number;
     }
 
     public void OpenWindow()
@@ -68,31 +114,7 @@ public class QuestionWindowView : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void Update()
-    {
-        if (isPlaying)
-        {
-            timer -= Time.deltaTime;
-            if (timer <= 15)
-            {
-                answerBox.SetActive(true);
-                timeSlider.value = timer;
-                if(isAnswerSet) buttonInput.SetActive(true);
-            }
-            else
-            {
-                isAnswerSet = false;
-            }
-            if (timer <= 0)
-            {
-                isPlaying = false;
-                //Debug.Log("false");
-                Invoke("CollectChecker", 2);
-            }
-        }
-    }
-
-    IEnumerator GetText()
+    private IEnumerator GetText()
     {
         www = UnityWebRequest.Get(requestURL);
         yield return www.SendWebRequest();
@@ -110,7 +132,7 @@ public class QuestionWindowView : MonoBehaviour
         }
     }
 
-    void PrintQuestions()
+    private void PrintQuestions()
     {
         string jsonText = www.downloadHandler.text;
 
@@ -122,7 +144,7 @@ public class QuestionWindowView : MonoBehaviour
             int id = int.Parse(note["id"].Get<string>());
             //簡易的な指定問題表示方法（効率悪め）
 
-            if (id == questionNumber)
+            if (id == questionNum)
             {
                 string question = note["question"].Get<string>();
                 answerNum = int.Parse(note["answer"].Get<string>());
@@ -130,66 +152,87 @@ public class QuestionWindowView : MonoBehaviour
                 string choicese2 = note["choicese2"].Get<string>();
                 string choicese3 = note["choicese3"].Get<string>();
 
-                Debug.Log("answerNum = " + answerNum);
+                //Debug.Log("answerNum = " + answerNum);
                 questionText.text = question;
                 questionNumberText.text = String.Format("{0:00}", id);
 
-                choiceseButton[0].GetComponentInChildren<Text>().text = choicese1;
-                choiceseButton[1].GetComponentInChildren<Text>().text = choicese2;
-                choiceseButton[2].GetComponentInChildren<Text>().text = choicese3;
+                choiceButtons[0].GetComponentInChildren<Text>().text = choicese1;
+                choiceButtons[1].GetComponentInChildren<Text>().text = choicese2;
+                choiceButtons[2].GetComponentInChildren<Text>().text = choicese3;
                 break;
             }
         }
     }
 
-    void ChoseButton0()
+    private void ChoseButton0()
     {
-        if (isPlaying && !isAnswerSet)
+        if (isPlaying)
         {
-            _playerAnswer = 1;
-            choiceseButton[0].GetComponent<Image>().enabled = true;
-            choiceseButton[1].GetComponent<Image>().enabled = false;
-            choiceseButton[2].GetComponent<Image>().enabled = false;
-        }
-    }
-    void ChoseButton1()
-    {
-        if (isPlaying && !isAnswerSet)
-        {
-            _playerAnswer = 2;
-            choiceseButton[0].GetComponent<Image>().enabled = false;
-            choiceseButton[1].GetComponent<Image>().enabled = true;
-            choiceseButton[2].GetComponent<Image>().enabled = false;
-        }
-    }
-    void ChoseButton2()
-    {
-        if (isPlaying && !isAnswerSet)
-        {
-            _playerAnswer = 3;
-            choiceseButton[0].GetComponent<Image>().enabled = false;
-            choiceseButton[1].GetComponent<Image>().enabled = false;
-            choiceseButton[2].GetComponent<Image>().enabled = true;
+            playerAnswerNum = 1;
+            choiceButtons[0].GetComponent<Image>().enabled = true;
+            choiceButtons[1].GetComponent<Image>().enabled = false;
+            choiceButtons[2].GetComponent<Image>().enabled = false;
+            isAnswerSetted = true;
         }
     }
 
-    void CollectChecker()
+    private void ChoseButton1()
     {
-        if(answerNum == _playerAnswer)
+        if (isPlaying)
         {
-            Debug.Log("seikai");
-            ansObj.SetActive(true);
+            playerAnswerNum = 2;
+            choiceButtons[0].GetComponent<Image>().enabled = false;
+            choiceButtons[1].GetComponent<Image>().enabled = true;
+            choiceButtons[2].GetComponent<Image>().enabled = false;
+            isAnswerSetted = true;
+        }
+    }
+
+    private void ChoseButton2()
+    {
+        if (isPlaying)
+        {
+            playerAnswerNum = 3;
+            choiceButtons[0].GetComponent<Image>().enabled = false;
+            choiceButtons[1].GetComponent<Image>().enabled = false;
+            choiceButtons[2].GetComponent<Image>().enabled = true;
+            isAnswerSetted = true;
+        }
+    }
+
+    private void SetAnswer()
+    {
+        if (!isAnswerSetted) return;
+
+        //問題を終了
+        isPlaying = false;
+        entered.SetActive(true);
+
+        //正解チェック
+        isRight = CheckAnswer();
+
+        //イベント通知
+        answerSubject.OnNext(isRight);
+    }
+
+    private bool CheckAnswer()
+    {
+        return (answerNum == playerAnswerNum);
+    }
+
+    public void ShowAnswerResult()
+    {
+        if (isRight)
+        {
+            rightObj.SetActive(true);
         }
         else
         {
-            Debug.Log("huseikai");
-            noansObj.SetActive(true);
+            wrongObj.SetActive(true);
         }
-    }
 
-    void AnswerSet()
-    {
-        isAnswerSet = true;
+        //TODO:いつ閉じるか
+        Invoke("CloseWindow", 3);
     }
 
 }
