@@ -8,13 +8,13 @@ public class BingoChecker : MonoBehaviour
     [SerializeField] bool inputNum = false;
     [SerializeField] Text[] bingoNumText;
     [SerializeField] bool[] isChecker;
-    bool[,] bingo = new bool[8,3];
+    bool[,] bingo = new bool[8, 3];
     int status = 0; //0=none 1=reach 2=bingo
 
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0; i < 9; i++)
+        for (int i = 0; i < 9; i++)
         {
             bingoNumText[i].text = "0";
             isChecker[i] = false;
@@ -24,7 +24,7 @@ public class BingoChecker : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(inputNum == true)
+        if (inputNum == true)
         {
             for (int i = 0; i < 9; i++)
             {
@@ -82,19 +82,19 @@ public class BingoChecker : MonoBehaviour
 
     void ClearChecker()
     {
-        for(int i = 0; i < 8; i++)
+        for (int i = 0; i < 8; i++)
         {
             int clearNum = 0;
-            for(int j = 0; j < 3; j++)
+            for (int j = 0; j < 3; j++)
             {
-                if(bingo[i,j] == true)
+                if (bingo[i, j] == true)
                 {
                     clearNum++;
                 }
                 //Debug.Log(clearNum-1);
-                if(clearNum-1 >= status)
+                if (clearNum - 1 >= status)
                 {
-                    status = clearNum-1;
+                    status = clearNum - 1;
 
                 }
             }
@@ -112,7 +112,8 @@ public class BingoChecker : MonoBehaviour
 
     void ClearPrinter()
     {
-        switch(status){
+        switch (status)
+        {
             case 0:
                 Debug.Log("none");
                 break;

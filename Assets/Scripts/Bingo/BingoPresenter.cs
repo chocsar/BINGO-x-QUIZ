@@ -31,8 +31,8 @@ public class BingoPresenter : MonoBehaviour
     {
         //Modelのイベントを監視
         bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
-        bingoModel.ChangeUserBingoStatusEvent.Subscribe(bingoView.OnChangeBingoStatus).AddTo(gameObject);
-        bingoModel.ChangeUserNameEvent.Subscribe(bingoView.SetUserName);
+        bingoModel.ChangeUserBingoStatusEvent.Subscribe(OnChangeBingoStatus).AddTo(gameObject);
+        bingoModel.ChangeUserNameEvent.Subscribe(bingoView.SetUserName).AddTo(gameObject);
         bingoModel.ChangeCellModelEvent.Subscribe(UpdateCellView).AddTo(gameObject);
 
         //Viewのイベントを監視
@@ -48,6 +48,8 @@ public class BingoPresenter : MonoBehaviour
     {
         //数字を持ってない場合は何も処理しない
         if (!bingoModel.HasNumber(number)) return;
+        //ビンゴしてる場合は何も処理しない
+        if (bingoModel.GetUserBingoStatus() == UserBingoStatus.Bingo) return;
 
         //ウィンドウへの処理
         OpenLoadingWindow();
@@ -90,6 +92,7 @@ public class BingoPresenter : MonoBehaviour
                 //答えが出たら画面を反映
                 canUpdateCell = true;
                 UpdateCellView(bingoModel.GetBingoCell(bingoModel.GetCurrentNumIndex()));
+                OnChangeBingoStatus(bingoModel.GetUserBingoStatus());
 
                 //Openフェーズへ遷移
                 bingoModel.SetUserBingoPhase(UserBingoPhase.Open);
@@ -125,6 +128,22 @@ public class BingoPresenter : MonoBehaviour
         if (canUpdateCell)
         {
             bingoView.SetBingoCellStatus(bingoCellModel);
+        }
+    }
+
+    private void OnChangeBingoStatus(string status)
+    {
+        if (canUpdateCell)
+        {
+            //viewの反映
+            bingoView.OnChangeBingoStatus(status);
+
+            //ビンゴ時の処理
+            if (status == UserBingoStatus.Bingo)
+            {
+                //TODO
+                Debug.Log("BINGO!");
+            }
         }
     }
 
