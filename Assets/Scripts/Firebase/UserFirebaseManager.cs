@@ -70,7 +70,7 @@ public class UserFirebaseManager : MonoBehaviour
     {
         //キーの作成
         //userKey = Utility.UtilityPass.GeneratePassword();
-        userKey = "reotest";
+        userKey = " mittan";
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         PlayerPrefs.Save();
     }
