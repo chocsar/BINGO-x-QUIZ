@@ -191,7 +191,7 @@ PrefabInstance:
     - target: {fileID: 9076359200919945883, guid: 522879c4d513c492f80b4fb2c9dc090c,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 522879c4d513c492f80b4fb2c9dc090c, type: 3}
@@ -473,11 +473,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: NameInputObj
       objectReference: {fileID: 0}
-    - target: {fileID: 3992547359461111801, guid: 399c7d4bdade6486f818075bd8b32a53,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3992547360124392227, guid: 399c7d4bdade6486f818075bd8b32a53,
         type: 3}
       propertyPath: m_Camera
@@ -485,39 +480,9 @@ PrefabInstance:
       objectReference: {fileID: 246736579}
     - target: {fileID: 3992547361266973755, guid: 399c7d4bdade6486f818075bd8b32a53,
         type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3992547361266973755, guid: 399c7d4bdade6486f818075bd8b32a53,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3992547361266973755, guid: 399c7d4bdade6486f818075bd8b32a53,
-        type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 201942747}
-    - target: {fileID: 3992547361266973755, guid: 399c7d4bdade6486f818075bd8b32a53,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 3992547361266973755, guid: 399c7d4bdade6486f818075bd8b32a53,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnClickStartButton
-      objectReference: {fileID: 0}
-    - target: {fileID: 3992547361266973755, guid: 399c7d4bdade6486f818075bd8b32a53,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
-    - target: {fileID: 3992547361266973757, guid: 399c7d4bdade6486f818075bd8b32a53,
-        type: 3}
-      propertyPath: m_Name
-      value: StartButton
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 399c7d4bdade6486f818075bd8b32a53, type: 3}
 --- !u!1 &765294565
@@ -1071,7 +1036,7 @@ PrefabInstance:
     - target: {fileID: 1950108235027313607, guid: 4048130a0b5464f97ba107b28f7c1d85,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4048130a0b5464f97ba107b28f7c1d85, type: 3}
