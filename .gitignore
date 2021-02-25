@@ -58,3 +58,12 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+# Firebase SDK
+Assets/Editor Default Resources*
+Assets/ExternalDependencyManager*
+Assets/Firebase/
+Assets/Firebase.meta
+Assets/Parse*
+Assets/Plugins/iOS*
+Assets/StreamingAssets*
+
