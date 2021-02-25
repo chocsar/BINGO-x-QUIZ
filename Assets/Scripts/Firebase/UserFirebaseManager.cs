@@ -74,7 +74,7 @@ public class UserFirebaseManager : MonoBehaviour
     {
         //キーの作成
         userKey = Utility.UtilityPass.GeneratePassword();
-        //userKey = "reotest";
+        //userKey = "reotest"; //デバッグ用
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         PlayerPrefs.Save();
     }
@@ -133,17 +133,30 @@ public class UserFirebaseManager : MonoBehaviour
     //Firebaseへのデータのセーブ処理
     private void SaveUserName(string name)
     {
-        userNameRef.SetValueAsync(name, 10, (res) => { });
+        //userNameRef.SetValueAsync(name, 10, (res) => { });
+
+        //複数箇所に同時に書き込む実装に変更
+        Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
+        childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserName}"] = name;
+        childUpdates[$"/{FirebaseKeys.UserNameAndStatusOnly}/{userKey}/{FirebaseKeys.UserName}"] = name;
+        firebaseDatabase.GetReference("/").UpdateChildAsync(childUpdates, 10, (res) => { });
     }
     private void SaveUserBingoStatus(string status)
     {
-        userStatusRef.SetValueAsync(status, 10, (res) => { });
+        //userStatusRef.SetValueAsync(status, 10, (res) => { });
+
+        //複数箇所に同時に書き込む実装に変更
+        Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
+        childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserStatus}"] = status;
+        childUpdates[$"/{FirebaseKeys.UserNameAndStatusOnly}/{userKey}/{FirebaseKeys.UserStatus}"] = status;
+        childUpdates[$"/{FirebaseKeys.UserStatusOnly}/{userKey}"] = status;
+        firebaseDatabase.GetReference("/").UpdateChildAsync(childUpdates, 10, (res) => { });
     }
     private void SaveUserBingoPhase(string phase)
     {
         //userPhaseRef.SetValueAsync(phase, 10, (res) => { });
 
-        //2箇所に同時に書き込む実装に変更
+        //複数箇所に同時に書き込む実装に変更
         Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
         childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserPhase}"] = phase;
         childUpdates[$"/{FirebaseKeys.UserPhaseOnly}/{userKey}"] = phase;

@@ -181,6 +181,7 @@ public class BingoModel : MonoBehaviour
             bingoCellModels[index].SetIndex(index);
             bingoCellModels[index].SetNumber(selectedNumbers[index]);
             bingoCellModels[index].SetStatus(BingoCellStatus.Default);
+            //bingoCellModels[index].SetStatus(BingoCellStatus.CanOpen); //デバッグ用
         }
 
         //イベント通知

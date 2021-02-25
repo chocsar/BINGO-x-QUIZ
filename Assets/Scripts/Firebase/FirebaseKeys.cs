@@ -12,4 +12,7 @@
     public const string HostNumbers = "numbers";
 
     public const string UserPhaseOnly = "userphase";
+    public const string UserNameAndStatusOnly = "usernameandstatus";
+    public const string UserStatusOnly = "userstatus";
+
 }
