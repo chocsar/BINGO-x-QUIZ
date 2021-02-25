@@ -24,6 +24,13 @@ public class BingoPresenter : MonoBehaviour
     // {
     //     InitBingoPresenter();
     // }
+    // private void Update()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.Space))
+    //     {
+    //         bingoModel.SetUserBingoPhase(UserBingoPhase.BeforeAnswer);
+    //     }
+    // }
 
     /// <summary>
     /// BingoPresenterの初期化処理（ここからModelとViewも初期化）
