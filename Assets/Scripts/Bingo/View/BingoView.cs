@@ -14,6 +14,7 @@ public class BingoView : MonoBehaviour
     //ユーザーの画面
     [SerializeField] private Text userNameText;
     [SerializeField] private BingoCellView[] bingoCellViews;
+    [SerializeField] private ReachCellView reachCellView;
 
     private int currentQuestionNumber;
 
@@ -55,7 +56,18 @@ public class BingoView : MonoBehaviour
 
     public void OnChangeBingoStatus(string status)
     {
-        //TODO:リーチやビンゴの画面表示
+
+        switch (status)
+        {
+            case UserBingoStatus.Default:
+                reachCellView.SetCellImage(false);
+                break;
+            case UserBingoStatus.Reach:
+                reachCellView.SetCellImage(true);
+                break;
+            case UserBingoStatus.Bingo:
+                break;
+        }
     }
 
     public void OnChangeBingoPhase(string phase)
@@ -63,7 +75,6 @@ public class BingoView : MonoBehaviour
         switch (phase)
         {
             case UserBingoPhase.Ready:
-
                 break;
 
             case UserBingoPhase.BeforeAnswer:

@@ -15,7 +15,8 @@ public class UserNameInput : MonoBehaviour
             PlayerPrefs.SetString(PlayerPrefsKeys.UserName, inputField.text);
             PlayerPrefs.Save();
             SceneManager.LoadScene(SceneNames.Bingo);
-            Debug.Log(inputField.text);
+            //SceneManager.LoadSceneAsync(SceneNames.Bingo);
+            //Debug.Log(inputField.text);
         }
     }
 
