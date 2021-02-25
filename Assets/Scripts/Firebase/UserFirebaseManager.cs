@@ -15,10 +15,12 @@ public class UserFirebaseManager : MonoBehaviour
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference hostPhaseRef;
     private DatabaseReference hostNumsRef;
+    private DatabaseReference usersRef;
     private DatabaseReference userNameRef;
     private DatabaseReference userStatusRef;
     private DatabaseReference userPhaseRef;
     private DatabaseReference userNumbersRef;
+    private DatabaseReference userPhaseOnlyRef;
 
     //ユーザーごとのKey
     private string userKey;
@@ -29,6 +31,7 @@ public class UserFirebaseManager : MonoBehaviour
         firebaseDatabase = FirebaseDatabase.Instance;
         hostPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");
         hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
+        usersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}");
 
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
         {
@@ -47,6 +50,7 @@ public class UserFirebaseManager : MonoBehaviour
         userPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserPhase}");
         userStatusRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserStatus}");
         userNumbersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}");
+        userPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.UserPhaseOnly}/{userKey}");
 
         //ホストの変更を監視
         hostPhaseRef.ValueChanged += OnChangeHostPhase;
@@ -70,7 +74,7 @@ public class UserFirebaseManager : MonoBehaviour
     {
         //キーの作成
         userKey = Utility.UtilityPass.GeneratePassword();
-        //userKey = "testuser";
+        //userKey = "reotest";
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         PlayerPrefs.Save();
     }
@@ -137,7 +141,13 @@ public class UserFirebaseManager : MonoBehaviour
     }
     private void SaveUserBingoPhase(string phase)
     {
-        userPhaseRef.SetValueAsync(phase, 10, (res) => { });
+        //userPhaseRef.SetValueAsync(phase, 10, (res) => { });
+
+        //2箇所に同時に書き込む実装に変更
+        Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
+        childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserPhase}"] = phase;
+        childUpdates[$"/{FirebaseKeys.UserPhaseOnly}/{userKey}"] = phase;
+        firebaseDatabase.GetReference("/").UpdateChildAsync(childUpdates, 10, (res) => { });
     }
     private void SaveUserNumber(BingoCellModel bingoCellModel)
     {
