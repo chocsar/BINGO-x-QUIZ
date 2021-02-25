@@ -1,4 +1,6 @@
-﻿namespace Utility
+﻿using System.Collections.Generic;
+using UnityEngine;
+namespace Utility
 {
     public static class UtilityPass
     {
@@ -26,6 +28,28 @@
         public static string StringParse(string _data)
         {
             return _data.Trim();
+        }
+    }
+
+    public static class UtilityRestJson
+    {
+        public static Dictionary<string, string> JsonPhaseLoad(string _data)
+        {
+            Debug.Log(_data);
+
+            Dictionary<string, string> phaseDic = new Dictionary<string, string>();
+            var data = _data;
+            data = data.TrimStart('{').TrimEnd('}');
+            var datas = data.Split(',');
+            Debug.Log(datas);
+            foreach (var userdata in datas)
+            {
+                var userdatas = userdata.Split(':');
+                Debug.Log(userdatas);
+                phaseDic.Add(userdatas[0].Trim('"'), userdatas[1].Trim('"'));
+            }
+
+            return phaseDic;
         }
     }
 }

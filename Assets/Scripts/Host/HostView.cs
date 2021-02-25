@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UniRx;
 using System;
+using System.Collections.Generic;
 
 namespace Host
 {
@@ -12,12 +13,16 @@ namespace Host
         [SerializeField] private Button generateNumButton;
         [SerializeField] private Text bingoNumText;
         [SerializeField] private InputField sendNumInputField;
+        [SerializeField] private Button loadPhaseData;
+        [SerializeField] private Text clientPhaseDataText;
 
         public IObservable<Unit> ChangeHostPhaseEvent => changeHostPhaseSubject;
         public IObservable<int> ChangeHostBingoNumEvent => changeHostBingoSubject;
+        public IObservable<Unit> LoadClientPhaseEvent => LoadPhaseClientSubject;
 
         private Subject<Unit> changeHostPhaseSubject = new Subject<Unit>();
         private Subject<int> changeHostBingoSubject = new Subject<int>();
+        private Subject<Unit> LoadPhaseClientSubject = new Subject<Unit>();
 
         private string nowPhase;
 
@@ -25,6 +30,7 @@ namespace Host
         {
             nextPhaseButton.onClick.AddListener(() => NextPhase());
             generateNumButton.onClick.AddListener(() => SubmitNumber());
+            loadPhaseData.onClick.AddListener(() => LoadAllClientPhase());
         }
 
         // HostのPhaseが変わった時の見た目の処理
@@ -55,6 +61,21 @@ namespace Host
             var submitNumber = Int32.Parse(sendNumInputField.text);
 
             changeHostBingoSubject.OnNext(submitNumber);
+        }
+
+        public void LoadAllClientPhase()
+        {
+            LoadPhaseClientSubject.OnNext(Unit.Default);
+        }
+
+        public void OnLoadClientPhase(Dictionary<string, int> _recieveDatas)
+        {
+            string displayText = "";
+            foreach (var item in _recieveDatas)
+            {
+                displayText += $"{item.Key} : {item.Value}\n"; 
+            }
+            clientPhaseDataText.text = displayText;
         }
         
     }
