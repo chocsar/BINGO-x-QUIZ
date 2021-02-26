@@ -102,8 +102,16 @@ public class BingoPresenter : MonoBehaviour
                 UpdateCellView(bingoModel.GetBingoCell(bingoModel.GetCurrentNumIndex()));
                 OnChangeBingoStatus(bingoModel.GetUserBingoStatus());
 
-                //Openフェーズへ遷移
-                bingoModel.SetUserBingoPhase(UserBingoPhase.Open);
+                //正解ならOpen，不正解ならReadyフェーズへ遷移
+                if (bingoModel.GetBingoCell(bingoModel.GetCurrentNumIndex()).GetStatus() == BingoCellStatus.CanOpen)
+                {
+                    bingoModel.SetUserBingoPhase(UserBingoPhase.Open);
+                }
+                else
+                {
+                    bingoModel.SetUserBingoPhase(UserBingoPhase.Ready);
+                }
+
                 break;
         }
     }
