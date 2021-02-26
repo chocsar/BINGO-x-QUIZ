@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using FirebaseREST;
+using UniRx;
 
 public class HostFirebaseLoader : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class HostFirebaseLoader : MonoBehaviour
 
     public Dictionary<string, int> ClientDataLoad()
     {
-        string data = ""; 
+        var data = new ReactiveProperty<string>();
         DatabaseReference reference = FirebaseDatabase.Instance.GetReference("userphase");
         reference.GetValueAsync(10, (res) =>
         {
@@ -17,8 +18,6 @@ public class HostFirebaseLoader : MonoBehaviour
             {
                 Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
                 Debug.Log("res : " + res.data.GetRawJsonValue());
-                //DisplayAllPhase();
-                
             }
             else
             {
