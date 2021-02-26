@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using System;
+
 namespace Utility
 {
     public static class UtilityPass
@@ -50,6 +52,34 @@ namespace Utility
             }
 
             return phaseDic;
+        }
+
+        public static List<ClientStatus> JsonStatusLoad(string _data)
+        {
+            List<ClientStatus> clientStatuses = new List<ClientStatus>();
+
+            string[] comma = { "}," };
+            string[] colon = { ":{" };
+            Dictionary<string, string> statusDic = new Dictionary<string, string>();
+            var data = _data;
+            data = data.TrimStart('{').TrimEnd('}');
+            var datas = data.Split(comma, StringSplitOptions.None);
+            for (int i = 0; i < datas.Length; i++)
+            {
+                datas[i] += "}";
+                //Debug.Log(datas[i]);
+            }
+            foreach (var item in datas)
+            {
+                var individualItem = item.Split(colon, StringSplitOptions.None);
+                individualItem[1] = "{" + individualItem[1];
+                //Debug.Log(individualItem[1]);
+                ClientStatus status = JsonUtility.FromJson<ClientStatus>(individualItem[1]);
+                clientStatuses.Add(status);
+            }
+
+            return clientStatuses;
+            
         }
     }
 }

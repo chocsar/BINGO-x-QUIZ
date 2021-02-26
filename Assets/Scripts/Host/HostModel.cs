@@ -14,10 +14,12 @@ namespace Host
         public IObservable<string> SubmitHostPhaseEvent => hostPhaseSubject;
         public IObservable<int> SubmitHostNumberEvent => hostSubmitNumSubject;
         public IObservable<Dictionary<string, int>> ClientPhaseEvent => loadClientPhaseSubject;
+        public IObservable<List<ClientStatus>> ClientStatusEvent => loadClientStatusSubject;
          
         private Subject<string> hostPhaseSubject = new Subject<string>();
         private Subject<int> hostSubmitNumSubject = new Subject<int>();
         private Subject<Dictionary<string, int>> loadClientPhaseSubject = new Subject<Dictionary<string, int>>();
+        private Subject<List<ClientStatus>> loadClientStatusSubject = new Subject<List<ClientStatus>>();
 
         private string[] phases = { HostPhase.SelectNum, HostPhase.PresentQuestion, HostPhase.PresentAnswer };
         
@@ -116,6 +118,29 @@ namespace Host
                 else
                 {
                     Debug.Log("Fetch data failed : " + res.message);
+                }
+            });
+        }
+
+        public void LoadClientStatus(Unit d)
+        {
+            var data = new ReactiveProperty<string>();
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("usernameandstatus");
+            reference.GetValueAsync(10, (res) =>
+            {
+                if (res.success)
+                {
+                    Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
+                    data.Value = res.data.GetRawJsonValue();
+                    data.Subscribe(x =>
+                    {
+                        var statusList = Utility.UtilityRestJson.JsonStatusLoad(x);
+                        //foreach (var item in statusList)
+                        //{
+                        //    Debug.Log($"status: {item.status}, username: {item.username}");
+                        //}
+                        loadClientStatusSubject.OnNext(statusList);
+                    });
                 }
             });
         }
