@@ -25,6 +25,7 @@ namespace Host
         private Subject<Unit> LoadPhaseClientSubject = new Subject<Unit>();
 
         private string nowPhase;
+        private bool canGenerateNumber;
 
         public void InitView()
         {
@@ -63,6 +64,7 @@ namespace Host
             changeHostBingoSubject.OnNext(submitNumber);
         }
 
+        // Clientのフェーズデータ読み取るイベント通知
         public void LoadAllClientPhase()
         {
             LoadPhaseClientSubject.OnNext(Unit.Default);
@@ -71,10 +73,23 @@ namespace Host
         public void OnLoadClientPhase(Dictionary<string, int> _recieveDatas)
         {
             string displayText = "";
-            foreach (var item in _recieveDatas)
+            if (nowPhase == HostPhase.SelectNum)
             {
-                displayText += $"{item.Key} : {item.Value}\n"; 
+                foreach (var item in _recieveDatas)
+                {
+                    displayText += $"{item.Key} : {item.Value}\n";
+                    if (item.Key != UserBingoPhase.Ready) canGenerateNumber = false;
+                    else canGenerateNumber = true;
+                }
             }
+            else
+            {
+                foreach (var item in _recieveDatas)
+                {
+                    displayText += $"{item.Key} : {item.Value}\n";
+                }
+            }
+            
             clientPhaseDataText.text = displayText;
         }
         

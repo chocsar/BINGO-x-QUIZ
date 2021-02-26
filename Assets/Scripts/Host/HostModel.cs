@@ -97,28 +97,26 @@ namespace Host
 
         public void LoadClientPhase(Unit d)
         {
-            string data = "";
+            var data = new ReactiveProperty<string>();
             DatabaseReference reference = FirebaseDatabase.Instance.GetReference("userphase");
             reference.GetValueAsync(10, (res) =>
             {
                 if (res.success)
                 {
                     Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
-                    Debug.Log("res : " + res.data.GetRawJsonValue());
-                    data = res.data.GetRawJsonValue();
+                    data.Value = res.data.GetRawJsonValue();
+                    data.Subscribe(x =>
+                    {
+                        Dictionary<string, string> phaseDic = new Dictionary<string, string>();
+                        phaseDic = Utility.UtilityRestJson.JsonPhaseLoad(x);
+                        loadClientPhaseSubject.OnNext(PhaseCheck(phaseDic));
+                    });
                 }
                 else
                 {
                     Debug.Log("Fetch data failed : " + res.message);
                 }
             });
-
-            var clientData = Utility.UtilityRestJson.JsonPhaseLoad(data);
-            foreach (var item in clientData)
-            {
-                Debug.Log($"{item.Key} : {item.Value}");
-            }
-            loadClientPhaseSubject.OnNext(PhaseCheck(clientData));
         }
 
         // ビンゴの乱数生成
