@@ -15,6 +15,7 @@ namespace Host
         [SerializeField] private InputField sendNumInputField;
         [SerializeField] private Button loadPhaseData;
         [SerializeField] private Text clientPhaseDataText;
+        [SerializeField] private Text alertText;
 
         public IObservable<Unit> ChangeHostPhaseEvent => changeHostPhaseSubject;
         public IObservable<int> ChangeHostBingoNumEvent => changeHostBingoSubject;
@@ -32,6 +33,7 @@ namespace Host
             nextPhaseButton.onClick.AddListener(() => NextPhase());
             generateNumButton.onClick.AddListener(() => SubmitNumber());
             loadPhaseData.onClick.AddListener(() => LoadAllClientPhase());
+            alertText.color = Color.red;
         }
 
         // HostのPhaseが変わった時の見た目の処理
@@ -56,8 +58,20 @@ namespace Host
         // 数字生成のイベント通知
         private void SubmitNumber()
         {
-            if (nowPhase != HostPhase.SelectNum) return;
-            if (string.IsNullOrEmpty(sendNumInputField.text)) return;
+            if (nowPhase != HostPhase.SelectNum)
+            {
+                alertText.text = "SelectNumPhaseではありません。";
+                return;
+            }
+            if (string.IsNullOrEmpty(sendNumInputField.text)) {
+                alertText.text = "数字が入力されていません。";
+                return;
+            }
+            if (!canGenerateNumber)
+            {
+                alertText.text = "全員がready状態ではありません。";
+                return;
+            }
 
             var submitNumber = Int32.Parse(sendNumInputField.text);
 
@@ -73,22 +87,14 @@ namespace Host
         public void OnLoadClientPhase(Dictionary<string, int> _recieveDatas)
         {
             string displayText = "";
-            if (nowPhase == HostPhase.SelectNum)
+            if (nowPhase == HostPhase.SelectNum && _recieveDatas[UserBingoPhase.BeforeAnswer] == 0 && _recieveDatas[UserBingoPhase.Answer] == 0 && _recieveDatas[UserBingoPhase.AfterAnswer] == 0 && _recieveDatas[UserBingoPhase.Open] == 0) canGenerateNumber = true;
+            else canGenerateNumber = false;
+
+            foreach (var item in _recieveDatas)
             {
-                foreach (var item in _recieveDatas)
-                {
-                    displayText += $"{item.Key} : {item.Value}\n";
-                    if (item.Key != UserBingoPhase.Ready) canGenerateNumber = false;
-                    else canGenerateNumber = true;
-                }
+                displayText += $"{item.Key} : {item.Value}\n";
             }
-            else
-            {
-                foreach (var item in _recieveDatas)
-                {
-                    displayText += $"{item.Key} : {item.Value}\n";
-                }
-            }
+
             
             clientPhaseDataText.text = displayText;
         }

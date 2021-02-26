@@ -22,6 +22,7 @@ namespace Host
         private string[] phases = { HostPhase.SelectNum, HostPhase.PresentQuestion, HostPhase.PresentAnswer };
         
         private int nowPhaseNum;
+        private List<int> useNumberList = new List<int>();
 
         public void InitModel()
         {
