@@ -43,8 +43,15 @@ public class BingoModel : MonoBehaviour
     /// <returns></returns>
     public bool HasNumber(int number)
     {
+        bool hasNumber = false;
+
         for (int index = 0; index < bingoCellModels.Length; index++)
         {
+            //もしHit状態だった場合はDefaultに戻す
+            if (bingoCellModels[index].GetStatus() == BingoCellStatus.Hit)
+            {
+                SetCellStatus(index, BingoCellStatus.Default);
+            }
             //数字を持っていた場合
             if (bingoCellModels[index].GetNumber() == number)
             {
@@ -54,11 +61,11 @@ public class BingoModel : MonoBehaviour
                 //Hit状態にする
                 SetCellStatus(index, BingoCellStatus.Hit);
 
-                return true;
+                hasNumber = true;
             }
         }
 
-        return false;
+        return hasNumber;
     }
 
     /// <summary>
