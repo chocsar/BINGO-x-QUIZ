@@ -112,6 +112,8 @@ public class BingoPresenter : MonoBehaviour
                     bingoModel.SetUserBingoPhase(UserBingoPhase.Ready);
                 }
 
+                //一定時間でOpenからReadyに遷移する
+                Invoke("OpenCellByTime", 10);
                 break;
         }
     }
@@ -137,6 +139,14 @@ public class BingoPresenter : MonoBehaviour
         bingoModel.SetCellStatus(index, BingoCellStatus.Open);
         //Readyフェーズへ遷移
         bingoModel.SetUserBingoPhase(UserBingoPhase.Ready);
+    }
+
+    private void OpenCellByTime()
+    {
+        if (bingoModel.GetUserBingoPhase() == UserBingoPhase.Open)
+        {
+            OpenCell(bingoModel.GetCurrentNumIndex());
+        }
     }
 
     private void UpdateCellView(BingoCellModel bingoCellModel)
