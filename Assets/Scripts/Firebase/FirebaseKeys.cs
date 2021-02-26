@@ -10,6 +10,7 @@
     public const string Host = "Host";
     public const string HostPhase = "phase";
     public const string HostNumbers = "numbers";
+    public const string HostPhaseOnly = "HostPhase";
 
     public const string UserPhaseOnly = "userphase";
     public const string UserNameAndStatusOnly = "usernameandstatus";
