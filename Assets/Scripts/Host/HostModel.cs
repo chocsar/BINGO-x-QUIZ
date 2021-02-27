@@ -48,7 +48,7 @@ namespace Host
 
         private void DeleteAllNumbers()
         {
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/numbers");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
             reference.RemoveValueAsync(10, (e) =>
             {
                 if (e.success)
@@ -65,7 +65,7 @@ namespace Host
         // DataBaseにあるHostのPhase変更処理とPresenterにイベントの通知
         private void SetHostPhase(string _phase)
         {
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/phase");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");
             reference.SetValueAsync(_phase, 10, (res) =>
             {
                 if (res.success)
@@ -84,7 +84,7 @@ namespace Host
         // 数字を送る
         private void SubmissionNumber(int num)
         {
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/numbers");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
             reference.Push(num, 10, (res)=>{
                 if (res.success)
                 {
@@ -101,7 +101,7 @@ namespace Host
         public void LoadClientPhase(Unit d)
         {
             var data = new ReactiveProperty<string>();
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("userphase");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference(FirebaseKeys.UserPhaseOnly);
             reference.GetValueAsync(10, (res) =>
             {
                 if (res.success)
@@ -125,7 +125,7 @@ namespace Host
         public void LoadClientStatus(Unit d)
         {
             var data = new ReactiveProperty<string>();
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("usernameandstatus");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference(FirebaseKeys.UserNameAndStatusOnly);
             reference.GetValueAsync(10, (res) =>
             {
                 if (res.success)
