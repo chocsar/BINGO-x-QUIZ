@@ -8,6 +8,9 @@ using System;
 
 public class keyboardClass : MonoBehaviour, ISelectHandler {
 
+	BaseEventData baseData;
+	[SerializeField] InputTextManager manager;
+
 	[DllImport("__Internal")]
 	private static extern void focusHandleAction (string _name, string _str);
 
@@ -16,11 +19,23 @@ public class keyboardClass : MonoBehaviour, ISelectHandler {
 	}
 
 	public void OnSelect(BaseEventData data) {
+		//Debug.Log(data);
+		baseData = data;
+		CheckOnSelect();
+	}
+	public void CheckOnSelect()
+    {
 		#if UNITY_WEBGL
-		try{
-			focusHandleAction (gameObject.name, gameObject.GetComponent<InputField> ().text);
+		try
+		{
+			focusHandleAction(gameObject.name, gameObject.GetComponent<InputField>().text);
+			Debug.Log("call");
+			manager.TextLenChecker();
 		}
-		catch(Exception error){}
+		catch (Exception error)
+		{
+			Debug.Log("call2");
+		}
 		#endif
 	}
 }
