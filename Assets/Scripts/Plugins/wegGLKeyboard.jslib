@@ -7,7 +7,7 @@
             } else {
                 //send data to unity
                 SendMessage(Pointer_stringify(_name), 'ReceiveInputData', _inputTextData);
-            }  
+            }
         }
     },
 });
