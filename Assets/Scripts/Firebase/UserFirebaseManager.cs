@@ -15,6 +15,7 @@ public class UserFirebaseManager : MonoBehaviour
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference hostPhaseRef;
     private DatabaseReference hostNumsRef;
+    private DatabaseReference hostPhaseOnlyRef;
     private DatabaseReference usersRef;
     private DatabaseReference userNameRef;
     private DatabaseReference userStatusRef;
@@ -31,6 +32,7 @@ public class UserFirebaseManager : MonoBehaviour
         firebaseDatabase = FirebaseDatabase.Instance;
         hostPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");
         hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
+        hostPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.HostPhaseOnly}/{FirebaseKeys.HostPhase}");
         usersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}");
 
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
@@ -53,7 +55,8 @@ public class UserFirebaseManager : MonoBehaviour
         userPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.UserPhaseOnly}/{userKey}");
 
         //ホストの変更を監視
-        hostPhaseRef.ValueChanged += OnChangeHostPhase;
+        //hostPhaseRef.ValueChanged += OnChangeHostPhase;
+        hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
 
         //BingoPresenterのイベントを監視
