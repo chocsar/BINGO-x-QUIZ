@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FirebaseREST;
 using UnityEngine;
 using System;
@@ -14,10 +13,12 @@ namespace Host
         public IObservable<string> SubmitHostPhaseEvent => hostPhaseSubject;
         public IObservable<int> SubmitHostNumberEvent => hostSubmitNumSubject;
         public IObservable<Dictionary<string, int>> ClientPhaseEvent => loadClientPhaseSubject;
+        public IObservable<List<ClientStatus>> ClientStatusEvent => loadClientStatusSubject;
          
         private Subject<string> hostPhaseSubject = new Subject<string>();
         private Subject<int> hostSubmitNumSubject = new Subject<int>();
         private Subject<Dictionary<string, int>> loadClientPhaseSubject = new Subject<Dictionary<string, int>>();
+        private Subject<List<ClientStatus>> loadClientStatusSubject = new Subject<List<ClientStatus>>();
 
         private string[] phases = { HostPhase.SelectNum, HostPhase.PresentQuestion, HostPhase.PresentAnswer };
         
@@ -46,7 +47,7 @@ namespace Host
 
         private void DeleteAllNumbers()
         {
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/numbers");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
             reference.RemoveValueAsync(10, (e) =>
             {
                 if (e.success)
@@ -63,7 +64,7 @@ namespace Host
         // DataBaseにあるHostのPhase変更処理とPresenterにイベントの通知
         private void SetHostPhase(string _phase)
         {
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/phase");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");
             reference.SetValueAsync(_phase, 10, (res) =>
             {
                 if (res.success)
@@ -82,7 +83,7 @@ namespace Host
         // 数字を送る
         private void SubmissionNumber(int num)
         {
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("Host/numbers");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
             reference.Push(num, 10, (res)=>{
                 if (res.success)
                 {
@@ -99,7 +100,7 @@ namespace Host
         public void LoadClientPhase(Unit d)
         {
             var data = new ReactiveProperty<string>();
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference("userphase");
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference(FirebaseKeys.UserPhaseOnly);
             reference.GetValueAsync(10, (res) =>
             {
                 if (res.success)
@@ -120,10 +121,23 @@ namespace Host
             });
         }
 
-        // ビンゴの乱数生成
-        private int RandomGenerateNumber()
+        public void LoadClientStatus(Unit d)
         {
-            return UnityEngine.Random.Range(1, 26);
+            var data = new ReactiveProperty<string>();
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference(FirebaseKeys.UserNameAndStatusOnly);
+            reference.GetValueAsync(10, (res) =>
+            {
+                if (res.success)
+                {
+                    Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
+                    data.Value = res.data.GetRawJsonValue();
+                    data.Subscribe(x =>
+                    {
+                        var statusList = Utility.UtilityRestJson.JsonStatusLoad(x);
+                        loadClientStatusSubject.OnNext(statusList);
+                    });
+                }
+            });
         }
 
         private Dictionary<string, int> PhaseCheck(Dictionary<string, string> dic)
