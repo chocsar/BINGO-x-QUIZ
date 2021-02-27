@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using FirebaseREST;
 using UnityEngine;
 using System;
@@ -135,20 +134,10 @@ namespace Host
                     data.Subscribe(x =>
                     {
                         var statusList = Utility.UtilityRestJson.JsonStatusLoad(x);
-                        //foreach (var item in statusList)
-                        //{
-                        //    Debug.Log($"status: {item.status}, username: {item.username}");
-                        //}
                         loadClientStatusSubject.OnNext(statusList);
                     });
                 }
             });
-        }
-
-        // ビンゴの乱数生成
-        private int RandomGenerateNumber()
-        {
-            return UnityEngine.Random.Range(1, 26);
         }
 
         private Dictionary<string, int> PhaseCheck(Dictionary<string, string> dic)
