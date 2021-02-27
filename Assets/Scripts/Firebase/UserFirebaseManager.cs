@@ -14,26 +14,19 @@ public class UserFirebaseManager : MonoBehaviour
     //FirebaseDatabase
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference hostPhaseRef;
-    private DatabaseReference hostNumsRef;
     private DatabaseReference hostPhaseOnlyRef;
-    private DatabaseReference usersRef;
-    private DatabaseReference userNameRef;
-    private DatabaseReference userStatusRef;
-    private DatabaseReference userPhaseRef;
-    private DatabaseReference userNumbersRef;
-    private DatabaseReference userPhaseOnlyRef;
+    private DatabaseReference hostNumsRef;
 
     //ユーザーごとのKey
     private string userKey;
 
     private void Start()
     {
-        //FirebaseDatabaseへの参照を保持（usersとHost）
+        //FirebaseDatabaseへの参照を保持
         firebaseDatabase = FirebaseDatabase.Instance;
-        hostPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");
-        hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
+        //hostPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");　//TODO:Host側でHostPhaseのセーブを修正する
         hostPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.HostPhaseOnly}/{FirebaseKeys.HostPhase}");
-        usersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}");
+        hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
 
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
         {
@@ -47,15 +40,8 @@ public class UserFirebaseManager : MonoBehaviour
             CreateUserKey(); //デバッグ用
         }
 
-        //FirebaseDatabaseへの参照を保持（usersにある自分のデータ）
-        userNameRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserName}");
-        userPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserPhase}");
-        userStatusRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserStatus}");
-        userNumbersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}");
-        userPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.UserPhaseOnly}/{userKey}");
-
         //ホストの変更を監視
-        //hostPhaseRef.ValueChanged += OnChangeHostPhase;
+        //hostPhaseRef.ValueChanged += OnChangeHostPhase; //TODO:Host側でHostPhaseのセーブを修正する
         hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
 
@@ -136,8 +122,6 @@ public class UserFirebaseManager : MonoBehaviour
     //Firebaseへのデータのセーブ処理
     private void SaveUserName(string name)
     {
-        //userNameRef.SetValueAsync(name, 10, (res) => { });
-
         //複数箇所に同時に書き込む実装に変更
         Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
         childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserName}"] = name;
@@ -146,8 +130,6 @@ public class UserFirebaseManager : MonoBehaviour
     }
     private void SaveUserBingoStatus(string status)
     {
-        //userStatusRef.SetValueAsync(status, 10, (res) => { });
-
         //複数箇所に同時に書き込む実装に変更
         Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
         childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserStatus}"] = status;
@@ -157,8 +139,6 @@ public class UserFirebaseManager : MonoBehaviour
     }
     private void SaveUserBingoPhase(string phase)
     {
-        //userPhaseRef.SetValueAsync(phase, 10, (res) => { });
-
         //複数箇所に同時に書き込む実装に変更
         Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
         childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserPhase}"] = phase;
@@ -168,8 +148,8 @@ public class UserFirebaseManager : MonoBehaviour
     private void SaveUserNumber(BingoCellModel bingoCellModel)
     {
         string json = JsonUtility.ToJson(bingoCellModel);
-        userNumbersRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}/{FirebaseKeys.UserNumber}{bingoCellModel.GetIndex()}");
-        userNumbersRef.SetRawJsonValueAsync(json, 10, (res) => { });
+        DatabaseReference userNumberRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}/{FirebaseKeys.UserNumber}{bingoCellModel.GetIndex()}");
+        userNumberRef.SetRawJsonValueAsync(json, 10, (res) => { });
 
         //TODO:CellのstatusがCanOpenなら，Openとして保存しておくほうがいいと思う
 
