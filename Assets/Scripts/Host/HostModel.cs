@@ -77,6 +77,19 @@ namespace Host
                 }
             });
 
+            reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.HostPhaseOnly}");
+            reference.SetValueAsync(_phase, 10, (res) =>
+            {
+                if (res.success)
+                {
+                    Debug.Log("Write success");
+                }
+                else
+                {
+                    Debug.Log("Write failed : " + res.message);
+                }
+            });
+
             hostPhaseSubject.OnNext(_phase);
         }
 
