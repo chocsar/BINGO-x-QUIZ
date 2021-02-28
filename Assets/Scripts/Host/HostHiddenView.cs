@@ -24,8 +24,11 @@ public class HostHiddenView : MonoBehaviour
 
     private void SubmitCommand()
     {
-        var commandString = commandInputField.text;
-        commandSubject.OnNext(commandString);
+        if (!string.IsNullOrEmpty(commandInputField.text))
+        {
+            var commandString = commandInputField.text;
+            commandSubject.OnNext(commandString);
+        }
     }
 
     public void ReceiveResult(string _resultData)
