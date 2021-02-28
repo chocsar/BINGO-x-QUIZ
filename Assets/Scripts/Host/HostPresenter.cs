@@ -15,6 +15,7 @@ namespace Host
         public IObservable<int> SubmitHostNumberEvent => hostModel.SubmitHostNumberEvent;
         public IObservable<Dictionary<string, int>> LoadHostPhaseEvent => hostModel.ClientPhaseEvent;
         public IObservable<List<ClientStatus>> LoadHostStatusEvent => hostModel.ClientStatusEvent;
+        public IObservable<string> SubmitAlertTextEvent => hostModel.AlertEvent;
 
         // View側のイベント通知
         public IObservable<Unit> ChangeHostPhaseEvent => hostView.ChangeHostPhaseEvent;
@@ -33,6 +34,7 @@ namespace Host
             hostModel.SubmitHostNumberEvent.Subscribe(hostView.RecieveHostNum).AddTo(gameObject);
             hostModel.ClientPhaseEvent.Subscribe(hostView.OnLoadClientPhase).AddTo(gameObject);
             hostModel.ClientStatusEvent.Subscribe(hostView.OnLoadClientStatus).AddTo(gameObject);
+            hostModel.AlertEvent.Subscribe(hostView.AlertDisplay).AddTo(gameObject);
 
             hostModel.InitModel();
             hostView.InitView();

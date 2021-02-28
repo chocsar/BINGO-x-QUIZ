@@ -14,22 +14,24 @@ namespace Host
         public IObservable<int> SubmitHostNumberEvent => hostSubmitNumSubject;
         public IObservable<Dictionary<string, int>> ClientPhaseEvent => loadClientPhaseSubject;
         public IObservable<List<ClientStatus>> ClientStatusEvent => loadClientStatusSubject;
+        public IObservable<string> AlertEvent => alertDisplaySubject;
          
         private Subject<string> hostPhaseSubject = new Subject<string>();
         private Subject<int> hostSubmitNumSubject = new Subject<int>();
         private Subject<Dictionary<string, int>> loadClientPhaseSubject = new Subject<Dictionary<string, int>>();
         private Subject<List<ClientStatus>> loadClientStatusSubject = new Subject<List<ClientStatus>>();
+        private Subject<string> alertDisplaySubject = new Subject<string>();
 
         private string[] phases = { HostPhase.SelectNum, HostPhase.PresentQuestion, HostPhase.PresentAnswer };
         
         private int nowPhaseNum;
+        private string nowHostPhase;
         private List<int> useNumberList = new List<int>();
 
         public void InitModel()
         {
             nowPhaseNum = 0;
             SetHostPhase(HostPhase.SelectNum);
-            DeleteAllNumbers();
         }
 
         // HostのPhaseが変わった時の処理
@@ -40,25 +42,10 @@ namespace Host
             SetHostPhase(phases[nowPhaseNum]);
         }
 
+        // ホストでビンゴの数字が送られてきた時の処理
         public void OnChangeHostBingoNum(int num)
         {
             SubmissionNumber(num);
-        }
-
-        private void DeleteAllNumbers()
-        {
-            DatabaseReference reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
-            reference.RemoveValueAsync(10, (e) =>
-            {
-                if (e.success)
-                {
-                    Debug.Log("Delete data success");
-                }
-                else
-                {
-                    Debug.Log("Delete data failed : " + e.message);
-                }
-            });
         }
 
         // DataBaseにあるHostのPhase変更処理とPresenterにイベントの通知
@@ -90,14 +77,50 @@ namespace Host
                 }
             });
 
+            nowHostPhase = _phase;
+
             hostPhaseSubject.OnNext(_phase);
         }
 
         // 数字を送る
         private void SubmissionNumber(int num)
         {
+            var data = new ReactiveProperty<string>();
+            DatabaseReference reference = FirebaseDatabase.Instance.GetReference(FirebaseKeys.UserPhaseOnly);
+            reference.GetValueAsync(10, (res) =>
+            {
+                if (res.success)
+                {
+                    data.Value = res.data.GetRawJsonValue();
+                    data.Subscribe(x =>
+                    {
+                        Dictionary<string, string> phaseDic = new Dictionary<string, string>();
+                        phaseDic = Utility.UtilityRestJson.JsonPhaseLoad(x);
+                        if (nowHostPhase == HostPhase.SelectNum)
+                        {
+                            var phaseCheck = PhaseCheck(phaseDic);
+                            if (nowHostPhase == HostPhase.SelectNum && phaseCheck[UserBingoPhase.BeforeAnswer] == 0 && phaseCheck[UserBingoPhase.Answer] == 0 && phaseCheck[UserBingoPhase.AfterAnswer] == 0 && phaseCheck[UserBingoPhase.Open] == 0)
+                                PossibleSubmittionNumber(num);
+                            else
+                            {
+                                loadClientPhaseSubject.OnNext(PhaseCheck(phaseDic));
+                                alertDisplaySubject.OnNext("全員がready状態ではありません。");
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    Debug.Log("Fetch data failed : " + res.message);
+                }
+            });
+        }
+
+        private void PossibleSubmittionNumber(int num)
+        {
             DatabaseReference reference = FirebaseDatabase.Instance.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
-            reference.Push(num, 10, (res)=>{
+            reference.Push(num, 10, (res) =>
+            {
                 if (res.success)
                 {
                     Debug.Log("Pushed with id: " + res.data);
@@ -107,9 +130,11 @@ namespace Host
                     Debug.Log("Push failed : " + res.message);
                 }
             });
+
             hostSubmitNumSubject.OnNext(num);
         }
 
+        // Firebaseに登録されている全クラインアントのフェーズを取得
         public void LoadClientPhase(Unit d)
         {
             var data = new ReactiveProperty<string>();
