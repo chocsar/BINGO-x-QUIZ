@@ -13,7 +13,6 @@ public class UserFirebaseManager : MonoBehaviour
 
     //FirebaseDatabase
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference hostPhaseRef;
     private DatabaseReference hostPhaseOnlyRef;
     private DatabaseReference hostNumsRef;
 
@@ -24,8 +23,7 @@ public class UserFirebaseManager : MonoBehaviour
     {
         //FirebaseDatabaseへの参照を保持
         firebaseDatabase = FirebaseDatabase.Instance;
-        //hostPhaseRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostPhase}");　//TODO:Host側でHostPhaseのセーブを修正する
-        hostPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.HostPhaseOnly}/{FirebaseKeys.HostPhase}");
+        hostPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.HostPhaseOnly}");
         hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
 
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
@@ -41,7 +39,6 @@ public class UserFirebaseManager : MonoBehaviour
         }
 
         //ホストの変更を監視
-        //hostPhaseRef.ValueChanged += OnChangeHostPhase; //TODO:Host側でHostPhaseのセーブを修正する
         hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
 
