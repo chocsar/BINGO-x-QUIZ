@@ -51,7 +51,7 @@ public class HostHidddenModel : MonoBehaviour
                     {
                         if (clientphase.Value != _status)
                         {
-                            UpdateDatabase(FirebaseKeys.UserPhaseOnly, clientphase, _status);
+                            UpdatePhaseDatabase(clientphase, _status);
                         }
                     }
                     commandResultSubject.OnNext("ALL CLIENT PHASE IS READY");
@@ -65,12 +65,12 @@ public class HostHidddenModel : MonoBehaviour
         });
     }
 
-    private void UpdateDatabase(string _path, KeyValuePair<string, string> phaseDic, string _updateValueData)
+    private void UpdatePhaseDatabase(KeyValuePair<string, string> phaseDic, string _updateValueData)
     {
         Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
-        childUpdates[phaseDic.Key] = _updateValueData;
-        DatabaseReference reference = FirebaseDatabase.Instance.GetReference(_path);
-        Debug.Log(childUpdates);
+        childUpdates[$"{FirebaseKeys.UserPhaseOnly}/{phaseDic.Key}"] = _updateValueData;
+        childUpdates[$"{FirebaseKeys.Users}/{phaseDic.Key}/{FirebaseKeys.UserPhase}"] = _updateValueData;
+        DatabaseReference reference = FirebaseDatabase.Instance.GetReference("/");
         reference.UpdateChildAsync(childUpdates, 10, (res) => { });
     }
 
