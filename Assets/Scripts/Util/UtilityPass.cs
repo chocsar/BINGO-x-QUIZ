@@ -124,6 +124,7 @@ namespace Utility
                 //Debug.Log(individualItem[1]);
                 BingoCellModel status = JsonUtility.FromJson<BingoCellModel>(individualItem[1]);
                 cellModels[i] = status;
+                //Debug.Log(cellModels[i].GetNumber());
             }
 
             return cellModels;
