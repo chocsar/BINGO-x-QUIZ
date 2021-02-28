@@ -23,11 +23,55 @@ public class HostHidddenModel : MonoBehaviour
         {
             DeleteAllNumbers();
         }
+        else if(_command == CommandList.changeAllClientReady)
+        {
+            UpdateAllClientStatus(UserBingoPhase.Ready);
+        }
         else
         {
             commandResultSubject.OnNext("DO NOT RUN COMMAND");
             commandColorSubject.OnNext(Color.red);
         }
+    }
+
+    private void UpdateAllClientStatus(string _status)
+    {
+        var data = new ReactiveProperty<string>();
+        DatabaseReference reference = FirebaseDatabase.Instance.GetReference(FirebaseKeys.UserPhaseOnly);
+        reference.GetValueAsync(10, (res) =>
+        {
+            if (res.success)
+            {
+                data.Value = res.data.GetRawJsonValue();
+                data.Subscribe(x =>
+                {
+                    Dictionary<string, string> phaseDic = new Dictionary<string, string>();
+                    phaseDic = Utility.UtilityRestJson.JsonPhaseLoad(x);
+                    foreach (var clientphase in phaseDic)
+                    {
+                        if (clientphase.Value != _status)
+                        {
+                            UpdateDatabase(FirebaseKeys.UserPhaseOnly, clientphase, _status);
+                        }
+                    }
+                    commandResultSubject.OnNext("ALL CLIENT PHASE IS READY");
+                    commandColorSubject.OnNext(Color.white);
+                });
+            }
+            else
+            {
+                Debug.Log("Fetch data failed : " + res.message);
+            }
+        });
+    }
+
+    private void UpdateDatabase(string _path, KeyValuePair<string, string> phaseDic, string _updateValueData)
+    {
+        Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
+        childUpdates[phaseDic.Key] = _updateValueData;
+        DatabaseReference reference = FirebaseDatabase.Instance.GetReference(_path);
+        Debug.Log(childUpdates);
+        reference.UpdateChildAsync(childUpdates, 10, (res) => { });
     }
 
     // ホストのデータベースに登録されている数字を全削除
