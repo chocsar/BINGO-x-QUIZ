@@ -89,6 +89,13 @@ public class BingoPresenter : MonoBehaviour
         switch (phase)
         {
             case HostPhase.SelectNum:
+                //何かの理由で正規のフェーズ遷移が行われなかった場合の対策
+                if (bingoModel.GetUserBingoPhase() == UserBingoPhase.BeforeAnswer ||
+                    bingoModel.GetUserBingoPhase() == UserBingoPhase.Answer ||
+                    bingoModel.GetUserBingoPhase() == UserBingoPhase.AfterAnswer)
+                {
+                    bingoModel.SetUserBingoPhase(UserBingoPhase.Ready);
+                }
                 break;
 
             case HostPhase.PresentQuestion:
