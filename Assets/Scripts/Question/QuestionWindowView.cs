@@ -20,6 +20,8 @@ public class QuestionWindowView : MonoBehaviour
     [SerializeField] private Text questionText;
     [SerializeField] private GameObject choices;
     [SerializeField] private Button[] choiceButtons;
+    [SerializeField] private Text[] choiceTexts;
+    [SerializeField] private Image[] choiceImages;
     [SerializeField] private Slider timeSlider;
     [SerializeField] private Button enterButton;
     [SerializeField] private GameObject entered;
@@ -39,6 +41,7 @@ public class QuestionWindowView : MonoBehaviour
 
     private void Start()
     {
+
         choiceButtons[0].GetComponent<Button>().onClick.AddListener(ChoseButton0);
         choiceButtons[1].GetComponent<Button>().onClick.AddListener(ChoseButton1);
         choiceButtons[2].GetComponent<Button>().onClick.AddListener(ChoseButton2);
@@ -75,17 +78,17 @@ public class QuestionWindowView : MonoBehaviour
 
     private void OnEnable()
     {
-        //テスト用
-        SetQuestionNumber(1);
+        //デバッグ用
+        //SetQuestionNumber(UnityEngine.Random.Range(0, 26));
 
         //問題のロード
         StartCoroutine(GetText()); //TODO:処理が終わるまで待機したい
 
         //初期化処理
         choices.SetActive(false);
-        choiceButtons[0].GetComponent<Image>().enabled = false;
-        choiceButtons[1].GetComponent<Image>().enabled = false;
-        choiceButtons[2].GetComponent<Image>().enabled = false;
+        choiceImages[0].enabled = false;
+        choiceImages[1].enabled = false;
+        choiceImages[2].enabled = false;
         entered.SetActive(false);
         rightObj.SetActive(false);
         wrongObj.SetActive(false);
@@ -97,6 +100,16 @@ public class QuestionWindowView : MonoBehaviour
 
         //問題の開始
         isPlaying = true;
+    }
+
+    private void OnDisable()
+    {
+        //テキストのリセット
+        questionText.text = string.Empty;
+        questionNumberText.text = string.Empty;
+        choiceTexts[0].text = string.Empty;
+        choiceTexts[1].text = string.Empty;
+        choiceTexts[2].text = string.Empty;
     }
 
     public void SetQuestionNumber(int number)
@@ -156,9 +169,9 @@ public class QuestionWindowView : MonoBehaviour
                 questionText.text = question;
                 questionNumberText.text = String.Format("{0:00}", id);
 
-                choiceButtons[0].GetComponentInChildren<Text>().text = choicese1;
-                choiceButtons[1].GetComponentInChildren<Text>().text = choicese2;
-                choiceButtons[2].GetComponentInChildren<Text>().text = choicese3;
+                choiceTexts[0].text = choicese1;
+                choiceTexts[1].text = choicese2;
+                choiceTexts[2].text = choicese3;
                 break;
             }
         }
@@ -169,9 +182,9 @@ public class QuestionWindowView : MonoBehaviour
         if (isPlaying)
         {
             playerAnswerNum = 1;
-            choiceButtons[0].GetComponent<Image>().enabled = true;
-            choiceButtons[1].GetComponent<Image>().enabled = false;
-            choiceButtons[2].GetComponent<Image>().enabled = false;
+            choiceImages[0].enabled = true;
+            choiceImages[1].enabled = false;
+            choiceImages[2].enabled = false;
             isAnswerSetted = true;
         }
     }
@@ -181,9 +194,9 @@ public class QuestionWindowView : MonoBehaviour
         if (isPlaying)
         {
             playerAnswerNum = 2;
-            choiceButtons[0].GetComponent<Image>().enabled = false;
-            choiceButtons[1].GetComponent<Image>().enabled = true;
-            choiceButtons[2].GetComponent<Image>().enabled = false;
+            choiceImages[0].enabled = false;
+            choiceImages[1].enabled = true;
+            choiceImages[2].enabled = false;
             isAnswerSetted = true;
         }
     }
@@ -193,9 +206,9 @@ public class QuestionWindowView : MonoBehaviour
         if (isPlaying)
         {
             playerAnswerNum = 3;
-            choiceButtons[0].GetComponent<Image>().enabled = false;
-            choiceButtons[1].GetComponent<Image>().enabled = false;
-            choiceButtons[2].GetComponent<Image>().enabled = true;
+            choiceImages[0].enabled = false;
+            choiceImages[1].enabled = false;
+            choiceImages[2].enabled = true;
             isAnswerSetted = true;
         }
     }

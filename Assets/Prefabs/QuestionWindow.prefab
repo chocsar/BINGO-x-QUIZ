@@ -1070,7 +1070,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7440791753992944540
 Transform:
   m_ObjectHideFlags: 0
@@ -1107,6 +1107,14 @@ MonoBehaviour:
   - {fileID: 7440791754187731768}
   - {fileID: 7440791754411465411}
   - {fileID: 7440791753504985061}
+  choiceTexts:
+  - {fileID: 7440791753539177903}
+  - {fileID: 7440791752716608706}
+  - {fileID: 7440791754335880986}
+  choiceImages:
+  - {fileID: 7440791754187731775}
+  - {fileID: 7440791754411465410}
+  - {fileID: 7440791753504985060}
   timeSlider: {fileID: 7440791752931431936}
   enterButton: {fileID: 7440791754282001309}
   entered: {fileID: 8099800646866468524}
