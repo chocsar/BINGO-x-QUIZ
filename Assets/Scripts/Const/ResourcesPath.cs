@@ -6,5 +6,6 @@
     public const string DeadCell = "Images/Cells/Dead/Dead";
     public const string ReachOn = "Images/ReachOn";
     public const string ReachOff = "Images/ReachOff";
+    public const string CenterCell = "Images/Cells/BINGO";
 
 }

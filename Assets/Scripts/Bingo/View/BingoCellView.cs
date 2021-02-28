@@ -25,24 +25,32 @@ public class BingoCellView : MonoBehaviour
 
     public void SetCellImage(int number, string status)
     {
-        switch (status)
+        //Centerセルの場合
+        if (number == -1)
         {
-            case BingoCellStatus.Default:
-                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.NormalCell + number.ToString());
-                break;
-            case BingoCellStatus.Hit:
-                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.HitCell + number.ToString());
-                break;
-            case BingoCellStatus.CanOpen:
-                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.HitCell + number.ToString());
-                canOpen = true;
-                break;
-            case BingoCellStatus.Open:
-                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.OpenCell + number.ToString());
-                break;
-            case BingoCellStatus.Dead:
-                cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.DeadCell + number.ToString());
-                break;
+            cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.CenterCell);
+        }
+        else
+        {
+            switch (status)
+            {
+                case BingoCellStatus.Default:
+                    cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.NormalCell + number.ToString());
+                    break;
+                case BingoCellStatus.Hit:
+                    cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.HitCell + number.ToString());
+                    break;
+                case BingoCellStatus.CanOpen:
+                    cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.HitCell + number.ToString());
+                    canOpen = true;
+                    break;
+                case BingoCellStatus.Open:
+                    cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.OpenCell + number.ToString());
+                    break;
+                case BingoCellStatus.Dead:
+                    cellImage.sprite = Resources.Load<Sprite>(ResourcesPath.DeadCell + number.ToString());
+                    break;
+            }
         }
     }
 
