@@ -33,8 +33,15 @@ namespace Utility
         }
     }
 
+
+
     public static class UtilityRestJson
     {
+        /// <summary>
+        /// { {RandomKey: value},{RandomKey: value}, ... }
+        /// </summary>
+        /// <param name="_data"></param>
+        /// <returns></returns>
         public static Dictionary<string, string> JsonPhaseLoad(string _data)
         {
             Debug.Log(_data);
@@ -54,6 +61,13 @@ namespace Utility
             return phaseDic;
         }
 
+        /// <summary>
+        /// {
+        ///   RandomKey:{status: value, username: value},RandomKey:{status: value, username: value}, ... 
+        /// }
+        /// </summary>
+        /// <param name="_data"></param>
+        /// <returns></returns>
         public static List<ClientStatus> JsonStatusLoad(string _data)
         {
             List<ClientStatus> clientStatuses = new List<ClientStatus>();
@@ -79,7 +93,40 @@ namespace Utility
             }
 
             return clientStatuses;
-            
+        }
+
+        /// <summary>
+        /// {
+        ///   RandomKey:{status: value, username: value},RandomKey:{status: value, username: value}, ... 
+        /// }
+        /// </summary>
+        /// <param name="_data"></param>
+        /// <returns></returns>
+        public static BingoCellModel[] JsonUserDataLoad(string _data)
+        {
+            BingoCellModel[] cellModels = new BingoCellModel[9];
+
+            string[] comma = { "}," };
+            string[] colon = { ":{" };
+            Dictionary<string, string> statusDic = new Dictionary<string, string>();
+            var data = _data;
+            data = data.TrimStart('{').TrimEnd('}');
+            var datas = data.Split(comma, StringSplitOptions.None);
+            for (int i = 0; i < datas.Length; i++)
+            {
+                datas[i] += "}";
+                //Debug.Log(datas[i]);
+            }
+            for (int i = 0; i < datas.Length; i++)
+            {
+                var individualItem = datas[i].Split(colon, StringSplitOptions.None);
+                individualItem[1] = "{" + individualItem[1];
+                //Debug.Log(individualItem[1]);
+                BingoCellModel status = JsonUtility.FromJson<BingoCellModel>(individualItem[1]);
+                cellModels[i] = status;
+            }
+
+            return cellModels;
         }
     }
 }
