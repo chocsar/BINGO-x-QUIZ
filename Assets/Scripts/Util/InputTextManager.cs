@@ -2,41 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Runtime.InteropServices;
+using System;
 
-public class InputTextManager : MonoBehaviour
+public class InputTextManager : MonoBehaviour , ISelectHandler
 {
-    [SerializeField] GameObject mainInputField;
-    bool firstInput = true;
 
-    // Start is called before the first frame update
-    void Start()
+    [DllImport("__Internal")]
+    private static extern void focusHandleAction(string _name, string _str);
+
+    public void ReceiveInputData(string value)
     {
-        //mainInputField.onEndEdit.AddListener(delegate { LockInput(mainInputField); });
+        gameObject.GetComponent<InputField>().text = value;
     }
 
-    private void Update()
-    {
-        //Debug.Log(textLength);
-        //textLength = mainInputField.GetComponent<InputField>().text.Length;
-        /*if (mainInputField.GetComponent<InputField>().text.Length == 0 && !firstInput)
-        {
-            mainInputField.GetComponent<keyboardClass>().CheckOnSelect();
-        }*/
-    }
 
-    // Update is called once per frame
-    public void OnEndText()
-    {
-        //mainInputField.text = "Enter Your Name...";
-        firstInput = false;
-        mainInputField.GetComponent<keyboardClass>().CheckOnSelect();
-    }
 
     public void TextLenChecker()
     {
-        if (mainInputField.GetComponent<InputField>().text.Length == 0)
+        if (gameObject.GetComponent<InputField>().text.Length == 0)
         {
-            mainInputField.GetComponent<keyboardClass>().CheckOnSelect();
+            OnChecker();
         }
+    }
+
+    public void OnSelect(BaseEventData eventData)
+    {
+        #if UNITY_WEBGL
+        try
+        {
+            focusHandleAction(gameObject.name, gameObject.GetComponent<InputField>().text);
+            Invoke("TextLenChecker", 0.3f);
+        }
+        catch (Exception error) { }
+        #endif
+    }
+
+    void OnChecker()
+    {
+        #if UNITY_WEBGL
+        try
+        {
+            focusHandleAction(gameObject.name, gameObject.GetComponent<InputField>().text);
+            Invoke("TextLenChecker", 0.3f);
+        }
+        catch (Exception error) { }
+        #endif
     }
 }

@@ -996,6 +996,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: QuestionWindow
       objectReference: {fileID: 0}
+    - target: {fileID: 7440791753992944541, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7440791754335880986, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
         type: 3}
       propertyPath: m_FontData.m_BestFit
