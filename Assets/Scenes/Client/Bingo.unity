@@ -499,7 +499,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &899536183
 Transform:
   m_ObjectHideFlags: 0
@@ -550,6 +550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e735a435ff454a98a6dc3324db93410, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isCenterOpen: 1
 --- !u!114 &899536186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -995,6 +996,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: QuestionWindow
+      objectReference: {fileID: 0}
+    - target: {fileID: 7440791753992944541, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7440791754335880986, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
         type: 3}

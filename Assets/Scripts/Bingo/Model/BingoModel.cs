@@ -7,6 +7,8 @@ using System;
 
 public class BingoModel : MonoBehaviour
 {
+    [SerializeField] private bool isCenterOpen = true; //初期状態で真ん中を上げるかどうか
+
     public IObservable<string> ChangeUserNameEvent => userNameSubject;
     public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
     public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
@@ -189,6 +191,13 @@ public class BingoModel : MonoBehaviour
             bingoCellModels[index].SetNumber(selectedNumbers[index]);
             bingoCellModels[index].SetStatus(BingoCellStatus.Default);
             //bingoCellModels[index].SetStatus(BingoCellStatus.CanOpen); //デバッグ用
+        }
+
+        //真ん中のセルをOpenにする場合
+        if (isCenterOpen)
+        {
+            bingoCellModels[4].SetNumber(-1);
+            bingoCellModels[4].SetStatus(BingoCellStatus.Open);
         }
 
         //イベント通知
