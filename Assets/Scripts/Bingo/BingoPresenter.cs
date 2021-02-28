@@ -52,6 +52,23 @@ public class BingoPresenter : MonoBehaviour
         bingoModel.InitBingoModel();
     }
 
+    public void InitBingoPresenter(BingoCellModel[] bingoCellModels)
+    {
+        //Modelのイベントを監視
+        bingoModel.ChangeUserBingoPhaseEvent.Subscribe(bingoView.OnChangeBingoPhase).AddTo(gameObject);
+        bingoModel.ChangeUserBingoStatusEvent.Subscribe(OnChangeBingoStatus).AddTo(gameObject);
+        bingoModel.ChangeUserNameEvent.Subscribe(bingoView.SetUserName).AddTo(gameObject);
+        bingoModel.ChangeCellModelEvent.Subscribe(UpdateCellView).AddTo(gameObject);
+
+        //Viewのイベントを監視
+        bingoView.OpenCellEvent.Subscribe(OpenCell);
+        questionWindowView.SetAnswerEvent.Subscribe(SetAnswerResult);
+
+        //ModelとViewの初期化処理
+        bingoView.InitBingoView();
+        bingoModel.InitBingoModel(bingoCellModels);
+    }
+
     public void OnGivenNumber(int number)
     {
         //数字を持ってない場合は何も処理しない

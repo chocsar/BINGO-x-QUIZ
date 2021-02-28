@@ -26,18 +26,6 @@ public class UserFirebaseManager : MonoBehaviour
         hostPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.HostPhaseOnly}");
         hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
 
-        if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
-        {
-            //ユーザーの新規作成
-            CreateUserKey();
-        }
-        else
-        {
-            //ユーザーデータのロード
-            //LoadUser();
-            CreateUserKey(); //デバッグ用
-        }
-
         //ホストの変更を監視
         hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
@@ -48,8 +36,19 @@ public class UserFirebaseManager : MonoBehaviour
         bingoPresenter.ChangeCellModelEvent.Subscribe(SaveUserNumber);
         bingoPresenter.ChangeUserNameEvent.Subscribe(SaveUserName);
 
-        //ビンゴの初期化
-        bingoPresenter.InitBingoPresenter();
+        if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
+        {
+            //ユーザーの新規作成
+            CreateUserKey();
+            //ビンゴの初期化
+            bingoPresenter.InitBingoPresenter();
+        }
+        else
+        {
+            //ユーザーデータのロード
+            LoadUserData();
+            //CreateUserKey(); //デバッグ用
+        }
 
     }
 
@@ -75,6 +74,39 @@ public class UserFirebaseManager : MonoBehaviour
 
         //TODO:データをロードしてPresenterに渡す処理
         //ロードだから非同期になる？
+    }
+
+    private void LoadUserData()
+    {
+        //キーの保持
+        userKey = PlayerPrefs.GetString(PlayerPrefsKeys.UserKey);
+
+        //bingoCellModelsにロードしたデータを格納
+        DatabaseReference reference = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}");
+        reference.GetValueAsync(10, (res) =>
+         {
+             if (res.success)
+             {
+                 Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
+
+                 var json = new ReactiveProperty<string>();
+                 json.Value = res.data.GetRawJsonValue();
+
+                 json.Subscribe(data =>
+                 {
+                     BingoCellModel[] bingoCellModels = new BingoCellModel[9];
+                     bingoCellModels = JsonUtility.FromJson<BingoCellModel[]>(data);
+                     Debug.Log(bingoCellModels);
+                     bingoPresenter.InitBingoPresenter(bingoCellModels);
+                 });
+
+
+             }
+             else
+             {
+                 Debug.Log("Fetch data failed : " + res.message);
+             }
+         });
     }
 
     /// <summary>

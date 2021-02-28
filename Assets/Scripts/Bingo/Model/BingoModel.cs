@@ -38,6 +38,21 @@ public class BingoModel : MonoBehaviour
         SetRadomBingoNumbers();
     }
 
+    public void InitBingoModel(BingoCellModel[] bingoCellModels)
+    {
+        SetUserName(PlayerPrefs.GetString(PlayerPrefsKeys.UserName));
+        SetUserBingoPhase(UserBingoPhase.Ready);
+
+        this.bingoCellModels = bingoCellModels;
+
+        //イベント通知
+        for (int index = 0; index < bingoCellModels.Length; index++)
+        {
+            bingoCellModelSubject.OnNext(bingoCellModels[index]);
+        }
+
+    }
+
     /// <summary>
     /// ホストから提示された数字を持っているかどうか
     /// </summary>
