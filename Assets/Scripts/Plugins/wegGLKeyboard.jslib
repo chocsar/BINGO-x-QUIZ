@@ -9,5 +9,6 @@
                 SendMessage(Pointer_stringify(_name), 'ReceiveInputData', _inputTextData);
             }
         }
+
     },
 });

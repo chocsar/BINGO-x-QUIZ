@@ -6,36 +6,50 @@ using UnityEngine.EventSystems;
 using System.Runtime.InteropServices;
 using System;
 
-public class keyboardClass : MonoBehaviour, ISelectHandler {
-
-	BaseEventData baseData;
-	[SerializeField] InputTextManager manager;
+public class keyboardClass : MonoBehaviour, ISelectHandler
+{
+	bool firstInput = false;
 
 	[DllImport("__Internal")]
-	private static extern void focusHandleAction (string _name, string _str);
+	private static extern void focusHandleAction(string _name, string _str);
 
-	public void ReceiveInputData(string value) {
-		gameObject.GetComponent<InputField> ().text = value;
+	public void ReceiveInputData(string value)
+	{
+		gameObject.GetComponent<InputField>().text = value;
 	}
 
-	public void OnSelect(BaseEventData data) {
-		//Debug.Log(data);
-		baseData = data;
-		CheckOnSelect();
+	private void Update()
+	{
+		if (gameObject.GetComponent<InputField>().text.Length == 0 && firstInput == true)
+		{
+			OnChecker();
+		}
 	}
-	public void CheckOnSelect()
-    {
+
+	public void OnSelect(BaseEventData data)
+	{
 		#if UNITY_WEBGL
 		try
 		{
 			focusHandleAction(gameObject.name, gameObject.GetComponent<InputField>().text);
-			Debug.Log("call");
-			manager.TextLenChecker();
+			firstInput = true;
 		}
-		catch (Exception error)
-		{
-			Debug.Log("call2");
-		}
+		catch (Exception error) { }
 		#endif
 	}
+
+	void OnChecker()
+	{
+		#if UNITY_WEBGL
+		try
+		{
+			focusHandleAction(gameObject.name, gameObject.GetComponent<InputField>().text);
+		}
+		catch (Exception error) { }
+		#endif
+	}
+
+
+
+
 }

@@ -299,7 +299,7 @@ GameObject:
   - component: {fileID: 3992547360441856404}
   - component: {fileID: 3992547360441856405}
   - component: {fileID: 3992547360441856406}
-  - component: {fileID: 762430722}
+  - component: {fileID: 4664939647731638563}
   m_Layer: 5
   m_Name: NameInputField
   m_TagString: Untagged
@@ -428,7 +428,7 @@ MonoBehaviour:
   m_CaretBlinkRate: 0.85
   m_CaretWidth: 1
   m_ReadOnly: 0
---- !u!114 &762430722
+--- !u!114 &4664939647731638563
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -437,9 +437,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3992547360441856408}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc366f21a474541c3b36305f7ccfd7a9, type: 3}
+  m_Script: {fileID: 11500000, guid: 848752bbfb4d44689975d10b6b913ba4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mainInputField: {fileID: 0}
 --- !u!1 &3992547360582469922
 GameObject:
   m_ObjectHideFlags: 0
