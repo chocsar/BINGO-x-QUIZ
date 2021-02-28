@@ -23,13 +23,15 @@ namespace Host
         public IObservable<int> ChangeHostBingoNumEvent => changeHostBingoSubject;
         public IObservable<Unit> LoadClientPhaseEvent => LoadPhaseClientSubject;
         public IObservable<Unit> LoadClientStatusEvent => LoadStatusClientSubject;
+        public IObservable<string> AlertEvent => alertSubject;
 
         private Subject<Unit> changeHostPhaseSubject = new Subject<Unit>();
         private Subject<int> changeHostBingoSubject = new Subject<int>();
         private Subject<Unit> LoadPhaseClientSubject = new Subject<Unit>();
         private Subject<Unit> LoadStatusClientSubject = new Subject<Unit>();
+        private Subject<string> alertSubject = new Subject<string>();
 
-        private string nowPhase;
+        private string nowHostPhase;
         private bool canGenerateNumber;
 
         public void InitView()
@@ -44,7 +46,7 @@ namespace Host
         // HostのPhaseが変わった時の見た目の処理
         public void OnChangeHostPhase(string _phase)
         {
-            nowPhase = _phase;
+            nowHostPhase = _phase;
             phaseText.text = $"PHASE : {_phase}";
         }
 
@@ -57,13 +59,14 @@ namespace Host
         // Phaseの変更通知
         private void NextPhase()
         {
+            AlertReset();
             changeHostPhaseSubject.OnNext(Unit.Default);
         }
 
         // 数字生成のイベント通知
         private void SubmitNumber()
         {
-            if (nowPhase != HostPhase.SelectNum)
+            if (nowHostPhase != HostPhase.SelectNum)
             {
                 alertText.text = "SelectNumPhaseではありません。";
                 return;
@@ -72,27 +75,34 @@ namespace Host
                 alertText.text = "数字が入力されていません。";
                 return;
             }
-            if (!canGenerateNumber)
-            {
-                alertText.text = "全員がready状態ではありません。";
-                return;
-            }
 
+            AlertReset();
             var submitNumber = Int32.Parse(sendNumInputField.text);
 
             changeHostBingoSubject.OnNext(submitNumber);
         }
 
+        public void AlertDisplay(string _alert)
+        {
+            alertText.text = _alert; 
+        }
+
+        private void AlertReset()
+        {
+            alertText.text = "";
+        }
+
         // Clientのフェーズデータ読み取るイベント通知
         public void LoadAllClientPhase()
         {
+            AlertReset();
             LoadPhaseClientSubject.OnNext(Unit.Default);
         }
 
         public void OnLoadClientPhase(Dictionary<string, int> _recieveDatas)
         {
             string displayText = "";
-            if (nowPhase == HostPhase.SelectNum && _recieveDatas[UserBingoPhase.BeforeAnswer] == 0 && _recieveDatas[UserBingoPhase.Answer] == 0 && _recieveDatas[UserBingoPhase.AfterAnswer] == 0 && _recieveDatas[UserBingoPhase.Open] == 0) canGenerateNumber = true;
+            if (nowHostPhase == HostPhase.SelectNum && _recieveDatas[UserBingoPhase.BeforeAnswer] == 0 && _recieveDatas[UserBingoPhase.Answer] == 0 && _recieveDatas[UserBingoPhase.AfterAnswer] == 0 && _recieveDatas[UserBingoPhase.Open] == 0) canGenerateNumber = true;
             else canGenerateNumber = false;
 
             foreach (var item in _recieveDatas)
@@ -107,6 +117,7 @@ namespace Host
         // Clientのフェーズデータ読み取るイベント通知
         public void LoadAllClientStatus()
         {
+            AlertReset();
             LoadStatusClientSubject.OnNext(Unit.Default);
         }
 
