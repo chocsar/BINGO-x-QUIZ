@@ -56,8 +56,8 @@ public class UserFirebaseManager : MonoBehaviour
     private void CreateUserKey()
     {
         //キーの作成
-        //userKey = Utility.UtilityPass.GeneratePassword();
-        userKey = "reotest"; //デバッグ用
+        userKey = Utility.UtilityPass.GeneratePassword();
+        //userKey = "reotest"; //デバッグ用
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         PlayerPrefs.Save();
     }
