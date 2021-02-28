@@ -26,10 +26,6 @@ public class UserFirebaseManager : MonoBehaviour
         hostPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.HostPhaseOnly}");
         hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
 
-        //ホストの変更を監視
-        hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
-        hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
-
         //BingoPresenterのイベントを監視
         bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase);
         bingoPresenter.ChangeUserBingoStatusEvent.Subscribe(SaveUserBingoStatus);
@@ -42,12 +38,14 @@ public class UserFirebaseManager : MonoBehaviour
             CreateUserKey();
             //ビンゴの初期化
             bingoPresenter.InitBingoPresenter();
+            //ホストの変更を監視
+            hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
+            hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
         }
         else
         {
             //ユーザーデータのロード
             LoadUserData();
-            //CreateUserKey(); //デバッグ用
         }
 
     }
@@ -58,22 +56,10 @@ public class UserFirebaseManager : MonoBehaviour
     private void CreateUserKey()
     {
         //キーの作成
-        userKey = Utility.UtilityPass.GeneratePassword();
-        //userKey = "reotest"; //デバッグ用
+        //userKey = Utility.UtilityPass.GeneratePassword();
+        userKey = "reotest"; //デバッグ用
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         PlayerPrefs.Save();
-    }
-
-    /// <summary>
-    /// ユーザーデータのロード
-    /// </summary>
-    private void LoadUser()
-    {
-        //キーの保持
-        userKey = PlayerPrefs.GetString(PlayerPrefsKeys.UserKey);
-
-        //TODO:データをロードしてPresenterに渡す処理
-        //ロードだから非同期になる？
     }
 
     private void LoadUserData()
@@ -84,29 +70,41 @@ public class UserFirebaseManager : MonoBehaviour
         //bingoCellModelsにロードしたデータを格納
         DatabaseReference reference = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}");
         reference.GetValueAsync(10, (res) =>
-         {
-             if (res.success)
-             {
-                 Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
+        {
+            if (res.success)
+            {
+                Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
 
-                 var json = new ReactiveProperty<string>();
-                 json.Value = res.data.GetRawJsonValue();
+                var json = new ReactiveProperty<string>();
+                json.Value = res.data.GetRawJsonValue();
 
-                 json.Subscribe(data =>
-                 {
-                     BingoCellModel[] bingoCellModels = new BingoCellModel[9];
-                     bingoCellModels = JsonUtility.FromJson<BingoCellModel[]>(data);
-                     Debug.Log(bingoCellModels);
-                     bingoPresenter.InitBingoPresenter(bingoCellModels);
-                 });
+                json.Subscribe(data =>
+                {
+                    BingoCellModel[] bingoCellModels = new BingoCellModel[9];
+                    bingoCellModels = Utility.UtilityRestJson.JsonUserDataLoad(json.Value);
 
+                    //Hit状態として保存されていたならDead状態としてロードする
+                    foreach (BingoCellModel bingoCellModel in bingoCellModels)
+                    {
+                        if (bingoCellModel.GetStatus() == BingoCellStatus.Hit)
+                        {
+                            bingoCellModel.SetStatus(BingoCellStatus.Dead);
+                        }
+                    }
 
-             }
-             else
-             {
-                 Debug.Log("Fetch data failed : " + res.message);
-             }
-         });
+                    //ビンゴの初期化処理 
+                    bingoPresenter.InitBingoPresenter(bingoCellModels);
+
+                    //ホストの変更を監視
+                    hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
+                    hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
+                });
+            }
+            else
+            {
+                Debug.Log("Fetch data failed : " + res.message);
+            }
+        });
     }
 
     /// <summary>
@@ -176,11 +174,19 @@ public class UserFirebaseManager : MonoBehaviour
     }
     private void SaveUserNumber(BingoCellModel bingoCellModel)
     {
-        string json = JsonUtility.ToJson(bingoCellModel);
+        BingoCellModel cell = new BingoCellModel();
+        cell.SetIndex(bingoCellModel.GetIndex());
+        cell.SetNumber(bingoCellModel.GetNumber());
+        cell.SetStatus(bingoCellModel.GetStatus());
+
+        //CanOpen状態ならOpenとして保存する
+        if (cell.GetStatus() == BingoCellStatus.CanOpen)
+        {
+            cell.SetStatus(BingoCellStatus.Open);
+        }
+
+        string json = JsonUtility.ToJson(cell);
         DatabaseReference userNumberRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}/{FirebaseKeys.UserNumber}{bingoCellModel.GetIndex()}");
         userNumberRef.SetRawJsonValueAsync(json, 10, (res) => { });
-
-        //TODO:CellのstatusがCanOpenなら，Openとして保存しておくほうがいいと思う
-
     }
 }
