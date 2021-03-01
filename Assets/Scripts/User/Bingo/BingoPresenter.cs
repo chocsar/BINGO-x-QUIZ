@@ -24,13 +24,6 @@ public class BingoPresenter : MonoBehaviour
     // {
     //     InitBingoPresenter();
     // }
-    // private void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.Space))
-    //     {
-    //         bingoModel.SetUserBingoPhase(UserBingoPhase.BeforeAnswer);
-    //     }
-    // }
 
     /// <summary>
     /// BingoPresenterの初期化処理（ここからModelとViewも初期化）
@@ -71,10 +64,10 @@ public class BingoPresenter : MonoBehaviour
 
     public void OnGivenNumber(int number)
     {
-        //数字を持ってない場合は何も処理しない
-        if (!bingoModel.HasNumber(number)) return;
         //ビンゴしてる場合は何も処理しない
         if (bingoModel.GetUserBingoStatus() == UserBingoStatus.Bingo) return;
+        //数字を持ってない場合は何も処理しない
+        if (!bingoModel.HasNumber(number)) return;
 
         //ウィンドウへの処理
         OpenLoadingWindow();
