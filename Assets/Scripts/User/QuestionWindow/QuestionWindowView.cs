@@ -26,7 +26,7 @@ public class QuestionWindowView : MonoBehaviour
     [SerializeField] private GameObject right;
     [SerializeField] private GameObject wrong;
 
-    private bool isAnswering = true;
+    private bool isAnswering = false;
     private bool isAnswerSetted = false;
     private int userChoiceNum;
 
@@ -41,6 +41,8 @@ public class QuestionWindowView : MonoBehaviour
             choiceViews[index].OnClickEvent.Subscribe(OnClick).AddTo(gameObject);
             //indexをセット
             choiceViews[index].SetIndex(index);
+            //初期化処理
+            choiceViews[index].InitChoiceView();
         }
 
         //回答ボタンへの入力を監視
@@ -49,41 +51,37 @@ public class QuestionWindowView : MonoBehaviour
 
     private void Update()
     {
-        if (isAnswering)
+        if (!isAnswering) return;
+
+        answerTimer -= Time.deltaTime;
+
+        if (answerTimer <= answerTime)
         {
-            answerTimer -= Time.deltaTime;
-
-            if (answerTimer <= answerTime)
+            //回答の開始
+            if (!choicesParent.activeSelf)
             {
-                //回答の開始
-                if (!choicesParent.activeSelf)
-                {
-                    choicesParent.SetActive(true);
-                }
-
-                //スライダーの更新
-                timeSlider.value = answerTimer;
+                choicesParent.SetActive(true);
             }
 
-            //回答時間切れ
-            if (answerTimer <= 0)
-            {
-                //回答をセット
-                isAnswerSetted = true;
-                SetAnswer();
-            }
+            //スライダーの更新
+            timeSlider.value = answerTimer;
+        }
+
+        //回答時間切れ
+        if (answerTimer <= 0)
+        {
+            //回答をセット
+            isAnswerSetted = true;
+            SetAnswer();
         }
     }
 
-    public void ResetQuestiontWindowView()
+    public void ResetQuestionWindowView()
     {
         //UIのリセット
-        questionNumberText.text = string.Empty;
-        questionText.text = string.Empty;
         foreach (ChoiceView choiceView in choiceViews)
         {
             choiceView.SetImage(false);
-            choiceView.SetText(string.Empty);
         }
         choicesParent.SetActive(false);
         entered.SetActive(false);
@@ -171,7 +169,9 @@ public class QuestionWindowView : MonoBehaviour
 
     public void SetChoiceTexts(string[] choices)
     {
+        //メモ：なぜ最初にnullで実行される？
         if (choices == null) return;
+
         for (int index = 0; index < choices.Length; index++)
         {
             choiceViews[index].SetText(choices[index]);

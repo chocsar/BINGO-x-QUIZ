@@ -77,6 +77,15 @@ public class QuestionWindowModel : MonoBehaviour
         }
     }
 
+    public void ResetQuestionWindowModel()
+    {
+        questionNumber.Value = 0;
+        question.Value = string.Empty;
+
+        string[] choices = new string[3] { string.Empty, string.Empty, string.Empty };
+        this.choices.Value = choices;
+    }
+
     public bool CheckAnswer(int userAnswer)
     {
         isRight = (answerNumber == userAnswer);

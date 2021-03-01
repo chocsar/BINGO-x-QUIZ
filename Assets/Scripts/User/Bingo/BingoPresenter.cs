@@ -24,13 +24,13 @@ public class BingoPresenter : MonoBehaviour
     // {
     //     InitBingoPresenter();
     // }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartCoroutine(questionWindowPresenter.OpenQuestionWindow(1));
-        }
-    }
+    // private void Update()
+    // {
+    //     if (Input.GetKeyDown(KeyCode.Space))
+    //     {
+    //         OpenQuestionWindow(1);
+    //     }
+    // }
 
     /// <summary>
     /// BingoPresenterの初期化処理（ここからModelとViewも初期化）
