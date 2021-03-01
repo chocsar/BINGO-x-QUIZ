@@ -155,6 +155,8 @@ public class QuestionWindowView : MonoBehaviour
     private void CloseWindow()
     {
         canvas.SetActive(false);
+        right.SetActive(false);
+        wrong.SetActive(false);
     }
 
     public void SetQuestionNumber(int number)
