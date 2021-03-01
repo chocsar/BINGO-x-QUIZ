@@ -142,8 +142,8 @@ public class BingoModel : MonoBehaviour
 
             if (openNumMax == 3) break;
         }
-
-        if (openNumMax == 2) SetUserBingoStatus(UserBingoStatus.Reach);
+        if (openNumMax <= 1) SetUserBingoStatus(UserBingoStatus.Default);
+        else if (openNumMax == 2) SetUserBingoStatus(UserBingoStatus.Reach);
         else if (openNumMax == 3) SetUserBingoStatus(UserBingoStatus.Bingo);
     }
 
