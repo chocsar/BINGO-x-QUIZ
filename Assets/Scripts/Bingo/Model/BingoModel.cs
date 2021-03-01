@@ -72,6 +72,13 @@ public class BingoModel : MonoBehaviour
             //数字を持っていた場合
             if (bingoCellModels[index].GetNumber() == number)
             {
+                //OpenかDead状態なら処理しない
+                if (bingoCellModels[index].GetStatus() == BingoCellStatus.Open ||
+                    bingoCellModels[index].GetStatus() == BingoCellStatus.Dead)
+                {
+                    break;
+                }
+
                 //数字を保持しておく
                 SetCurrentNumber(number);
                 SetCurrentNumIndex(index);
