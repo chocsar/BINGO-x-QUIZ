@@ -15,7 +15,7 @@ public class BingoPresenter : MonoBehaviour
     [SerializeField] private BingoView bingoView;
     [SerializeField] private QuestionWindowView questionWindowView;
     [SerializeField] private LoadingWindowView loadingWindowView;
-    [SerializeField] private BingoAnimationView bingoAnimationView;
+    [SerializeField] private BingoAnimationWindowView bingoAnimationView;
 
     private bool canUpdateCell = true;
 

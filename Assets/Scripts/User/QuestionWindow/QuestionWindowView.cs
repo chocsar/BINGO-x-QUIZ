@@ -19,6 +19,7 @@ public class QuestionWindowView : MonoBehaviour
     [SerializeField] private Text questionNumberText;
     [SerializeField] private Text questionText;
     [SerializeField] private GameObject choices;
+    [SerializeField] private ChoiceView[] choiceViews;
     [SerializeField] private Button[] choiceButtons;
     [SerializeField] private Text[] choiceTexts;
     [SerializeField] private Image[] choiceImages;
@@ -112,10 +113,31 @@ public class QuestionWindowView : MonoBehaviour
         choiceTexts[2].text = string.Empty;
     }
 
+
     public void SetQuestionNumber(int number)
     {
-        questionNum = number;
+        questionNumberText.text = String.Format("{0:00}", number);
     }
+
+    public void SetQuestion(string text)
+    {
+        questionText.text = text;
+    }
+
+    public void SetChoiceTexts(string[] choices)
+    {
+        for (int index = 0; index < choices.Length; index++)
+        {
+            choiceViews[index].SetText(choices[index]);
+        }
+    }
+
+
+
+    // public void SetQuestionNumber(int number)
+    // {
+    //     questionNum = number;
+    // }
 
     public void OpenWindow()
     {
