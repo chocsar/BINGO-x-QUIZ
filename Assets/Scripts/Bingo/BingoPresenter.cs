@@ -94,6 +94,7 @@ public class BingoPresenter : MonoBehaviour
                     bingoModel.GetUserBingoPhase() == UserBingoPhase.Answer ||
                     bingoModel.GetUserBingoPhase() == UserBingoPhase.AfterAnswer)
                 {
+                    CloseLoadingWindow();
                     bingoModel.SetUserBingoPhase(UserBingoPhase.Ready);
                 }
                 break;
@@ -191,7 +192,6 @@ public class BingoPresenter : MonoBehaviour
             //ビンゴ時の処理
             if (status == UserBingoStatus.Bingo)
             {
-                //TODO
                 bingoAnimationView.OpenWindow();
             }
         }
