@@ -35,12 +35,7 @@ public class UserFirebaseManager : MonoBehaviour
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
         {
             //ユーザーの新規作成
-            CreateUserKey();
-            //ビンゴの初期化
-            bingoPresenter.InitBingoPresenter();
-            //ホストの変更を監視
-            hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
-            hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
+            CreateUserData();
         }
         else
         {
@@ -53,18 +48,27 @@ public class UserFirebaseManager : MonoBehaviour
     /// <summary>
     /// ユーザーデータの新規作成
     /// </summary>
-    private void CreateUserKey()
+    private void CreateUserData()
     {
         //キーの作成
         userKey = Utility.UtilityPass.GeneratePassword();
         //userKey = "reotest"; //デバッグ用
+
+        //キーの保存
         PlayerPrefs.SetString(PlayerPrefsKeys.UserKey, userKey);
         PlayerPrefs.Save();
+
+        //ビンゴの初期化
+        bingoPresenter.InitBingoPresenter();
+
+        //ホストの変更を監視
+        hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
+        hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
     }
 
     private void LoadUserData()
     {
-        //キーの保持
+        //キーのロード
         userKey = PlayerPrefs.GetString(PlayerPrefsKeys.UserKey);
 
         //bingoCellModelsにロードしたデータを格納
@@ -73,13 +77,21 @@ public class UserFirebaseManager : MonoBehaviour
         {
             if (res.success)
             {
-                Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
+                //Debug.Log("Success fetched data : " + res.data.GetRawJsonValue());
 
                 var json = new ReactiveProperty<string>();
                 json.Value = res.data.GetRawJsonValue();
 
+                //ロードし終わった時の処理    
                 json.Subscribe(data =>
                 {
+                    //データが入ってなかった場合はデータを新規作成する
+                    if (data == null)
+                    {
+                        CreateUserData();
+                        return;
+                    }
+
                     BingoCellModel[] bingoCellModels = new BingoCellModel[9];
                     bingoCellModels = Utility.UtilityRestJson.JsonUserDataLoad(json.Value);
 
