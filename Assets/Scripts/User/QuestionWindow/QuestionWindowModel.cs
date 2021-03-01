@@ -7,68 +7,57 @@ using System;
 
 public class QuestionWindowModel : MonoBehaviour
 {
+    /// <summary>
+    /// デバッグ用にロードする問題を指定する（負の数なら動作しない）
+    /// </summary>
+    [SerializeField] private int debugQuestionNumber = -1;
+
     // リクエストするスプシのWebアプリURL
     private const string requestURL = "https://script.google.com/macros/s/AKfycbyx8EIlFlR20QxbbkyMKKy1odFNsjOEKjIaoikXJ1q8wYEhRmRPt1D1/exec";
     UnityWebRequest www;
 
-    public IObservable<string> ChangeQuestionEvent => question;
     public IObservable<int> ChangeQuestionNumEvent => questionNumber;
+    public IObservable<string> ChangeQuestionEvent => question;
     public IObservable<string[]> ChangeChoicesEvent => choices;
-
     private ReactiveProperty<int> questionNumber = new ReactiveProperty<int>();
     private ReactiveProperty<string> question = new ReactiveProperty<string>();
     private ReactiveProperty<string[]> choices = new ReactiveProperty<string[]>();
 
+    private int answerNumber;
+    private bool isRight;
 
-    [SerializeField] private float answerTimerMaxValue = 15;
-    [SerializeField] private float timeToReadQuestion = 9;
-
-    private bool isPlaying = true;
-    private bool isAnswerSetted = false;
-    private float answerTimer;
-    private int answerNum;
-    private int playerAnswerNum;
-    private bool isRight = false;
-
-
-    public IEnumerator InitQuestionWindowModel(int questionNum)
+    public IEnumerator GetQuestion(int questionNum)
     {
-        //問題番号のセット
-        questionNumber.Value = questionNum;
+        //デバッグ用
+        if (debugQuestionNumber > 0)
+        {
+            questionNum = debugQuestionNumber;
+        }
 
-        yield return StartCoroutine(GetQuestions());
-    }
-
-    private IEnumerator GetQuestions()
-    {
+        //全ての問題をロードする
         www = UnityWebRequest.Get(requestURL);
-
         yield return www.SendWebRequest();
 
+        //エラー処理
         if (www.isNetworkError || www.isHttpError)
         {
             Debug.Log(www.error);
+            yield break;
         }
-        else
-        {
-            GetQuestion(questionNumber.Value);
-        }
-    }
 
-    private void GetQuestion(int questionNum)
-    {
         string jsonText = www.downloadHandler.text;
-
         JsonNode json = JsonNode.Parse(jsonText);
 
-        //Debug.Log("requestID = " + questionNumber);
+        //問題のセット
         foreach (var note in json["questions"])
         {
             int id = int.Parse(note["id"].Get<string>());
-            //簡易的な指定問題表示方法（効率悪め）
 
             if (id == questionNum)
             {
+                //問題番号のセット
+                questionNumber.Value = questionNum;
+
                 //問題文のセット
                 question.Value = note["question"].Get<string>();
 
@@ -78,12 +67,26 @@ public class QuestionWindowModel : MonoBehaviour
                 choices[1] = note["choicese2"].Get<string>();
                 choices[2] = note["choicese3"].Get<string>();
                 this.choices.Value = choices;
+                //Debug.Log(choices[0]);
 
                 //正解番号のセット
-                this.answerNum = int.Parse(note["answer"].Get<string>());
+                answerNumber = int.Parse(note["answer"].Get<string>());
 
                 break;
             }
         }
     }
+
+    public bool CheckAnswer(int userAnswer)
+    {
+        isRight = (answerNumber == userAnswer);
+
+        return isRight;
+    }
+
+    public bool IsRight()
+    {
+        return isRight;
+    }
+
 }

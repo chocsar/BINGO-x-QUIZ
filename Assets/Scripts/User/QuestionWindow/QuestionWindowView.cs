@@ -8,111 +8,156 @@ using UniRx;
 
 public class QuestionWindowView : MonoBehaviour
 {
-    public IObservable<bool> SetAnswerEvent => answerSubject;
-    private Subject<bool> answerSubject = new Subject<bool>();
 
+    [SerializeField] private float answerTime = 15;
+    [SerializeField] private float timeToReadQuestion = 2;
 
-    // リクエストするスプシのWebアプリURL
-    private const string requestURL = "https://script.google.com/macros/s/AKfycbyx8EIlFlR20QxbbkyMKKy1odFNsjOEKjIaoikXJ1q8wYEhRmRPt1D1/exec";
-    UnityWebRequest www;
+    public IObservable<int> SetAnswerEvent => answerSubject;
+    private Subject<int> answerSubject = new Subject<int>();
 
+    [SerializeField] private GameObject canvas;
     [SerializeField] private Text questionNumberText;
     [SerializeField] private Text questionText;
-    [SerializeField] private GameObject choices;
     [SerializeField] private ChoiceView[] choiceViews;
-    [SerializeField] private Button[] choiceButtons;
-    [SerializeField] private Text[] choiceTexts;
-    [SerializeField] private Image[] choiceImages;
-    [SerializeField] private Slider timeSlider;
+    [SerializeField] private GameObject choicesParent;
     [SerializeField] private Button enterButton;
     [SerializeField] private GameObject entered;
-    [SerializeField] private GameObject rightObj;
-    [SerializeField] private GameObject wrongObj;
+    [SerializeField] private Slider timeSlider;
+    [SerializeField] private GameObject right;
+    [SerializeField] private GameObject wrong;
 
-    [SerializeField] private float answerTimerMaxValue = 15;
-    [SerializeField] private float timeToReadQuestion = 9;
-
-    private bool isPlaying = true;
+    private bool isAnswering = true;
     private bool isAnswerSetted = false;
-    private float answerTimer;
-    private int questionNum;
-    private int answerNum;
-    private int playerAnswerNum;
-    private bool isRight = false;
+    private int userChoiceNum;
 
-    private void Start()
+    private float answerTimer = 15;
+
+
+    public void InitQuestionWindowView()
     {
+        for (int index = 0; index < choiceViews.Length; index++)
+        {
+            //各選択肢ボタンへの入力を監視
+            choiceViews[index].OnClickEvent.Subscribe(OnClick).AddTo(gameObject);
+            //indexをセット
+            choiceViews[index].SetIndex(index);
+        }
 
-        choiceButtons[0].GetComponent<Button>().onClick.AddListener(ChoseButton0);
-        choiceButtons[1].GetComponent<Button>().onClick.AddListener(ChoseButton1);
-        choiceButtons[2].GetComponent<Button>().onClick.AddListener(ChoseButton2);
-        enterButton.GetComponent<Button>().onClick.AddListener(SetAnswer);
+        //回答ボタンへの入力を監視
+        enterButton.OnClickAsObservable().Subscribe(_ => SetAnswer()).AddTo(gameObject);
     }
 
     private void Update()
     {
-        if (isPlaying)
+        if (isAnswering)
         {
             answerTimer -= Time.deltaTime;
 
-            if (answerTimer <= answerTimerMaxValue)
+            if (answerTimer <= answerTime)
             {
                 //回答の開始
-                if (!choices.activeSelf)
+                if (!choicesParent.activeSelf)
                 {
-                    choices.SetActive(true);
+                    choicesParent.SetActive(true);
                 }
 
                 //スライダーの更新
                 timeSlider.value = answerTimer;
             }
 
+            //回答時間切れ
             if (answerTimer <= 0)
             {
                 //回答をセット
                 isAnswerSetted = true;
                 SetAnswer();
-
             }
         }
     }
 
-    private void OnEnable()
+    public void ResetQuestiontWindowView()
     {
-        //デバッグ用
-        //SetQuestionNumber(UnityEngine.Random.Range(0, 26));
-
-        //問題のロード
-        StartCoroutine(GetText()); //TODO:処理が終わるまで待機したい
-
-        //初期化処理
-        choices.SetActive(false);
-        choiceImages[0].enabled = false;
-        choiceImages[1].enabled = false;
-        choiceImages[2].enabled = false;
-        entered.SetActive(false);
-        rightObj.SetActive(false);
-        wrongObj.SetActive(false);
-        answerTimer = answerTimerMaxValue + timeToReadQuestion;
-        timeSlider.value = answerTimerMaxValue;
-        playerAnswerNum = 0;
-        isAnswerSetted = false;
-        isRight = false;
-
-        //問題の開始
-        isPlaying = true;
-    }
-
-    private void OnDisable()
-    {
-        //テキストのリセット
-        questionText.text = string.Empty;
+        //UIのリセット
         questionNumberText.text = string.Empty;
-        choiceTexts[0].text = string.Empty;
-        choiceTexts[1].text = string.Empty;
-        choiceTexts[2].text = string.Empty;
+        questionText.text = string.Empty;
+        foreach (ChoiceView choiceView in choiceViews)
+        {
+            choiceView.SetImage(false);
+            choiceView.SetText(string.Empty);
+        }
+        choicesParent.SetActive(false);
+        entered.SetActive(false);
+        right.SetActive(false);
+        wrong.SetActive(false);
+
+        //パラメータのリセット
+        userChoiceNum = 0;
+        answerTimer = answerTime + timeToReadQuestion;
+        timeSlider.value = answerTime;
+        isAnswerSetted = false;
     }
 
+    private void OnClick(int index)
+    {
+        if (!isAnswering) return;
+
+        //ImageのON/OFF切り替え
+        for (int i = 0; i < choiceViews.Length; i++)
+        {
+
+            if (i == index)
+            {
+                choiceViews[i].SetImage(true);
+            }
+            else
+            {
+                choiceViews[i].SetImage(false);
+            }
+        }
+
+        //選択番号を保持
+        userChoiceNum = index + 1;
+
+        isAnswerSetted = true;
+    }
+
+    private void SetAnswer()
+    {
+        if (!isAnswerSetted) return;
+
+        //問題を終了
+        isAnswering = false;
+        entered.SetActive(true);
+
+        //イベント通知
+        answerSubject.OnNext(userChoiceNum);
+    }
+
+    public void ShowAnswerResult(bool isRight)
+    {
+        if (isRight)
+        {
+            right.SetActive(true);
+        }
+        else
+        {
+            wrong.SetActive(true);
+        }
+
+        //3秒後にウィンドウを閉じる
+        Invoke("CloseWindow", 3);
+    }
+
+    public void OpenWindow()
+    {
+        canvas.SetActive(true);
+        isAnswering = true;
+    }
+
+    private void CloseWindow()
+    {
+        canvas.SetActive(false);
+    }
 
     public void SetQuestionNumber(int number)
     {
@@ -126,148 +171,10 @@ public class QuestionWindowView : MonoBehaviour
 
     public void SetChoiceTexts(string[] choices)
     {
+        if (choices == null) return;
         for (int index = 0; index < choices.Length; index++)
         {
             choiceViews[index].SetText(choices[index]);
         }
     }
-
-
-
-    // public void SetQuestionNumber(int number)
-    // {
-    //     questionNum = number;
-    // }
-
-    public void OpenWindow()
-    {
-        gameObject.SetActive(true);
-    }
-
-    private void CloseWindow()
-    {
-        gameObject.SetActive(false);
-    }
-
-    private IEnumerator GetText()
-    {
-        www = UnityWebRequest.Get(requestURL);
-        yield return www.SendWebRequest();
-        if (www.isNetworkError || www.isHttpError)
-        {
-            Debug.Log(www.error);
-        }
-        else
-        {
-            // 結果をテキストとして表示します
-            //Debug.Log("LoadJson : " + www.downloadHandler.text);
-            // または、結果をバイナリデータとして取得します
-            // byte[] results = www.downloadHandler.data;
-            PrintQuestions();
-        }
-    }
-
-    private void PrintQuestions()
-    {
-        string jsonText = www.downloadHandler.text;
-
-        JsonNode json = JsonNode.Parse(jsonText);
-
-        //Debug.Log("requestID = " + questionNumber);
-        foreach (var note in json["questions"])
-        {
-            int id = int.Parse(note["id"].Get<string>());
-            //簡易的な指定問題表示方法（効率悪め）
-
-            if (id == questionNum)
-            {
-                string question = note["question"].Get<string>();
-                answerNum = int.Parse(note["answer"].Get<string>());
-                string choicese1 = note["choicese1"].Get<string>();
-                string choicese2 = note["choicese2"].Get<string>();
-                string choicese3 = note["choicese3"].Get<string>();
-
-                //Debug.Log("answerNum = " + answerNum);
-                questionText.text = question;
-                questionNumberText.text = String.Format("{0:00}", id);
-
-                choiceTexts[0].text = choicese1;
-                choiceTexts[1].text = choicese2;
-                choiceTexts[2].text = choicese3;
-                break;
-            }
-        }
-    }
-
-    private void ChoseButton0()
-    {
-        if (isPlaying)
-        {
-            playerAnswerNum = 1;
-            choiceImages[0].enabled = true;
-            choiceImages[1].enabled = false;
-            choiceImages[2].enabled = false;
-            isAnswerSetted = true;
-        }
-    }
-
-    private void ChoseButton1()
-    {
-        if (isPlaying)
-        {
-            playerAnswerNum = 2;
-            choiceImages[0].enabled = false;
-            choiceImages[1].enabled = true;
-            choiceImages[2].enabled = false;
-            isAnswerSetted = true;
-        }
-    }
-
-    private void ChoseButton2()
-    {
-        if (isPlaying)
-        {
-            playerAnswerNum = 3;
-            choiceImages[0].enabled = false;
-            choiceImages[1].enabled = false;
-            choiceImages[2].enabled = true;
-            isAnswerSetted = true;
-        }
-    }
-
-    private void SetAnswer()
-    {
-        if (!isAnswerSetted) return;
-
-        //問題を終了
-        isPlaying = false;
-        entered.SetActive(true);
-
-        //正解チェック
-        isRight = CheckAnswer();
-
-        //イベント通知
-        answerSubject.OnNext(isRight);
-    }
-
-    private bool CheckAnswer()
-    {
-        return (answerNum == playerAnswerNum);
-    }
-
-    public void ShowAnswerResult()
-    {
-        if (isRight)
-        {
-            rightObj.SetActive(true);
-        }
-        else
-        {
-            wrongObj.SetActive(true);
-        }
-
-        //TODO:いつ閉じるか
-        Invoke("CloseWindow", 3);
-    }
-
 }
