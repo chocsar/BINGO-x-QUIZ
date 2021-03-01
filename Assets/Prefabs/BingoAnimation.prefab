@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2974030658113435023}
   - component: {fileID: 2974030658113435016}
   - component: {fileID: 2974030658113435017}
-  - component: {fileID: 6129921925542636423}
+  - component: {fileID: 8327392401931914050}
   m_Layer: 0
   m_Name: BingoAnimation
   m_TagString: Untagged
@@ -80,7 +80,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &6129921925542636423
+--- !u!114 &8327392401931914050
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -89,7 +89,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2974030658113435020}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4ddfd9ae6959453aaebdbd26b37a827, type: 3}
+  m_Script: {fileID: 11500000, guid: ffabf5137030840228076b905a852114, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &2974030658370019621

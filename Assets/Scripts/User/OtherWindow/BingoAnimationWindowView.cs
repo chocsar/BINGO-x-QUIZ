@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BingoAnimationView : MonoBehaviour
+public class BingoAnimationWindowView : MonoBehaviour
 {
     public void OpenWindow()
     {
