@@ -8,6 +8,7 @@ public class BingoReport : MonoBehaviour
     [SerializeField] private Text statusText;
     [SerializeField] private Text userNameText;
     [SerializeField] private float moveTime = 2;
+    [SerializeField] private Animator statusAnimator;
 
     private Vector3 start = new Vector3(-600, -600, 0);
     private Vector3 end = new Vector3(600, -600, 0);
@@ -49,6 +50,7 @@ public class BingoReport : MonoBehaviour
         if (status == UserBingoStatus.Bingo)
         {
             statusText.text = "BINGO!";
+            statusAnimator.SetTrigger("Flush");
         }
         else if (status == UserBingoStatus.Reach)
         {

@@ -1473,7 +1473,7 @@ MonoBehaviour:
   reportParent: {fileID: 441143022}
   reportPrefab: {fileID: 3662463152074800077, guid: d0975b22bb37b405893adfc1694b8a68,
     type: 3}
-  reportInterval: 2
+  reportInterval: 3
 --- !u!114 &899536185
 MonoBehaviour:
   m_ObjectHideFlags: 0

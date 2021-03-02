@@ -142,6 +142,15 @@ public class BingoView : MonoBehaviour
         bingoReport.SetUserName(report[0]);
         bingoReport.SetStatus(report[1]);
         bingoReport.transform.SetParent(reportParent.transform);
-        bingoReport.transform.localScale = new Vector3(1, 1, 1);
+
+        if (report[1] == UserBingoStatus.Reach)
+        {
+            bingoReport.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+        }
+        else if (report[1] == UserBingoStatus.Bingo)
+        {
+            bingoReport.transform.localScale = new Vector3(1, 1, 1);
+
+        }
     }
 }
