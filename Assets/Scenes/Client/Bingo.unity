@@ -1469,7 +1469,7 @@ MonoBehaviour:
   - {fileID: 1360058383}
   - {fileID: 1041076820}
   reachCellView: {fileID: 9023740657045905950}
-  tapCellAudioSource: {fileID: 0}
+  tapCellAudioSource: {fileID: 965496702}
 --- !u!114 &899536185
 MonoBehaviour:
   m_ObjectHideFlags: 0
