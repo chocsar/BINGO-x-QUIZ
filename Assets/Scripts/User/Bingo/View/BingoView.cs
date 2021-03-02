@@ -21,17 +21,17 @@ public class BingoView : MonoBehaviour
     [SerializeField] private GameObject reportParent;
     [SerializeField] private BingoReport reportPrefab;
     private List<string> bingoUserList = new List<string>();
-    private float reportInterval = 1;
+    [SerializeField] private float reportInterval = 1;
     private float timer = 0;
 
 
     private void Update()
     {
         //デバッグ用
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StackBingoUser("testuser");
-        }
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     StackBingoUser("testuser");
+        // }
 
         //スタックされたビンゴユーザーを一定間隔で生成
         if (bingoUserList.Count != 0)

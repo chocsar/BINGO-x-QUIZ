@@ -74,7 +74,7 @@ MonoBehaviour:
     m_Alignment: 4
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
+    m_HorizontalOverflow: 1
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: "\u30C6\u30B9\u30C8\u540D\u524D"
@@ -207,6 +207,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   userNameText: {fileID: 1821225938831325445}
-  moveTime: 5
-  start: {x: -600, y: -600, z: 0}
-  end: {x: 600, y: -600, z: 0}
+  moveTime: 10
