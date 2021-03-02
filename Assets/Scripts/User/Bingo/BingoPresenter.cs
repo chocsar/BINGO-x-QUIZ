@@ -10,6 +10,8 @@ public class BingoPresenter : MonoBehaviour
     public IObservable<string> ChangeUserBingoStatusEvent => bingoModel.ChangeUserBingoStatusEvent;
     public IObservable<string> ChangeUserBingoPhaseEvent => bingoModel.ChangeUserBingoPhaseEvent;
     public IObservable<BingoCellModel> ChangeCellModelEvent => bingoModel.ChangeCellModelEvent;
+    public IObservable<string> BingoEvent => bingoModel.BingoEvent;
+    public IObservable<string> ReachEvent => bingoModel.ReachEvent;
 
     [SerializeField] private BingoModel bingoModel;
     [SerializeField] private BingoView bingoView;
@@ -217,5 +219,10 @@ public class BingoPresenter : MonoBehaviour
         bingoModel.SetUserBingoPhase(UserBingoPhase.AfterAnswer);
     }
 
+    public void ReportBingoUser(string userName, string userStatus)
+    {
+        //Debug.Log(userName + " is " + userStatus);
+        bingoView.StackBingoUser(userName, userStatus);
+    }
 
 }

@@ -17,7 +17,40 @@ public class BingoView : MonoBehaviour
     [SerializeField] private ReachCellView reachCellView;
     [SerializeField] private AudioSource tapCellAudioSource;
 
-    private int currentQuestionNumber;
+    //ビンゴ通知
+    [SerializeField] private GameObject reportParent;
+    [SerializeField] private BingoReport reportPrefab;
+    private List<string[]> bingoUserList = new List<string[]>();
+    [SerializeField] private float reportInterval = 1;
+    private float timer = 0;
+
+
+    private void Update()
+    {
+        //デバッグ用
+        // if (Input.GetKeyDown(KeyCode.Space))
+        // {
+        //     StackBingoUser("bingouser", UserBingoStatus.Bingo);
+        // }
+        // else if (Input.GetKeyDown(KeyCode.Return))
+        // {
+        //     StackBingoUser("reachuser", UserBingoStatus.Reach);
+        // }
+
+        //スタックされたビンゴユーザーを一定間隔で生成
+        if (bingoUserList.Count != 0)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= reportInterval)
+            {
+                timer = 0;
+                ReportBingoUser(bingoUserList[0]);
+                bingoUserList.RemoveAt(0);
+            }
+        }
+    }
+
 
     public void InitBingoView()
     {
@@ -97,4 +130,27 @@ public class BingoView : MonoBehaviour
         }
     }
 
+    public void StackBingoUser(string userName, string userStatus)
+    {
+        string[] report = new string[2] { userName, userStatus };
+        bingoUserList.Add(report);
+    }
+
+    private void ReportBingoUser(string[] report)
+    {
+        BingoReport bingoReport = Instantiate(reportPrefab, new Vector3(-600, -600, 0), Quaternion.identity);
+        bingoReport.SetUserName(report[0]);
+        bingoReport.SetStatus(report[1]);
+        bingoReport.transform.SetParent(reportParent.transform);
+
+        if (report[1] == UserBingoStatus.Reach)
+        {
+            bingoReport.transform.localScale = new Vector3(0.7f, 0.7f, 0.7f);
+        }
+        else if (report[1] == UserBingoStatus.Bingo)
+        {
+            bingoReport.transform.localScale = new Vector3(1, 1, 1);
+
+        }
+    }
 }

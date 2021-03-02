@@ -13,21 +13,26 @@ public class BingoModel : MonoBehaviour
     public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
     public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
     public IObservable<BingoCellModel> ChangeCellModelEvent => bingoCellModelSubject;
+    public IObservable<string> BingoEvent => bingoSubject;
+    public IObservable<string> ReachEvent => reachSubject;
 
     private Subject<string> userNameSubject = new Subject<string>();
     private Subject<string> userBingoStatusSubject = new Subject<string>();
     private Subject<string> userBingoPhaseSubject = new Subject<string>();
     private Subject<BingoCellModel> bingoCellModelSubject = new Subject<BingoCellModel>();
+    private Subject<string> bingoSubject = new Subject<string>();
+    private Subject<string> reachSubject = new Subject<string>();
 
     //ユーザーのデータ
     private string userName;
     private string userBingoStatus;
     private string userBingoPhase;
     private BingoCellModel[] bingoCellModels = new BingoCellModel[9];
+    private bool isReach = false;
 
     //ホストから提示された数字を保持
     private int currentNumber;
-    private int currentNumIndex; //現状は不要
+    private int currentNumIndex;
 
     public void InitBingoModel()
     {
@@ -169,16 +174,21 @@ public class BingoModel : MonoBehaviour
         if (openCountMaxContainingCanOpenCell <= 1)
         {
             SetUserBingoStatus(UserBingoStatus.Default);
+            isReach = false;
         }
         else if (openCountMaxContainingCanOpenCell == 2)
         {
             if (openCountMax < 2)
             {
                 SetUserBingoStatus(UserBingoStatus.PreReach);
+                isReach = false;
             }
             else if (openCountMax == 2)
             {
                 SetUserBingoStatus(UserBingoStatus.Reach);
+
+                if (!isReach) reachSubject.OnNext(userName);
+                isReach = true;
             }
         }
         else if (openCountMaxContainingCanOpenCell == 3)
@@ -190,6 +200,7 @@ public class BingoModel : MonoBehaviour
             else if (openCountMax == 3)
             {
                 SetUserBingoStatus(UserBingoStatus.Bingo);
+                bingoSubject.OnNext(userName);
             }
         }
 
@@ -203,7 +214,7 @@ public class BingoModel : MonoBehaviour
     public void SetUserBingoStatus(string status)
     {
         this.userBingoStatus = status;
-        Debug.Log("SetUserBingoStatus: " + status);
+        //Debug.Log("SetUserBingoStatus: " + status);
         userBingoStatusSubject.OnNext(status);
     }
     public string GetUserBingoStatus()
