@@ -16,6 +16,7 @@ public class UserFirebaseManager : MonoBehaviour
     private DatabaseReference hostPhaseOnlyRef;
     private DatabaseReference hostNumsRef;
     private DatabaseReference bingoUserRef;
+    private DatabaseReference reachUserRef;
 
     //ユーザーごとのKey
     private string userKey;
@@ -27,6 +28,7 @@ public class UserFirebaseManager : MonoBehaviour
         hostPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.HostPhaseOnly}");
         hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
         bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.BingoUser}");
+        reachUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.ReachUser}");
 
         //BingoPresenterのイベントを監視
         bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase).AddTo(gameObject);
@@ -34,6 +36,7 @@ public class UserFirebaseManager : MonoBehaviour
         bingoPresenter.ChangeCellModelEvent.Subscribe(SaveUserNumber).AddTo(gameObject);
         bingoPresenter.ChangeUserNameEvent.Subscribe(SaveUserName).AddTo(gameObject);
         bingoPresenter.BingoEvent.Subscribe(SaveUserAsBingo).AddTo(gameObject);
+        bingoPresenter.ReachEvent.Subscribe(SaveUserAsReach).AddTo(gameObject);
 
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
         {
@@ -64,11 +67,8 @@ public class UserFirebaseManager : MonoBehaviour
         //ビンゴの初期化
         bingoPresenter.InitBingoPresenter();
 
-        //ホストの変更を監視
-        hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
-        hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
-        bingoUserRef.LimitToLast(1).ValueChanged += ReportBingoUser;
-
+        //データベースの変更を監視
+        AddEventHandler();
     }
 
     private void LoadUserData()
@@ -112,10 +112,8 @@ public class UserFirebaseManager : MonoBehaviour
                     //ビンゴの初期化処理 
                     bingoPresenter.InitBingoPresenter(bingoCellModels);
 
-                    //ホストの変更を監視
-                    hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
-                    hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
-                    bingoUserRef.LimitToLast(1).ValueChanged += ReportBingoUser;
+                    //データベースの変更を監視
+                    AddEventHandler();
                 });
             }
             else
@@ -123,6 +121,14 @@ public class UserFirebaseManager : MonoBehaviour
                 Debug.Log("Fetch data failed : " + res.message);
             }
         });
+    }
+
+    private void AddEventHandler()
+    {
+        hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
+        hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
+        bingoUserRef.LimitToLast(1).ValueChanged += ReportBingoUser;
+        reachUserRef.LimitToLast(1).ValueChanged += ReportReachUser;
     }
 
     /// <summary>
@@ -222,7 +228,7 @@ public class UserFirebaseManager : MonoBehaviour
 
     private void SaveUserAsBingo(string userName)
     {
-        //Debug.Log("SaveUserAsBingo: " + userName);
+        //TODO:userkeyではなく，pushで実装する
         DatabaseReference bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.BingoUser}/{userKey}");
         bingoUserRef.SetValueAsync(userName, 10, (res) => { });
     }
@@ -243,6 +249,32 @@ public class UserFirebaseManager : MonoBehaviour
             else userName = name.Split(':')[1];
         }
 
-        bingoPresenter.ReportBingoUser(userName.Trim('"'));
+        bingoPresenter.ReportBingoUser(userName.Trim('"'), UserBingoStatus.Bingo);
+    }
+
+    private void SaveUserAsReach(string userName)
+    {
+        //TODO:userkeyではなく，pushで実装する
+        DatabaseReference bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.ReachUser}/{userKey}");
+        bingoUserRef.SetValueAsync(userName, 10, (res) => { });
+    }
+
+    private void ReportReachUser(object sender, ValueChangedEventArgs e)
+    {
+        string userName = e.Snapshot.GetRawJsonValue();
+        //Debug.Log(userName);
+        if (userName == null) return;
+        if (userName.Contains("{"))
+        {
+            var name = userName.TrimStart('{').TrimEnd('}');
+            if (userName.Contains(","))
+            {
+                var names = name.Split(',');
+                userName = names[names.Length - 1].Split(':')[1];
+            }
+            else userName = name.Split(':')[1];
+        }
+
+        bingoPresenter.ReportBingoUser(userName.Trim('"'), UserBingoStatus.Reach);
     }
 }

@@ -20,7 +20,7 @@ public class BingoView : MonoBehaviour
     //ビンゴ通知
     [SerializeField] private GameObject reportParent;
     [SerializeField] private BingoReport reportPrefab;
-    private List<string> bingoUserList = new List<string>();
+    private List<string[]> bingoUserList = new List<string[]>();
     [SerializeField] private float reportInterval = 1;
     private float timer = 0;
 
@@ -30,7 +30,11 @@ public class BingoView : MonoBehaviour
         //デバッグ用
         // if (Input.GetKeyDown(KeyCode.Space))
         // {
-        //     StackBingoUser("testuser");
+        //     StackBingoUser("bingouser", UserBingoStatus.Bingo);
+        // }
+        // else if (Input.GetKeyDown(KeyCode.Return))
+        // {
+        //     StackBingoUser("reachuser", UserBingoStatus.Reach);
         // }
 
         //スタックされたビンゴユーザーを一定間隔で生成
@@ -126,17 +130,18 @@ public class BingoView : MonoBehaviour
         }
     }
 
-    public void StackBingoUser(string userName)
+    public void StackBingoUser(string userName, string userStatus)
     {
-        bingoUserList.Add(userName);
+        string[] report = new string[2] { userName, userStatus };
+        bingoUserList.Add(report);
     }
 
-    private void ReportBingoUser(string userName)
+    private void ReportBingoUser(string[] report)
     {
-        BingoReport report = Instantiate(reportPrefab, new Vector3(-600, -600, 0), Quaternion.identity);
-        report.SetText(userName);
-        report.transform.SetParent(reportParent.transform);
-        report.transform.localScale = new Vector3(1, 1, 1);
+        BingoReport bingoReport = Instantiate(reportPrefab, new Vector3(-600, -600, 0), Quaternion.identity);
+        bingoReport.SetUserName(report[0]);
+        bingoReport.SetStatus(report[1]);
+        bingoReport.transform.SetParent(reportParent.transform);
+        bingoReport.transform.localScale = new Vector3(1, 1, 1);
     }
-
 }

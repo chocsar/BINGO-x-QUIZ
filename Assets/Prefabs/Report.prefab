@@ -90,7 +90,7 @@ GameObject:
   - component: {fileID: 7027041209072959063}
   - component: {fileID: 994996841543231976}
   m_Layer: 5
-  m_Name: ReportText
+  m_Name: StatusText
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -206,5 +206,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c7d0b1bb21a246dca8f33646f21f398, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  statusText: {fileID: 994996841543231976}
   userNameText: {fileID: 1821225938831325445}
   moveTime: 10

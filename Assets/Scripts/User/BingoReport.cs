@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class BingoReport : MonoBehaviour
 {
+    [SerializeField] private Text statusText;
     [SerializeField] private Text userNameText;
     [SerializeField] private float moveTime = 2;
 
@@ -38,8 +39,20 @@ public class BingoReport : MonoBehaviour
         return start + (end - start) * x;
     }
 
-    public void SetText(string userName)
+    public void SetUserName(string userName)
     {
         userNameText.text = userName;
+    }
+
+    public void SetStatus(string status)
+    {
+        if (status == UserBingoStatus.Bingo)
+        {
+            statusText.text = "BINGO!";
+        }
+        else if (status == UserBingoStatus.Reach)
+        {
+            statusText.text = "REACH!";
+        }
     }
 }
