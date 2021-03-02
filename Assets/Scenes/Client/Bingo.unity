@@ -930,7 +930,7 @@ PrefabInstance:
     - target: {fileID: 6970453451052808445, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
         type: 3}
       propertyPath: m_Text
-      value: "\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587"
+      value: "\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\n\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\n\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587"
       objectReference: {fileID: 0}
     - target: {fileID: 6970453451052808445, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
         type: 3}
@@ -960,7 +960,7 @@ PrefabInstance:
     - target: {fileID: 6970453451052808445, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
         type: 3}
       propertyPath: m_FontData.m_VerticalOverflow
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6970453451052808445, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
         type: 3}
@@ -975,7 +975,7 @@ PrefabInstance:
     - target: {fileID: 6970453452003946324, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6970453452198139864, guid: 13dd6c2bde4114fdfb28c56c6c15147c,
         type: 3}

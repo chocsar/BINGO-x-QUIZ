@@ -194,7 +194,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &6668357974524889525
 Transform:
   m_ObjectHideFlags: 0
@@ -355,15 +355,15 @@ RectTransform:
   m_GameObject: {fileID: 6970453451052808447}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.7142857, y: 0.7142857, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6970453452449630355}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 32.329, y: 235}
-  m_SizeDelta: {x: 169.87915, y: -864.23315}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 515.917, y: -719.5}
+  m_SizeDelta: {x: 808.165, y: 584.332}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6970453451052808442
 CanvasRenderer:
@@ -397,7 +397,7 @@ MonoBehaviour:
     m_FontSize: 88
     m_FontStyle: 0
     m_BestFit: 1
-    m_MinSize: 0
+    m_MinSize: 44
     m_MaxSize: 88
     m_Alignment: 0
     m_AlignByGeometry: 0
@@ -405,7 +405,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 
+  m_Text: "\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\n\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587\n\u554F\u984C\u6587\u554F\u984C\u6587\u554F\u984C\u6587"
 --- !u!1 &6970453451112168007
 GameObject:
   m_ObjectHideFlags: 0
@@ -668,7 +668,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6970453452003946320
 RectTransform:
   m_ObjectHideFlags: 0
@@ -950,7 +950,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   answerTime: 15
-  timeToReadQuestion: 2
+  timeToReadQuestion: 3
   canvas: {fileID: 6970453452003946324}
   questionNumberText: {fileID: 6970453452039464050}
   questionText: {fileID: 6970453451052808445}
@@ -1024,7 +1024,7 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1408,8 +1408,8 @@ RectTransform:
   m_Father: {fileID: 6970453451982751490}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
