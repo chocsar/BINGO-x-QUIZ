@@ -24,13 +24,13 @@ public class BingoPresenter : MonoBehaviour
     // {
     //     InitBingoPresenter();
     // }
-    // private void Update()
-    // {
-    //     if (Input.GetKeyDown(KeyCode.Space))
-    //     {
-    //         OpenQuestionWindow(1);
-    //     }
-    // }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            OpenQuestionWindow(1);
+        }
+    }
 
     /// <summary>
     /// BingoPresenterの初期化処理（ここからModelとViewも初期化）
@@ -155,7 +155,7 @@ public class BingoPresenter : MonoBehaviour
 
     private void OpenQuestionWindow(int questionNum)
     {
-        questionWindowPresenter.OpenQuestionWindow(questionNum);
+        StartCoroutine(questionWindowPresenter.OpenQuestionWindow(questionNum));
     }
 
     private void OpenCell(int index)

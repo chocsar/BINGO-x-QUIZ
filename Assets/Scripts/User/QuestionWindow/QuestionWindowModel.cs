@@ -39,7 +39,7 @@ public class QuestionWindowModel : MonoBehaviour
         }
     }
 
-    public void GetQuestion(int questionNum)
+    public IEnumerator GetQuestion(int questionNum)
     {
         //デバッグ用
         if (debugQuestionNumber > 0)
@@ -48,7 +48,16 @@ public class QuestionWindowModel : MonoBehaviour
         }
 
         string jsonText = www.downloadHandler.text;
-        JsonNode json = JsonNode.Parse(jsonText); //TODO：OverFlowのエラー対応
+
+        //問題がまだ読み込み終わってなかった場合の対策
+        while (jsonText == string.Empty)
+        {
+            jsonText = www.downloadHandler.text;
+            Debug.Log("Wait Question Loading");
+            yield return null;
+        }
+
+        JsonNode json = JsonNode.Parse(jsonText);
 
         //問題のセット
         foreach (var note in json["questions"])

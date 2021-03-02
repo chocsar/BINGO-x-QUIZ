@@ -26,14 +26,14 @@ public class QuestionWindowPresenter : MonoBehaviour
         StartCoroutine(questionWindowModel.GetQuestions());
     }
 
-    public void OpenQuestionWindow(int questionNum)
+    public IEnumerator OpenQuestionWindow(int questionNum)
     {
         //リセット処理
         questionWindowModel.ResetQuestionWindowModel();
         questionWindowView.ResetQuestionWindowView();
 
         //問題のセット
-        questionWindowModel.GetQuestion(questionNum);
+        yield return StartCoroutine(questionWindowModel.GetQuestion(questionNum));
 
         //ウィンドウを表示
         questionWindowView.OpenWindow();
