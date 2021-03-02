@@ -26,14 +26,8 @@ public class QuestionWindowModel : MonoBehaviour
     private int answerNumber;
     private bool isRight;
 
-    public IEnumerator GetQuestion(int questionNum)
+    public IEnumerator GetQuestions()
     {
-        //デバッグ用
-        if (debugQuestionNumber > 0)
-        {
-            questionNum = debugQuestionNumber;
-        }
-
         //全ての問題をロードする
         www = UnityWebRequest.Get(requestURL);
         yield return www.SendWebRequest();
@@ -42,11 +36,19 @@ public class QuestionWindowModel : MonoBehaviour
         if (www.isNetworkError || www.isHttpError)
         {
             Debug.Log(www.error);
-            yield break;
+        }
+    }
+
+    public void GetQuestion(int questionNum)
+    {
+        //デバッグ用
+        if (debugQuestionNumber > 0)
+        {
+            questionNum = debugQuestionNumber;
         }
 
         string jsonText = www.downloadHandler.text;
-        JsonNode json = JsonNode.Parse(jsonText);
+        JsonNode json = JsonNode.Parse(jsonText); //TODO：OverFlowのエラー対応
 
         //問題のセット
         foreach (var note in json["questions"])

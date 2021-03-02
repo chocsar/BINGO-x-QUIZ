@@ -21,16 +21,19 @@ public class QuestionWindowPresenter : MonoBehaviour
 
         //初期化処理
         questionWindowView.InitQuestionWindowView();
+
+        //問題のロード
+        StartCoroutine(questionWindowModel.GetQuestions());
     }
 
-    public IEnumerator OpenQuestionWindow(int questionNum)
+    public void OpenQuestionWindow(int questionNum)
     {
         //リセット処理
         questionWindowModel.ResetQuestionWindowModel();
         questionWindowView.ResetQuestionWindowView();
 
-        //問題のロード
-        yield return StartCoroutine(questionWindowModel.GetQuestion(questionNum));
+        //問題のセット
+        questionWindowModel.GetQuestion(questionNum);
 
         //ウィンドウを表示
         questionWindowView.OpenWindow();

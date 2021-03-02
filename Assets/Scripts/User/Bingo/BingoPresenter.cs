@@ -155,7 +155,7 @@ public class BingoPresenter : MonoBehaviour
 
     private void OpenQuestionWindow(int questionNum)
     {
-        StartCoroutine(questionWindowPresenter.OpenQuestionWindow(questionNum));
+        questionWindowPresenter.OpenQuestionWindow(questionNum);
     }
 
     private void OpenCell(int index)
