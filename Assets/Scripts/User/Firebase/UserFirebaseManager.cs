@@ -229,7 +229,9 @@ public class UserFirebaseManager : MonoBehaviour
     private void SaveUserAsBingo(string userName)
     {
         //TODO:userkeyではなく，pushで実装する
-        DatabaseReference bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.BingoUser}/{userKey}");
+
+        string key = Utility.UtilityPass.GeneratePassword();
+        DatabaseReference bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.BingoUser}/{key}");
         bingoUserRef.SetValueAsync(userName, 10, (res) => { });
     }
 
@@ -254,8 +256,8 @@ public class UserFirebaseManager : MonoBehaviour
 
     private void SaveUserAsReach(string userName)
     {
-        //TODO:userkeyではなく，pushで実装する
-        DatabaseReference bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.ReachUser}/{userKey}");
+        string key = Utility.UtilityPass.GeneratePassword();
+        DatabaseReference bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.ReachUser}/{key}");
         bingoUserRef.SetValueAsync(userName, 10, (res) => { });
     }
 
