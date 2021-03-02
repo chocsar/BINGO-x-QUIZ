@@ -51,8 +51,8 @@ public class QuestionWindowView : MonoBehaviour
         enterButton.OnClickAsObservable().Subscribe(_ => SetAnswer()).AddTo(gameObject);
 
         //サウンドの準備
-        choiceAudioSource.clip = Resources.Load<AudioClip>(ResourcesPath.choiceAudioClip);
-        enterAudioSource.clip = Resources.Load<AudioClip>(ResourcesPath.enterAudioClip);
+        //choiceAudioSource.clip = Resources.Load<AudioClip>(ResourcesPath.choiceAudioClip);
+        //enterAudioSource.clip = Resources.Load<AudioClip>(ResourcesPath.enterAudioClip);
     }
 
     private void Update()
