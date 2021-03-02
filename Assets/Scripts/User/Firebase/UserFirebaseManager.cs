@@ -239,7 +239,7 @@ public class UserFirebaseManager : MonoBehaviour
         //Unicodeから変換
         userName = System.Text.RegularExpressions.Regex.Unescape(userName);
 
-        Debug.Log(userName);
+        //Debug.Log(userName);
         if (userName == null) return;
         if (userName.Contains("{"))
         {
@@ -268,7 +268,7 @@ public class UserFirebaseManager : MonoBehaviour
         //Unicodeから変換
         userName = System.Text.RegularExpressions.Regex.Unescape(userName);
 
-        Debug.Log(userName);
+        //Debug.Log(userName);
         if (userName == null) return;
         if (userName.Contains("{"))
         {
