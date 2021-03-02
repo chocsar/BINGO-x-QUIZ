@@ -19,8 +19,10 @@ public class QuestionWindowView : MonoBehaviour
     [SerializeField] private Text questionNumberText;
     [SerializeField] private Text questionText;
     [SerializeField] private ChoiceView[] choiceViews;
+    [SerializeField] private AudioSource choiceAudioSource;
     [SerializeField] private GameObject choicesParent;
     [SerializeField] private Button enterButton;
+    [SerializeField] private AudioSource enterAudioSource;
     [SerializeField] private GameObject entered;
     [SerializeField] private Slider timeSlider;
     [SerializeField] private GameObject right;
@@ -117,6 +119,8 @@ public class QuestionWindowView : MonoBehaviour
         userChoiceNum = index + 1;
 
         isAnswerSetted = true;
+
+        choiceAudioSource.Play();
     }
 
     private void SetAnswer()
@@ -126,6 +130,9 @@ public class QuestionWindowView : MonoBehaviour
         //問題を終了
         isAnswering = false;
         entered.SetActive(true);
+
+        //サウンド
+        enterAudioSource.Play();
 
         //イベント通知
         answerSubject.OnNext(userChoiceNum);
