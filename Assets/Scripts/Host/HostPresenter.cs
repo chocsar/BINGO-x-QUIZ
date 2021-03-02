@@ -2,6 +2,7 @@
 using UnityEngine;
 using UniRx;
 using System;
+using System.Collections;
 
 namespace Host
 {
@@ -38,6 +39,15 @@ namespace Host
 
             hostModel.InitModel();
             hostView.InitView();
+
+            StartCoroutine(CycleClientLoad());
+        }
+
+        private IEnumerator CycleClientLoad()
+        {
+            yield return new WaitForSeconds(3f);
+            hostModel.LoadClientPhase(Unit.Default);
+            StartCoroutine(CycleClientLoad());
         }
     }
 }
