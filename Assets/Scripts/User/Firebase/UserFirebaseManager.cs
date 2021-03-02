@@ -235,7 +235,11 @@ public class UserFirebaseManager : MonoBehaviour
     private void ReportBingoUser(object sender, ValueChangedEventArgs e)
     {
         string userName = e.Snapshot.GetRawJsonValue();
-        //Debug.Log(userName);
+
+        //Unicodeから変換
+        userName = System.Text.RegularExpressions.Regex.Unescape(userName);
+
+        Debug.Log(userName);
         if (userName == null) return;
         if (userName.Contains("{"))
         {
@@ -260,7 +264,11 @@ public class UserFirebaseManager : MonoBehaviour
     private void ReportReachUser(object sender, ValueChangedEventArgs e)
     {
         string userName = e.Snapshot.GetRawJsonValue();
-        //Debug.Log(userName);
+
+        //Unicodeから変換
+        userName = System.Text.RegularExpressions.Regex.Unescape(userName);
+
+        Debug.Log(userName);
         if (userName == null) return;
         if (userName.Contains("{"))
         {
