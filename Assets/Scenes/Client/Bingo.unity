@@ -1469,7 +1469,7 @@ MonoBehaviour:
   - {fileID: 1360058383}
   - {fileID: 1041076820}
   reachCellView: {fileID: 9023740657045905950}
-  cellTapAudioSource: {fileID: 965496702}
+  tapCellAudioSource: {fileID: 0}
 --- !u!114 &899536185
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2672,7 +2672,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 6df17fb40e6ea40739a953064d888308, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
@@ -4435,7 +4435,7 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: 6df17fb40e6ea40739a953064d888308, type: 3}
+  m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1

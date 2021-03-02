@@ -15,7 +15,7 @@ public class BingoView : MonoBehaviour
     [SerializeField] private Text userNameText;
     [SerializeField] private BingoCellView[] bingoCellViews;
     [SerializeField] private ReachCellView reachCellView;
-    [SerializeField] private AudioSource cellTapAudioSource;
+    [SerializeField] private AudioSource tapCellAudioSource;
 
     private int currentQuestionNumber;
 
@@ -30,6 +30,9 @@ public class BingoView : MonoBehaviour
             //各BingoCellViewのイベントを監視
             bingoCellViews[index].OpenCellEvent.Subscribe(OpenCell);
         }
+
+        //サウンド
+        tapCellAudioSource.clip = Resources.Load<AudioClip>(ResourcesPath.TapCellAudioClip);
     }
 
     public void SetUserName(string name)
@@ -53,7 +56,7 @@ public class BingoView : MonoBehaviour
     private void OpenCell(int index)
     {
         //サウンド再生
-        cellTapAudioSource.Play();
+        tapCellAudioSource.Play();
         openCellSubject.OnNext(index);
     }
 

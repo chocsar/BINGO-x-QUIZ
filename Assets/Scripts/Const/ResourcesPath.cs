@@ -7,5 +7,9 @@
     public const string ReachOn = "Images/ReachOn";
     public const string ReachOff = "Images/ReachOff";
     public const string CenterCell = "Images/Cells/BINGO";
+    public const string TapCellAudioClip = "Sounds/TapCell";
+    public const string choiceAudioClip = "Sounds/Choice";
+    public const string enterAudioClip = "Sounds/Enter";
+
 
 }
