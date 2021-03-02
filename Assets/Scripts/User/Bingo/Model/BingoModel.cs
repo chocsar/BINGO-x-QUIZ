@@ -51,6 +51,9 @@ public class BingoModel : MonoBehaviour
             bingoCellModelSubject.OnNext(bingoCellModels[index]);
         }
 
+        //Userのビンゴ状態を判定
+        DetermineBingoStatus();
+
     }
 
     /// <summary>
@@ -132,7 +135,8 @@ public class BingoModel : MonoBehaviour
             int openNum = 0;
             for (int j = 0; j < 3; j++)
             {
-                if (bingoLine[i, j] == BingoCellStatus.Open)
+                if (bingoLine[i, j] == BingoCellStatus.Open
+                    /*|| bingoLine[i, j] == BingoCellStatus.CanOpen*/)
                 {
                     openNum++;
                 }
