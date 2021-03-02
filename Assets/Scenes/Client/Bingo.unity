@@ -1470,6 +1470,9 @@ MonoBehaviour:
   - {fileID: 1041076820}
   reachCellView: {fileID: 9023740657045905950}
   tapCellAudioSource: {fileID: 965496702}
+  reportParent: {fileID: 441143022}
+  reportPrefab: {fileID: 3662463152074800077, guid: d0975b22bb37b405893adfc1694b8a68,
+    type: 3}
 --- !u!114 &899536185
 MonoBehaviour:
   m_ObjectHideFlags: 0

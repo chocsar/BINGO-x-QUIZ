@@ -17,7 +17,36 @@ public class BingoView : MonoBehaviour
     [SerializeField] private ReachCellView reachCellView;
     [SerializeField] private AudioSource tapCellAudioSource;
 
-    private int currentQuestionNumber;
+    //ビンゴ通知
+    [SerializeField] private GameObject reportParent;
+    [SerializeField] private BingoReport reportPrefab;
+    private List<string> bingoUserList = new List<string>();
+    private float reportInterval = 1;
+    private float timer = 0;
+
+
+    private void Update()
+    {
+        //デバッグ用
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            StackBingoUser("testuser");
+        }
+
+        //スタックされたビンゴユーザーを一定間隔で生成
+        if (bingoUserList.Count != 0)
+        {
+            timer += Time.deltaTime;
+
+            if (timer >= reportInterval)
+            {
+                timer = 0;
+                ReportBingoUser(bingoUserList[0]);
+                bingoUserList.RemoveAt(0);
+            }
+        }
+    }
+
 
     public void InitBingoView()
     {
@@ -95,6 +124,19 @@ public class BingoView : MonoBehaviour
             case UserBingoPhase.Open:
                 break;
         }
+    }
+
+    public void StackBingoUser(string userName)
+    {
+        bingoUserList.Add(userName);
+    }
+
+    private void ReportBingoUser(string userName)
+    {
+        BingoReport report = Instantiate(reportPrefab, new Vector3(-600, -600, 0), Quaternion.identity);
+        report.SetText(userName);
+        report.transform.SetParent(reportParent.transform);
+        report.transform.localScale = new Vector3(1, 1, 1);
     }
 
 }

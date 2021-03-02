@@ -15,6 +15,7 @@ public class UserFirebaseManager : MonoBehaviour
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference hostPhaseOnlyRef;
     private DatabaseReference hostNumsRef;
+    private DatabaseReference bingoUserRef;
 
     //ユーザーごとのKey
     private string userKey;
@@ -25,12 +26,14 @@ public class UserFirebaseManager : MonoBehaviour
         firebaseDatabase = FirebaseDatabase.Instance;
         hostPhaseOnlyRef = firebaseDatabase.GetReference($"{FirebaseKeys.HostPhaseOnly}");
         hostNumsRef = firebaseDatabase.GetReference($"{FirebaseKeys.Host}/{FirebaseKeys.HostNumbers}");
+        bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.BingoUser}");
 
         //BingoPresenterのイベントを監視
-        bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase);
-        bingoPresenter.ChangeUserBingoStatusEvent.Subscribe(SaveUserBingoStatus);
-        bingoPresenter.ChangeCellModelEvent.Subscribe(SaveUserNumber);
-        bingoPresenter.ChangeUserNameEvent.Subscribe(SaveUserName);
+        bingoPresenter.ChangeUserBingoPhaseEvent.Subscribe(SaveUserBingoPhase).AddTo(gameObject);
+        bingoPresenter.ChangeUserBingoStatusEvent.Subscribe(SaveUserBingoStatus).AddTo(gameObject);
+        bingoPresenter.ChangeCellModelEvent.Subscribe(SaveUserNumber).AddTo(gameObject);
+        bingoPresenter.ChangeUserNameEvent.Subscribe(SaveUserName).AddTo(gameObject);
+        bingoPresenter.BingoEvent.Subscribe(SaveUserAsBingo).AddTo(gameObject);
 
         if (!PlayerPrefs.HasKey(PlayerPrefsKeys.UserKey))
         {
@@ -64,6 +67,8 @@ public class UserFirebaseManager : MonoBehaviour
         //ホストの変更を監視
         hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
         hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
+        bingoUserRef.LimitToLast(1).ValueChanged += ReportBingoUser;
+
     }
 
     private void LoadUserData()
@@ -110,6 +115,7 @@ public class UserFirebaseManager : MonoBehaviour
                     //ホストの変更を監視
                     hostPhaseOnlyRef.ValueChanged += OnChangeHostPhase;
                     hostNumsRef.LimitToLast(1).ValueChanged += OnGivenNumber;
+                    bingoUserRef.LimitToLast(1).ValueChanged += ReportBingoUser;
                 });
             }
             else
@@ -185,6 +191,7 @@ public class UserFirebaseManager : MonoBehaviour
         childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserStatus}"] = status;
         childUpdates[$"/{FirebaseKeys.UserNameAndStatusOnly}/{userKey}/{FirebaseKeys.UserStatus}"] = status;
         childUpdates[$"/{FirebaseKeys.UserStatusOnly}/{userKey}"] = status;
+
         firebaseDatabase.GetReference("/").UpdateChildAsync(childUpdates, 10, (res) => { });
     }
     private void SaveUserBingoPhase(string phase)
@@ -211,5 +218,31 @@ public class UserFirebaseManager : MonoBehaviour
         string json = JsonUtility.ToJson(cell);
         DatabaseReference userNumberRef = firebaseDatabase.GetReference($"{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserNumbers}/{FirebaseKeys.UserNumber}{bingoCellModel.GetIndex()}");
         userNumberRef.SetRawJsonValueAsync(json, 10, (res) => { });
+    }
+
+    private void SaveUserAsBingo(string userName)
+    {
+        //Debug.Log("SaveUserAsBingo: " + userName);
+        DatabaseReference bingoUserRef = firebaseDatabase.GetReference($"{FirebaseKeys.BingoUser}/{userKey}");
+        bingoUserRef.SetValueAsync(userName, 10, (res) => { });
+    }
+
+    private void ReportBingoUser(object sender, ValueChangedEventArgs e)
+    {
+        string userName = e.Snapshot.GetRawJsonValue();
+        //Debug.Log(userName);
+        if (userName == null) return;
+        if (userName.Contains("{"))
+        {
+            var name = userName.TrimStart('{').TrimEnd('}');
+            if (userName.Contains(","))
+            {
+                var names = name.Split(',');
+                userName = names[names.Length - 1].Split(':')[1];
+            }
+            else userName = name.Split(':')[1];
+        }
+
+        bingoPresenter.ReportBingoUser(userName.Trim('"'));
     }
 }

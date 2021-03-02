@@ -15,5 +15,6 @@
     public const string UserPhaseOnly = "userphase";
     public const string UserNameAndStatusOnly = "usernameandstatus";
     public const string UserStatusOnly = "userstatus";
+    public const string BingoUser = "bingouser";
 
 }

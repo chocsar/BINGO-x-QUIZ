@@ -13,11 +13,13 @@ public class BingoModel : MonoBehaviour
     public IObservable<string> ChangeUserBingoStatusEvent => userBingoStatusSubject;
     public IObservable<string> ChangeUserBingoPhaseEvent => userBingoPhaseSubject;
     public IObservable<BingoCellModel> ChangeCellModelEvent => bingoCellModelSubject;
+    public IObservable<string> BingoEvent => bingoSubject;
 
     private Subject<string> userNameSubject = new Subject<string>();
     private Subject<string> userBingoStatusSubject = new Subject<string>();
     private Subject<string> userBingoPhaseSubject = new Subject<string>();
     private Subject<BingoCellModel> bingoCellModelSubject = new Subject<BingoCellModel>();
+    private Subject<string> bingoSubject = new Subject<string>();
 
     //ユーザーのデータ
     private string userName;
@@ -190,6 +192,7 @@ public class BingoModel : MonoBehaviour
             else if (openCountMax == 3)
             {
                 SetUserBingoStatus(UserBingoStatus.Bingo);
+                bingoSubject.OnNext(userName);
             }
         }
 
@@ -203,7 +206,7 @@ public class BingoModel : MonoBehaviour
     public void SetUserBingoStatus(string status)
     {
         this.userBingoStatus = status;
-        Debug.Log("SetUserBingoStatus: " + status);
+        //Debug.Log("SetUserBingoStatus: " + status);
         userBingoStatusSubject.OnNext(status);
     }
     public string GetUserBingoStatus()
