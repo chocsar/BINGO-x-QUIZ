@@ -28,10 +28,11 @@ public class BingoModel : MonoBehaviour
     private string userBingoStatus;
     private string userBingoPhase;
     private BingoCellModel[] bingoCellModels = new BingoCellModel[9];
+    private bool isReach = false;
 
     //ホストから提示された数字を保持
     private int currentNumber;
-    private int currentNumIndex; //現状は不要
+    private int currentNumIndex;
 
     public void InitBingoModel()
     {
@@ -173,17 +174,21 @@ public class BingoModel : MonoBehaviour
         if (openCountMaxContainingCanOpenCell <= 1)
         {
             SetUserBingoStatus(UserBingoStatus.Default);
+            isReach = false;
         }
         else if (openCountMaxContainingCanOpenCell == 2)
         {
             if (openCountMax < 2)
             {
                 SetUserBingoStatus(UserBingoStatus.PreReach);
+                isReach = false;
             }
             else if (openCountMax == 2)
             {
                 SetUserBingoStatus(UserBingoStatus.Reach);
-                reachSubject.OnNext(userName);
+
+                if (!isReach) reachSubject.OnNext(userName);
+                isReach = true;
             }
         }
         else if (openCountMaxContainingCanOpenCell == 3)
