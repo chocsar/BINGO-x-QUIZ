@@ -32,7 +32,7 @@ public class BingoView : MonoBehaviour
         }
 
         //サウンド
-        tapCellAudioSource.clip = Resources.Load<AudioClip>(ResourcesPath.TapCellAudioClip);
+        //tapCellAudioSource.clip = Resources.Load<AudioClip>(ResourcesPath.TapCellAudioClip);
     }
 
     public void SetUserName(string name)
