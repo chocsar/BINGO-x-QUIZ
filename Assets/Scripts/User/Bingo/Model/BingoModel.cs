@@ -129,26 +129,70 @@ public class BingoModel : MonoBehaviour
         bingoLine[7, 1] = bingoCellModels[4].GetStatus();
         bingoLine[7, 2] = bingoCellModels[6].GetStatus();
 
-        int openNumMax = 0;
+        int openCountMax = 0;
+        int openCountMaxContainingCanOpenCell = 0;
+
         for (int i = 0; i < 8; i++)
         {
-            int openNum = 0;
+            int openCount = 0;
+            int openCountContainingCanOpenCell = 0;
+
+            //Openセルのカウント
             for (int j = 0; j < 3; j++)
             {
-                if (bingoLine[i, j] == BingoCellStatus.Open
-                    /*|| bingoLine[i, j] == BingoCellStatus.CanOpen*/)
+                if (bingoLine[i, j] == BingoCellStatus.Open)
                 {
-                    openNum++;
+                    openCount++;
+                    openCountContainingCanOpenCell++;
+                }
+                if (bingoLine[i, j] == BingoCellStatus.CanOpen)
+                {
+                    openCountContainingCanOpenCell++;
                 }
             }
 
-            if (openNumMax < openNum) openNumMax = openNum;
+            //カウントの最大値を更新
+            if (openCountMax < openCount)
+            {
+                openCountMax = openCount;
+            }
+            if (openCountMaxContainingCanOpenCell < openCountContainingCanOpenCell)
+            {
+                openCountMaxContainingCanOpenCell = openCountContainingCanOpenCell;
+            }
 
-            if (openNumMax == 3) break;
+            //ビンゴの場合はカウント終了
+            if (openCountMax == 3) break;
         }
-        if (openNumMax <= 1) SetUserBingoStatus(UserBingoStatus.Default);
-        else if (openNumMax == 2) SetUserBingoStatus(UserBingoStatus.Reach);
-        else if (openNumMax == 3) SetUserBingoStatus(UserBingoStatus.Bingo);
+
+        //ユーザーの状態を判定
+        if (openCountMaxContainingCanOpenCell <= 1)
+        {
+            SetUserBingoStatus(UserBingoStatus.Default);
+        }
+        else if (openCountMaxContainingCanOpenCell == 2)
+        {
+            if (openCountMax < 2)
+            {
+                SetUserBingoStatus(UserBingoStatus.PreReach);
+            }
+            else if (openCountMax == 2)
+            {
+                SetUserBingoStatus(UserBingoStatus.Reach);
+            }
+        }
+        else if (openCountMaxContainingCanOpenCell == 3)
+        {
+            if (openCountMax < 3)
+            {
+                SetUserBingoStatus(UserBingoStatus.PreBingo);
+            }
+            else if (openCountMax == 3)
+            {
+                SetUserBingoStatus(UserBingoStatus.Bingo);
+            }
+        }
+
     }
 
     public void SetUserName(string name)
@@ -159,6 +203,7 @@ public class BingoModel : MonoBehaviour
     public void SetUserBingoStatus(string status)
     {
         this.userBingoStatus = status;
+        Debug.Log("SetUserBingoStatus: " + status);
         userBingoStatusSubject.OnNext(status);
     }
     public string GetUserBingoStatus()

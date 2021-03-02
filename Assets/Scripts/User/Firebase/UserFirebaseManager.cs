@@ -169,6 +169,17 @@ public class UserFirebaseManager : MonoBehaviour
     }
     private void SaveUserBingoStatus(string status)
     {
+        //PreBingoならBingoとして保存する
+        if (status == UserBingoStatus.PreBingo)
+        {
+            status = UserBingoStatus.Bingo;
+        }
+        //PreReachならReachとして保存する
+        else if (status == UserBingoStatus.PreReach)
+        {
+            status = UserBingoStatus.Reach;
+        }
+
         //複数箇所に同時に書き込む実装に変更
         Dictionary<string, System.Object> childUpdates = new Dictionary<string, System.Object>();
         childUpdates[$"/{FirebaseKeys.Users}/{userKey}/{FirebaseKeys.UserStatus}"] = status;
