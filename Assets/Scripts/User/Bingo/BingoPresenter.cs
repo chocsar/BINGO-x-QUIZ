@@ -20,6 +20,7 @@ public class BingoPresenter : MonoBehaviour
     [SerializeField] private BingoAnimationWindowView bingoAnimationView;
 
     private bool canUpdateCell = true;
+    public bool isPlaying = false;
 
     //デバッグ用
     // private void Start()
@@ -75,6 +76,9 @@ public class BingoPresenter : MonoBehaviour
 
     public void OnGivenNumber(int number)
     {
+        //名前入力ウィンドウがある場合は弾く
+        if (!isPlaying) return;
+
         //ビンゴしてる場合は何も処理しない
         if (bingoModel.GetUserBingoStatus() == UserBingoStatus.Bingo) return;
         //数字を持ってない場合は何も処理しない

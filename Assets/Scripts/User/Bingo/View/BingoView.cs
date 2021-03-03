@@ -24,6 +24,8 @@ public class BingoView : MonoBehaviour
     [SerializeField] private float reportInterval = 1;
     private float timer = 0;
 
+    public bool isPlaying = false;
+
 
     private void Update()
     {
@@ -36,6 +38,8 @@ public class BingoView : MonoBehaviour
         // {
         //     StackBingoUser("reachuser", UserBingoStatus.Reach);
         // }
+
+        if (!isPlaying) return;
 
         //スタックされたビンゴユーザーを一定間隔で生成
         if (bingoUserList.Count != 0)

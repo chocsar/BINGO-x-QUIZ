@@ -34,6 +34,8 @@ public class BingoModel : MonoBehaviour
     private int currentNumber;
     private int currentNumIndex;
 
+    public bool isPlaying = false;
+
     public void InitBingoModel()
     {
         //ユーザーデータの初期化
@@ -57,7 +59,7 @@ public class BingoModel : MonoBehaviour
         }
 
         //Userのビンゴ状態を判定
-        DetermineBingoStatus();
+        //DetermineBingoStatus();
 
     }
 
