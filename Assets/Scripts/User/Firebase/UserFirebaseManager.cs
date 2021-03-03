@@ -236,11 +236,13 @@ public class UserFirebaseManager : MonoBehaviour
     {
         string userName = e.Snapshot.GetRawJsonValue();
 
+        if (userName == null) return;
+
         //Unicodeから変換
         userName = System.Text.RegularExpressions.Regex.Unescape(userName);
 
         //Debug.Log(userName);
-        if (userName == null) return;
+
         if (userName.Contains("{"))
         {
             var name = userName.TrimStart('{').TrimEnd('}');
@@ -265,11 +267,13 @@ public class UserFirebaseManager : MonoBehaviour
     {
         string userName = e.Snapshot.GetRawJsonValue();
 
+        if (userName == null) return;
+
         //Unicodeから変換
         userName = System.Text.RegularExpressions.Regex.Unescape(userName);
 
         //Debug.Log(userName);
-        if (userName == null) return;
+
         if (userName.Contains("{"))
         {
             var name = userName.TrimStart('{').TrimEnd('}');
